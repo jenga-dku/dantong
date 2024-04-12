@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 
 public class Survey {
+
     private int surveyId;
     private String title;
     private String description;
