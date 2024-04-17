@@ -1,16 +1,14 @@
 package org.jenga.dantong.user.service;
 
 import jakarta.transaction.Transactional;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.jenga.dantong.global.auth.AuthenticationToken;
-import org.jenga.dantong.global.auth.JwtProvider;
+import org.jenga.dantong.global.auth.jwt.AuthenticationToken;
+import org.jenga.dantong.global.auth.jwt.JwtProvider;
 import org.jenga.dantong.user.model.dto.LoginRequest;
 import org.jenga.dantong.user.model.dto.LoginResponse;
 import org.jenga.dantong.user.model.dto.SignupRequest;
 import org.jenga.dantong.user.model.entity.Status;
 import org.jenga.dantong.user.model.entity.User;
-import org.jenga.dantong.user.model.entity.UserRole;
 import org.jenga.dantong.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

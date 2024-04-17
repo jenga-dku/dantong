@@ -1,7 +1,7 @@
 package org.jenga.dantong.user.model.dto;
 
 import lombok.Getter;
-import org.jenga.dantong.global.auth.AuthenticationToken;
+import org.jenga.dantong.global.auth.jwt.AuthenticationToken;
 
 @Getter
 public class LoginResponse {

@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Getter;
-import org.jenga.dantong.global.auth.AppAuthentication;
+import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 
 @Getter
 public enum UserRole {
