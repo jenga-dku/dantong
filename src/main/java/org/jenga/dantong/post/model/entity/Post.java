@@ -1,11 +1,27 @@
 package org.jenga.dantong.post.model.entity;
 
+import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
+@Table(name = "post")
+@NoArgsConstructor
+@Entity
 public class Post {
 
+    @Id
     private int postId;
+
+    @Column(name = "userId")
     private int userId;
+
+    @Column(name = "title")
     private String title;
+
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "content")
     private String content;
 
     @Column(name = "shown")
