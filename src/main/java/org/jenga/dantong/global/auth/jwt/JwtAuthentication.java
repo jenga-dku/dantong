@@ -1,4 +1,4 @@
-package org.jenga.dantong.global.auth;
+package org.jenga.dantong.global.auth.jwt;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package org.jenga.dantong.global.auth;
+package org.jenga.dantong.global.auth.jwt;
 
 import lombok.Builder;
 import lombok.Getter;

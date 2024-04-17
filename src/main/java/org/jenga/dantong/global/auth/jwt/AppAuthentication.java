@@ -1,4 +1,4 @@
-package org.jenga.dantong.global.auth;
+package org.jenga.dantong.global.auth.jwt;
 
 import org.jenga.dantong.user.model.entity.UserRole;
 import org.springframework.security.core.Authentication;

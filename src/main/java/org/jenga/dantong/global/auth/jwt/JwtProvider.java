@@ -1,4 +1,4 @@
-package org.jenga.dantong.global.auth;
+package org.jenga.dantong.global.auth.jwt;
 
 
 import io.jsonwebtoken.*;
@@ -7,10 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.jenga.dantong.user.model.entity.User;
 import org.jenga.dantong.user.model.entity.UserRole;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -23,14 +21,7 @@ public class JwtProvider implements AuthenticationProvider {
 
     public static final String AUTHORIZATION = "Authorization";
 
-    @Value("${app.auth.jwt.access-expiration}")
-    private final Duration accessExpiration;
-
-    @Value("${app.auth.jwt.refresh-expiration}")
-    private final Duration refreshExpiration;
-
-    @Value("${app.auth.jwt.secret-key}")
-    private final String secretKey;
+    private final SecretKey secretKey;
 
 
     @Override
@@ -102,7 +93,7 @@ public class JwtProvider implements AuthenticationProvider {
 
     private String createAccessToken(String userId, UserRole role) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime validity = now.plus(accessExpiration);
+        LocalDateTime validity = now.plus(secretKey.getJwtValidityTime());
 
         Map<String, Object> payloads = new HashMap<>();
         payloads.put("userId", userId);
@@ -113,24 +104,24 @@ public class JwtProvider implements AuthenticationProvider {
             .setClaims(payloads)
             .setIssuedAt(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()))
             .setExpiration(Date.from(validity.atZone(ZoneId.systemDefault()).toInstant()))
-            .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
+            .signWith(SignatureAlgorithm.HS256, secretKey.getJwtSecretKey().getBytes())
             .compact();
     }
 
     private String createRefreshToken() {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime validity = now.plus(refreshExpiration);
+        LocalDateTime validity = now.plus(secretKey.getRefreshValidityTime());
         return Jwts.builder()
             .setIssuedAt(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()))
             .setExpiration(Date.from(validity.atZone(ZoneId.systemDefault()).toInstant()))
-            .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
+            .signWith(SignatureAlgorithm.HS256, secretKey.getJwtSecretKey().getBytes())
             .compact();
     }
 
     private Jws<Claims> validateAccessToken(String accessToken) {
         try {
             return Jwts.parser()
-                .setSigningKey(secretKey.getBytes())
+                .setSigningKey(secretKey.getJwtSecretKey().getBytes())
                 .parseClaimsJws(accessToken);
         } catch (ExpiredJwtException e) {
             //TODO 커스텀 exception으로 변경
@@ -144,7 +135,7 @@ public class JwtProvider implements AuthenticationProvider {
     private String validateRefreshToken(String refreshToken) {
         try {
             Jwts.parser()
-                .setSigningKey(secretKey.getBytes())
+                .setSigningKey(secretKey.getJwtSecretKey().getBytes())
                 .parseClaimsJws(refreshToken);
             return refreshToken;
         } catch (ExpiredJwtException e) {

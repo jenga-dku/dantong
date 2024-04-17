@@ -1,4 +1,4 @@
-package org.jenga.dantong.global.auth;
+package org.jenga.dantong.global.auth.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
