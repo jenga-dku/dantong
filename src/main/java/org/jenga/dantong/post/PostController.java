@@ -2,7 +2,7 @@ package org.jenga.dantong.post;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jenga.dantong.post.model.entity.Post;
+import org.jenga.dantong.post.model.entity.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,52 +14,52 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostController {
 
-    private final PostRepository postRepository;
     private final PostService postService;
 
     @PostMapping("/post")
-    public String post(@RequestBody Post post) throws Exception{
-        postService.savePost(post);
+    public String post(@RequestBody PostSaveDto postSaveDto) throws Exception{
 
-        return "Save Post Success";
+        postService.savePost(postSaveDto);
+
+        return "redirect:list";
     }
 
     @GetMapping("/{postId}/edit")
-    public ResponseEntity<Post> goToUpdate(@PathVariable int postId){
-        Post post = postRepository.findByPostId(postId);
+    public ResponseEntity<PostResponseDto> goToUpdate(@ModelAttribute PostIdInfoDto postInfo){
+//        Post post = postRepository.findByPostId(postInfo.getPostId());
+        PostResponseDto post = postService.findPost(postInfo.getPostId());
 
         return ResponseEntity.ok(post);
     }
 
     @PostMapping("/{postId}/edit")
-    public String update(@RequestBody Post post) throws Exception{
-        postService.savePost(post);
-
-        String returnMessage = "%s".formatted(post.getPostId()) + " Update Complete!";
+    public String update(@ModelAttribute PostIdInfoDto postInfo, @RequestBody PostUpdateDto post) throws Exception{
+        post.setPostId(postInfo.getPostId());
+        postService.updatePost(post);
 
         return "redirect:list";
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<Post>> list(){
-        List<Post> posts = postService.showPost();
+    public ResponseEntity<List<PostResponseDto>> list(){
+//        List<Post> posts = postService.showAllPost();
+        List<PostResponseDto> posts = postService.showAllPost();
 
         return ResponseEntity.ok(posts);
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<Post> view(@PathVariable int postId){
-        Post post = postRepository.findByPostId(postId);
+    public ResponseEntity<PostResponseDto> view(@ModelAttribute PostIdInfoDto postId){
+//        Post post = postRepository.findByPostId(postId.getPostId());
+        PostResponseDto post = postService.findPost(postId.getPostId());
 
         return ResponseEntity.ok(post);
     }
 
     @GetMapping("/{postId}/delete")
-    public String delete(@PathVariable int postId) throws Exception{
-        postService.deletePost(postId);
+    public String delete(@ModelAttribute PostIdInfoDto postId) throws Exception{
+        postService.deletePost(postId.getPostId());
 
-        String returnMessage = "%s".formatted(postId) + " Delete Complete!";
-
-        return returnMessage;
+        return "redirect:list";
     }
 }
