@@ -2,14 +2,21 @@ package org.jenga.dantong.post.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Table(name = "post")
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 public class Post {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int postId;
 
     @Column(name = "userId")
@@ -24,65 +31,19 @@ public class Post {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "writtenDate")
+    private LocalDateTime date;
+
     @Column(name = "shown")
     private boolean shown;
 
-
-    public int getPostId() {
-        return postId;
-    }
-
-    public void setPostId(int postId) {
-        this.postId = postId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public boolean isShown() {
-        return shown;
-    }
-
-    public void setShown(boolean shown) {
-        this.shown = shown;
-    }
-
     @Builder
-    public Post(int postId, int userId, String title, String description, String content, boolean shown) {
-        this.postId = postId;
+    public Post(int userId, String title, String description, String content, LocalDateTime date, boolean shown) {
         this.userId = userId;
         this.title = title;
         this.description = description;
         this.content = content;
+        this.date = date;
         this.shown = shown;
     }
 }
