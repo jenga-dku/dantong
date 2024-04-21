@@ -3,7 +3,10 @@ package org.jenga.dantong.post;
 import org.jenga.dantong.post.model.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom{
+import java.util.List;
+
+public interface PostRepository extends JpaRepository<Post, Long>{
 
     Post findByPostId(int postId);
+    List<Post> findByShownTrue();
 }
