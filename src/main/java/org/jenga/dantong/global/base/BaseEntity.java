@@ -1,4 +1,4 @@
-package org.jenga.dantong.global.entity;
+package org.jenga.dantong.global.base;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
