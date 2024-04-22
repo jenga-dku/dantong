@@ -6,8 +6,10 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jenga.dantong.global.util.CodeGenerator;
 import org.jenga.dantong.global.util.TextTemplateEngine;
+import org.jenga.dantong.infra.nhn.service.NHNEmailService;
 import org.jenga.dantong.user.model.dto.EmailRequest;
 import org.jenga.dantong.user.model.entity.User;
+import org.jenga.dantong.user.repository.SignupRedisRepository;
 import org.jenga.dantong.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,9 +24,11 @@ public class EmailService {
     private final Clock clock;
 
     private final UserRepository userRepository;
+    private final SignupRedisRepository signupRedisRepository;
+    private final NHNEmailService nhnEmailService;
 
     @Value("${app.auth.email.code-length}")
-    private final int codeLength;
+    private int codeLength;
     @Transactional(readOnly = true)
     public void sendEmailCode(EmailRequest dto) {
         String emailCode = CodeGenerator.generateHexCode(codeLength);
@@ -32,15 +36,13 @@ public class EmailService {
         Instant now = Instant.now(clock);
 
         checkAlreadyStudentId(studentId);
-        //TODO
-//        dkuAuthRepository.setAuthPayload(studentId, EMAIL_AUTH_NAME, emailCode, now);
+        signupRedisRepository.setAuthPayload(studentId, EMAIL_AUTH_NAME, emailCode, now);
 
         String text = makeTemplatedEmail(
             dto.getStudentId(),
             emailCode
         );
-//TODO
-//        service.sendMessage(dto.getStudentId(), "단국대 학생 인증", text);
+        nhnEmailService.sendMessage(dto.getStudentId(), "단국대 학생 인증", text);
     }
 
     private void checkAlreadyStudentId(String studentId) {
