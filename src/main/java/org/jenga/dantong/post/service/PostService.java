@@ -1,25 +1,25 @@
-package org.jenga.dantong.post.model.service;
+package org.jenga.dantong.post.service;
 
-import org.jenga.dantong.post.model.entity.Post;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.post.model.dto.PostResponse;
 import org.jenga.dantong.post.model.dto.PostSaveRequest;
 import org.jenga.dantong.post.model.dto.PostUpdateRequest;
-import org.jenga.dantong.post.model.repository.PostRepository;
+import org.jenga.dantong.post.model.entity.Post;
+import org.jenga.dantong.post.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
     private PostRepository postRepository;
 
-    public PostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
-
-    public int savePost(PostSaveRequest postSaveRequest){
+    public int savePost(PostSaveRequest postSaveRequest) {
         Post post = Post.builder()
                 .userId(postSaveRequest.getUserId())
                 .title(postSaveRequest.getTitle())
@@ -34,19 +34,23 @@ public class PostService {
         return post.getPostId();
     }
 
-    public PostResponse findPost(int postId){
+    public PostResponse findPost(int postId) {
         Post post = postRepository.findByPostId(postId);
 
-        return PostResponse.builder()
+        log.info(String.valueOf(post.getPostId()));
+
+        PostResponse response = PostResponse.builder()
                 .userId(post.getUserId())
                 .title(post.getTitle())
                 .description(post.getDescription())
                 .content(post.getContent())
                 .date(post.getDate())
                 .build();
+
+        return response;
     }
 
-    public int deletePost(int postId){
+    public int deletePost(int postId) {
         Post post = postRepository.findByPostId(postId);
         post.setShown(false);
         postRepository.save(post);
