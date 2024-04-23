@@ -1,4 +1,4 @@
-package org.jenga.dantong.post.model.entity;
+package org.jenga.dantong.post.model.dto;
 
 
 import lombok.Builder;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class PostUpdateDto {
+public class PostUpdateRequestDto {
 
     private int postId;
 

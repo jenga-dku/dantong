@@ -1,8 +1,12 @@
-package org.jenga.dantong.post;
+package org.jenga.dantong.post.model.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jenga.dantong.post.model.entity.*;
+import org.jenga.dantong.post.model.service.PostService;
+import org.jenga.dantong.post.model.dto.PostIdInfoRequestDto;
+import org.jenga.dantong.post.model.dto.PostResponseDto;
+import org.jenga.dantong.post.model.dto.PostSaveRequestDto;
+import org.jenga.dantong.post.model.dto.PostUpdateRequestDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,15 +21,15 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/post")
-    public String post(@RequestBody PostSaveDto postSaveDto) throws Exception{
+    public String post(@RequestBody PostSaveRequestDto postSaveRequestDto) throws Exception{
 
-        postService.savePost(postSaveDto);
+        postService.savePost(postSaveRequestDto);
 
         return "redirect:list";
     }
 
     @GetMapping("/{postId}/edit")
-    public ResponseEntity<PostResponseDto> goToUpdate(@ModelAttribute PostIdInfoDto postInfo){
+    public ResponseEntity<PostResponseDto> goToUpdate(@ModelAttribute PostIdInfoRequestDto postInfo){
 //        Post post = postRepository.findByPostId(postInfo.getPostId());
         PostResponseDto post = postService.findPost(postInfo.getPostId());
 
@@ -33,7 +37,7 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/edit")
-    public String update(@ModelAttribute PostIdInfoDto postInfo, @RequestBody PostUpdateDto post) throws Exception{
+    public String update(@ModelAttribute PostIdInfoRequestDto postInfo, @RequestBody PostUpdateRequestDto post) throws Exception{
         post.setPostId(postInfo.getPostId());
         postService.updatePost(post);
 
@@ -49,7 +53,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponseDto> view(@ModelAttribute PostIdInfoDto postId){
+    public ResponseEntity<PostResponseDto> view(@ModelAttribute PostIdInfoRequestDto postId){
 //        Post post = postRepository.findByPostId(postId.getPostId());
         PostResponseDto post = postService.findPost(postId.getPostId());
 
@@ -57,7 +61,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/delete")
-    public String delete(@ModelAttribute PostIdInfoDto postId) throws Exception{
+    public String delete(@ModelAttribute PostIdInfoRequestDto postId) throws Exception{
         postService.deletePost(postId.getPostId());
 
         return "redirect:list";

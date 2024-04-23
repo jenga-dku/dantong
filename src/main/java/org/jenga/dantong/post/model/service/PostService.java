@@ -1,9 +1,10 @@
-package org.jenga.dantong.post;
+package org.jenga.dantong.post.model.service;
 
 import org.jenga.dantong.post.model.entity.Post;
-import org.jenga.dantong.post.model.entity.PostResponseDto;
-import org.jenga.dantong.post.model.entity.PostSaveDto;
-import org.jenga.dantong.post.model.entity.PostUpdateDto;
+import org.jenga.dantong.post.model.dto.PostResponseDto;
+import org.jenga.dantong.post.model.dto.PostSaveRequestDto;
+import org.jenga.dantong.post.model.dto.PostUpdateRequestDto;
+import org.jenga.dantong.post.model.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,20 +19,20 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public int savePost(PostSaveDto postSaveDto){
+    public int savePost(PostSaveRequestDto postSaveRequestDto){
         Post post = Post.builder()
-                .userId(postSaveDto.getUserId())
-                .title(postSaveDto.getTitle())
-                .description(postSaveDto.getDescription())
-                .content(postSaveDto.getContent())
-                .date(postSaveDto.getDate())
-                .shown(postSaveDto.isShown())
+                .userId(postSaveRequestDto.getUserId())
+                .title(postSaveRequestDto.getTitle())
+                .description(postSaveRequestDto.getDescription())
+                .content(postSaveRequestDto.getContent())
+                .date(postSaveRequestDto.getDate())
+                .shown(postSaveRequestDto.isShown())
                 .build();
 
         System.out.println("**** Post Info ****");
-        System.out.println("Title: " + postSaveDto.getTitle());
-        System.out.println("Description: " + postSaveDto.getDescription());
-        System.out.println("Content: " +postSaveDto.getContent());
+        System.out.println("Title: " + postSaveRequestDto.getTitle());
+        System.out.println("Description: " + postSaveRequestDto.getDescription());
+        System.out.println("Content: " + postSaveRequestDto.getContent());
         System.out.println("*******************");
 
         postRepository.save(post);
@@ -78,7 +79,7 @@ public class PostService {
         return postResponseDtos;
     }
 
-    public int updatePost(PostUpdateDto updatedPost) {
+    public int updatePost(PostUpdateRequestDto updatedPost) {
         Post post = postRepository.findByPostId(updatedPost.getPostId());
 
         post.setContent(updatedPost.getContent());

@@ -1,4 +1,4 @@
-package org.jenga.dantong.post;
+package org.jenga.dantong.post.model.repository;
 
 import org.jenga.dantong.post.model.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-package org.jenga.dantong.post.model.entity;
+package org.jenga.dantong.post.model.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class PostSaveDto {
+public class PostSaveRequestDto {
 
     private int userId;
     private String title;
@@ -19,7 +19,7 @@ public class PostSaveDto {
     private boolean shown = true;
 
     @Builder
-    public PostSaveDto(int userId, String title, String description, String content) {
+    public PostSaveRequestDto(int userId, String title, String description, String content) {
         this.userId = userId;
         this.title = title;
         this.description = description;

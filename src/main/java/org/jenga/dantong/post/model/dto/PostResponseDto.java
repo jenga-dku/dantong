@@ -1,4 +1,4 @@
-package org.jenga.dantong.post.model.entity;
+package org.jenga.dantong.post.model.dto;
 
 import jakarta.persistence.Column;
 import lombok.Builder;
