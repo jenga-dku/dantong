@@ -1,13 +1,17 @@
 package org.jenga.dantong.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.jenga.dantong.global.auth.CustomAccessDeniedHandler;
 import org.jenga.dantong.global.auth.CustomAuthenticationEntryPoint;
 import org.jenga.dantong.global.auth.JwtAuthenticationFilter;
 import org.jenga.dantong.global.auth.jwt.JwtProvider;
+import org.jenga.dantong.global.error.ExceptionHandlerFilter;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -33,7 +37,16 @@ public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
 
+    private final ObjectMapper objectMapper;
 
+    @Bean
+    public MessageSource messageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasenames("customMessage/messages");
+        messageSource.setFallbackToSystemLocale(false);
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
+    }
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -53,6 +66,11 @@ public class SecurityConfig {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public ExceptionHandlerFilter exceptionHandlerFilter() {
+        return new ExceptionHandlerFilter(objectMapper, messageSource());
     }
 
     private static final String[] PUBLIC_URI = {
@@ -83,6 +101,7 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class)
             .exceptionHandling(c -> c.authenticationEntryPoint(customAuthenticationEntryPoint())
                 .accessDeniedHandler(customAccessDeniedHandler()))
             .build();

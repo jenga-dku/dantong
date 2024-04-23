@@ -15,6 +15,12 @@ public class ApplicationException extends RuntimeException {
     private final Object[] arguments;
     private String customMessage = null;
 
+    public ApplicationException(HttpStatus status, String messageId, Object... arguments) {
+        super(formatMessage(messageId, arguments));
+        this.status = status;
+        this.messageId = messageId;
+        this.arguments = arguments;
+    }
 
     public ApplicationException(Throwable cause, HttpStatus status, String messageId,
         Object... arguments) {
