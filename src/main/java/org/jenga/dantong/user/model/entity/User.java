@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.jenga.dantong.global.entity.BaseEntity;
+import org.jenga.dantong.global.base.BaseEntity;
 
 @Entity
 @NoArgsConstructor
