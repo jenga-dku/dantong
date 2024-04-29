@@ -19,7 +19,7 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int postId;
 
-    @Column(name = "userId")
+    @Column(name = "user_id")
     private int userId;
 
     @Column(name = "title")
@@ -31,7 +31,7 @@ public class Post {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "writtenDate")
+    @Column(name = "written_date")
     private LocalDateTime date;
 
     @Column(name = "shown")
