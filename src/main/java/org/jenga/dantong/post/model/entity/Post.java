@@ -1,12 +1,12 @@
 package org.jenga.dantong.post.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.jenga.dantong.survey.model.entity.Survey;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "post")
 @NoArgsConstructor
@@ -37,6 +37,9 @@ public class Post {
 
     @Column(name = "shown")
     private boolean shown;
+
+    @OneToMany(mappedBy = "survey")
+    private List<Survey> surveys = new ArrayList<>();
 
     @Builder
     public Post(int userId, String title, String description, String content, LocalDateTime date, boolean shown) {
