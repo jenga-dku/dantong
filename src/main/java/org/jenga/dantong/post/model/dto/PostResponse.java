@@ -9,8 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class PostResponseDto {
-//    private int postId;
+public class PostResponse {
     private int userId;
     private String title;
     private String description;
@@ -18,7 +17,7 @@ public class PostResponseDto {
     private LocalDateTime date;
 
     @Builder
-    public PostResponseDto(int userId, String title, String description, String content, LocalDateTime date) {
+    public PostResponse(int userId, String title, String description, String content, LocalDateTime date) {
         this.userId = userId;
         this.title = title;
         this.description = description;
