@@ -3,11 +3,16 @@ package org.jenga.dantong.user.service;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jenga.dantong.global.util.CodeGenerator;
 import org.jenga.dantong.global.util.TextTemplateEngine;
 import org.jenga.dantong.infra.nhn.service.NHNEmailService;
 import org.jenga.dantong.user.model.dto.EmailRequest;
+import org.jenga.dantong.user.model.dto.EmailVerifyRequest;
+import org.jenga.dantong.user.model.dto.StudentVerifyResponse;
+import org.jenga.dantong.user.model.dto.UserInfo;
+import org.jenga.dantong.user.model.entity.Major;
 import org.jenga.dantong.user.model.entity.User;
 import org.jenga.dantong.user.repository.SignupRedisRepository;
 import org.jenga.dantong.user.repository.UserRepository;
@@ -18,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class EmailService {
+
     private static final String DKU_AUTH_NAME = "dku";
     private static final String EMAIL_AUTH_NAME = "email";
 
@@ -29,6 +35,7 @@ public class EmailService {
 
     @Value("${app.auth.email.code-length}")
     private int codeLength;
+
     @Transactional(readOnly = true)
     public void sendEmailCode(EmailRequest dto) {
         String emailCode = CodeGenerator.generateHexCode(codeLength);
@@ -50,6 +57,33 @@ public class EmailService {
         if (alreadyUser.isPresent()) {
             throw new RuntimeException();
         }
+    }
+
+    public StudentVerifyResponse validateEmailCode(EmailVerifyRequest request) {
+        String signupToken = UUID.randomUUID().toString();
+
+        Instant now = Instant.now(clock);
+        String emailCode = signupRedisRepository.getAuthPayload(request.getStudentId(),
+            EMAIL_AUTH_NAME,
+            String.class,
+            now).orElseThrow(RuntimeException::new);
+
+        if (!emailCode.equalsIgnoreCase(request.getEmailCode())) {
+            throw new RuntimeException();
+        }
+
+        UserInfo info = new UserInfo(request.getStudentName(), request.getStudentId(),
+            request.getMajor().name());
+
+        signupRedisRepository.setAuthPayload(signupToken, DKU_AUTH_NAME, info, now);
+
+        return new StudentVerifyResponse(info, signupToken);
+    }
+
+    public UserInfo getStudentInfo(String signupToken) {
+        Instant now = Instant.now(clock);
+        return signupRedisRepository.getAuthPayload(signupToken, DKU_AUTH_NAME, UserInfo.class, now)
+            .orElseThrow(RuntimeException::new);
     }
 
     private String makeTemplatedEmail(String studentId, String buttonContent) {

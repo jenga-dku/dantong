@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping(path = "/signup")
-    public void signup(@Valid @RequestBody SignupRequest request) {
-        User user = userSignupService.signup(request);
+    public void signup(@Valid @RequestBody SignupRequest request, String signupToken) {
+        User user = userSignupService.signup(request, signupToken);
     }
 }

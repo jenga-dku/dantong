@@ -7,8 +7,10 @@ import org.jenga.dantong.global.auth.jwt.JwtProvider;
 import org.jenga.dantong.user.model.dto.LoginRequest;
 import org.jenga.dantong.user.model.dto.LoginResponse;
 import org.jenga.dantong.user.model.dto.SignupRequest;
+import org.jenga.dantong.user.model.dto.UserInfo;
 import org.jenga.dantong.user.model.entity.Status;
 import org.jenga.dantong.user.model.entity.User;
+import org.jenga.dantong.user.repository.SignupRedisRepository;
 import org.jenga.dantong.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,23 +24,28 @@ public class UserSignupService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
-    public User signup(SignupRequest dto) {
+    private final EmailService emailService;
+
+    public User signup(SignupRequest dto, String signupToken) {
+        UserInfo info = emailService.getStudentInfo(signupToken);
 
         checkUserExist(dto);
+        String encryptedPassword = passwordEncoder.encode(dto.getPassword());
 
         User user = User.builder()
-            .studentId(dto.getStudentId())
-            .name(dto.getName())
+            .studentId(info.getStudentId())
+            .name(info.getName())
             .phoneNumber(dto.getPhoneNumber())
             .status(Status.INACTIVE)
-            .password(passwordEncoder.encode(dto.getPassword()))
+            .password(encryptedPassword)
             .build();
 
         return userRepository.save(user);
     }
 
     public LoginResponse login(LoginRequest dto) {
-        User user = userRepository.findByStudentId(dto.getStudentId()).orElseThrow(RuntimeException::new);
+        User user = userRepository.findByStudentId(dto.getStudentId())
+            .orElseThrow(RuntimeException::new);
 
         if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             AuthenticationToken token = jwtProvider.issue(user);
