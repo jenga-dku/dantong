@@ -22,6 +22,7 @@ public class SurveyReply {
     private SurveyItem surveyItem;
 
     @Column(name = "content")
+
     private String content;
 
     @Column(name = "user_id")

@@ -19,6 +19,7 @@ public class Survey {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "survey_id", insertable = false, updatable = false)
+
     private int surveyId;
 
     @ManyToOne
