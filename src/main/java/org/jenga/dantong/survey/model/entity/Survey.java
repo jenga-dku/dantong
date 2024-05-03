@@ -40,4 +40,34 @@ public class Survey {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
+    @Column(name = "shown")
+    private boolean shown = true;
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setShown(boolean shown) {
+        this.shown = shown;
+    }
+
+    public Survey(String title, String description, LocalDateTime startTime, LocalDateTime endTime) {
+        this.title = title;
+        this.description = description;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
 }

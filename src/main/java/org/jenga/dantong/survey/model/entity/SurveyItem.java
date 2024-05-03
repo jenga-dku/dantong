@@ -23,15 +23,37 @@ public class SurveyItem {
     @Column(name = "tag")
     private Tag tag;
 
-    @Column(name = "survey_id")
-    private int surveyId;
-
     @Column(name = "title")
     private String title;
 
     @Column(name = "description")
     private String description;
 
-    @OneToOne
+    @Column(name = "shown")
+    @Builder.Default
+    private boolean shown = true;
+
+    @OneToOne(mappedBy = "surveyItem")
     private SurveyReply surveyReply;
+
+    public void setSurvey(Survey survey) {
+        this.survey = survey;
+        survey.getSurveyItems().add(this);
+    }
+
+    public void setTag(Tag tag) {
+        this.tag = tag;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setShown(boolean shown) {
+        this.shown = shown;
+    }
 }
