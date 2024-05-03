@@ -37,6 +37,7 @@ public class TextTemplateEngine {
             while ((buffer = bReader.readLine()) != null) {
                 lines.add(buffer);
             }
+            bReader.close();
         } catch (IOException e) {
             throw new RuntimeException("리소스 파일을 읽을 수 없습니다: " + htmlResourcePath);
         }

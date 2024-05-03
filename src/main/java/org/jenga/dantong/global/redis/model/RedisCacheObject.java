@@ -1,13 +1,17 @@
 package org.jenga.dantong.global.redis.model;
 
 import java.time.Instant;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RedisCacheObject<T> {
 
-    private final Instant expiredAt;
-    private final T value;
+    private Instant expiredAt;
+    private T value;
 }
