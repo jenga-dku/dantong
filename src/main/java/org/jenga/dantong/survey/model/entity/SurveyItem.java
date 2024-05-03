@@ -1,22 +1,19 @@
 package org.jenga.dantong.survey.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Table(name = "survey_item")
 @Entity
 @Getter
-@Setter
-@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class SurveyItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "survey_item_id")
+    @Column(name = "survey_item_id", insertable = false, updatable = false)
     private int surveyItemId;
 
     @ManyToOne

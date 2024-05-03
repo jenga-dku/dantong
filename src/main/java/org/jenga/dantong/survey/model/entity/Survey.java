@@ -1,10 +1,7 @@
 package org.jenga.dantong.survey.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.jenga.dantong.post.model.entity.Post;
 
 import java.time.LocalDateTime;
@@ -13,22 +10,22 @@ import java.util.List;
 
 @Table(name = "survey")
 @Entity
-@Getter
-@Setter
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Survey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "survey_id")
+    @Column(name = "survey_id", insertable = false, updatable = false)
     private int surveyId;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @OneToMany(mappedBy = "survey_item")
+    @OneToMany(mappedBy = "survey")
     private List<SurveyItem> surveyItems = new ArrayList<>();
 
     @Column(name = "title")
