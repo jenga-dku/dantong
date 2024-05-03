@@ -10,6 +10,8 @@ import java.util.List;
 
 @Table(name = "post")
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Getter
 @Setter
@@ -17,7 +19,7 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "post_id")
+    @Column(name = "post_id", insertable = false, updatable = false)
     private int postId;
 
     @Column(name = "user_id")
@@ -38,16 +40,7 @@ public class Post {
     @Column(name = "shown")
     private boolean shown;
 
-    @OneToMany(mappedBy = "survey")
-    private List<Survey> surveys = new ArrayList<>();
+    @OneToMany(mappedBy = "post")
+    private List<Survey> surveys = new ArrayList<Survey>();
 
-    @Builder
-    public Post(int userId, String title, String description, String content, LocalDateTime date, boolean shown) {
-        this.userId = userId;
-        this.title = title;
-        this.description = description;
-        this.content = content;
-        this.date = date;
-        this.shown = shown;
-    }
 }
