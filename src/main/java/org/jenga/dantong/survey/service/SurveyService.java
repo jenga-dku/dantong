@@ -29,18 +29,18 @@ public class SurveyService {
         this.surveyReplyRepository = surveyReplyRepository;
     }
 
-    public int create(SurveySaveRequest surveyCreate){
+    public int create(SurveySaveRequest surveyCreate) {
 
         Survey survey = new Survey(
                 surveyCreate.getTitle(),
                 surveyCreate.getDescription(),
                 surveyCreate.getStartTime(),
                 surveyCreate.getEndTime()
-                );
+        );
 
         surveyRepository.save(survey);
 
-        for (SurveyItemSaveRequest currItem : surveyCreate.getSurveyItems()){
+        for (SurveyItemSaveRequest currItem : surveyCreate.getSurveyItems()) {
             SurveyItem item = SurveyItem.builder()
                     .title(currItem.getTitle())
                     .tag(currItem.getTag())
@@ -66,7 +66,7 @@ public class SurveyService {
     }
 
 
-    public int updateSurvey(int surveyId, SurveySaveRequest surveyUpdate){
+    public int updateSurvey(int surveyId, SurveySaveRequest surveyUpdate) {
 
         Survey survey = surveyRepository.findBySurveyId(surveyId);
 
@@ -79,7 +79,7 @@ public class SurveyService {
         List<SurveyItemSaveRequest> itemUpdate = surveyUpdate.getSurveyItems();
 
         int index = 0;
-        for (SurveyItem currItem : items){
+        for (SurveyItem currItem : items) {
             currItem.setTitle(itemUpdate.get(index).getTitle());
             currItem.setTag(itemUpdate.get(index).getTag());
             currItem.setDescription(itemUpdate.get(index).getDescription());
@@ -98,7 +98,7 @@ public class SurveyService {
         return survey.getSurveyId();
     }
 
-    public void deleteSurveyItem(int surveyId, int itemId){
+    public void deleteSurveyItem(int surveyId, int itemId) {
         SurveyItem item = surveyItemRepository.findBySurvey_SurveyIdAndSurveyItemId(surveyId, itemId);
 
         item.setShown(false);
@@ -106,19 +106,19 @@ public class SurveyService {
     }
 
 
-    public void deleteSurvey(int surveyId){
+    public void deleteSurvey(int surveyId) {
         Survey survey = surveyRepository.findBySurveyId(surveyId);
 
         survey.setShown(false);
         surveyRepository.save(survey);
     }
 
-    public SurveyResponse viewSurvey(int surveyId){
+    public SurveyResponse viewSurvey(int surveyId) {
         Survey survey = surveyRepository.findBySurveyId(surveyId);
         List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyIdAndShownTrue(surveyId);
         List<SurveyItemResponse> responseItems = new ArrayList<SurveyItemResponse>();
 
-        for (SurveyItem currItem : items){
+        for (SurveyItem currItem : items) {
             SurveyItemResponse item = new SurveyItemResponse();
             item.setTag(currItem.getTag());
             item.setTitle(currItem.getTitle());
@@ -139,12 +139,12 @@ public class SurveyService {
     }
 
 
-    public int reply(){
+    public int reply() {
         return 1234;
     }
 
 
-    public int updateReply(){
+    public int updateReply() {
         return 1234;
     }
 

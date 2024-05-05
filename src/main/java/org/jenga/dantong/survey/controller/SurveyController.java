@@ -19,7 +19,7 @@ public class SurveyController {
     private final SurveyService surveyService;
 
     @PostMapping("/create")
-    public String create(@RequestBody SurveySaveRequest survey) throws Exception{
+    public String create(@RequestBody SurveySaveRequest survey) throws Exception {
 
         surveyService.create(survey);
 
@@ -27,7 +27,7 @@ public class SurveyController {
     }
 
     @PostMapping("/{surveyId}/update")
-    public String update(@ModelAttribute SurveyIdInfoRequest surveyInfo, @RequestBody SurveySaveRequest survey) throws Exception{
+    public String update(@ModelAttribute SurveyIdInfoRequest surveyInfo, @RequestBody SurveySaveRequest survey) throws Exception {
 
         surveyService.updateSurvey(surveyInfo.getSurveyId(), survey);
 
@@ -35,21 +35,21 @@ public class SurveyController {
     }
 
     @PostMapping("/{surveyId}/delete")
-    public String deleteSurvey(@ModelAttribute SurveyIdInfoRequest surveyInfo){
+    public String deleteSurvey(@ModelAttribute SurveyIdInfoRequest surveyInfo) {
         surveyService.deleteSurvey(surveyInfo.getSurveyId());
 
         return "delete survey succeed!";
     }
 
     @PostMapping("/{surveyId}/{surveyItemId}/delete")
-    public String deleteSurveyItem(@ModelAttribute SurveyIdInfoRequest surveyInfo, @ModelAttribute SurveyItemIdInfoRequest surveyItemInfo){
+    public String deleteSurveyItem(@ModelAttribute SurveyIdInfoRequest surveyInfo, @ModelAttribute SurveyItemIdInfoRequest surveyItemInfo) {
         surveyService.deleteSurveyItem(surveyInfo.getSurveyId(), surveyItemInfo.getSurveyItemId());
 
         return "delete survey succeed!";
     }
 
     @GetMapping("/{surveyId}")
-    public ResponseEntity<SurveyResponse> viewSurvey(@ModelAttribute SurveyIdInfoRequest surveyInfo){
+    public ResponseEntity<SurveyResponse> viewSurvey(@ModelAttribute SurveyIdInfoRequest surveyInfo) {
         SurveyResponse response = surveyService.viewSurvey(surveyInfo.getSurveyId());
 
         return ResponseEntity.ok(response);

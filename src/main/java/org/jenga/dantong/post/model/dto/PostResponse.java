@@ -1,6 +1,5 @@
 package org.jenga.dantong.post.model.dto;
 
-import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
