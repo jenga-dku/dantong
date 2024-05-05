@@ -1,8 +1,8 @@
-package org.jenga.dantong.post.model.controller;
+package org.jenga.dantong.post.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jenga.dantong.post.model.service.PostService;
+import org.jenga.dantong.post.service.PostService;
 import org.jenga.dantong.post.model.dto.PostIdInfoRequest;
 import org.jenga.dantong.post.model.dto.PostResponse;
 import org.jenga.dantong.post.model.dto.PostSaveRequest;

@@ -1,4 +1,4 @@
-package org.jenga.dantong.survey.model.controller;
+package org.jenga.dantong.survey.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,7 @@ import org.jenga.dantong.survey.model.dto.SurveyIdInfoRequest;
 import org.jenga.dantong.survey.model.dto.SurveyItemIdInfoRequest;
 import org.jenga.dantong.survey.model.dto.SurveyResponse;
 import org.jenga.dantong.survey.model.dto.SurveySaveRequest;
-import org.jenga.dantong.survey.model.service.SurveyService;
+import org.jenga.dantong.survey.service.SurveyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

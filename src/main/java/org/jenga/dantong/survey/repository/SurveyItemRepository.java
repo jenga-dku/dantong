@@ -1,4 +1,4 @@
-package org.jenga.dantong.survey.model.repository;
+package org.jenga.dantong.survey.repository;
 
 import org.jenga.dantong.survey.model.dto.SurveyItemResponse;
 import org.jenga.dantong.survey.model.entity.SurveyItem;

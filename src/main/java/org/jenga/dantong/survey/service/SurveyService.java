@@ -1,4 +1,4 @@
-package org.jenga.dantong.survey.model.service;
+package org.jenga.dantong.survey.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.survey.model.dto.SurveyItemResponse;
@@ -7,9 +7,9 @@ import org.jenga.dantong.survey.model.dto.SurveyResponse;
 import org.jenga.dantong.survey.model.dto.SurveySaveRequest;
 import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.survey.model.entity.SurveyItem;
-import org.jenga.dantong.survey.model.repository.SurveyItemRepository;
-import org.jenga.dantong.survey.model.repository.SurveyReplyRepository;
-import org.jenga.dantong.survey.model.repository.SurveyRepository;
+import org.jenga.dantong.survey.repository.SurveyItemRepository;
+import org.jenga.dantong.survey.repository.SurveyReplyRepository;
+import org.jenga.dantong.survey.repository.SurveyRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

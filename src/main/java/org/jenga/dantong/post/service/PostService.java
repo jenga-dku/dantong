@@ -1,10 +1,10 @@
-package org.jenga.dantong.post.model.service;
+package org.jenga.dantong.post.service;
 
 import org.jenga.dantong.post.model.entity.Post;
 import org.jenga.dantong.post.model.dto.PostResponse;
 import org.jenga.dantong.post.model.dto.PostSaveRequest;
 import org.jenga.dantong.post.model.dto.PostUpdateRequest;
-import org.jenga.dantong.post.model.repository.PostRepository;
+import org.jenga.dantong.post.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
