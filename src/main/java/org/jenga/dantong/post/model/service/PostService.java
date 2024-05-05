@@ -1,9 +1,9 @@
 package org.jenga.dantong.post.model.service;
 
 import org.jenga.dantong.post.model.entity.Post;
-import org.jenga.dantong.post.model.dto.PostResponseDto;
-import org.jenga.dantong.post.model.dto.PostSaveRequestDto;
-import org.jenga.dantong.post.model.dto.PostUpdateRequestDto;
+import org.jenga.dantong.post.model.dto.PostResponse;
+import org.jenga.dantong.post.model.dto.PostSaveRequest;
+import org.jenga.dantong.post.model.dto.PostUpdateRequest;
 import org.jenga.dantong.post.model.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,31 +19,25 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public int savePost(PostSaveRequestDto postSaveRequestDto){
+    public int savePost(PostSaveRequest postSaveRequest){
         Post post = Post.builder()
-                .userId(postSaveRequestDto.getUserId())
-                .title(postSaveRequestDto.getTitle())
-                .description(postSaveRequestDto.getDescription())
-                .content(postSaveRequestDto.getContent())
-                .date(postSaveRequestDto.getDate())
-                .shown(postSaveRequestDto.isShown())
+                .userId(postSaveRequest.getUserId())
+                .title(postSaveRequest.getTitle())
+                .description(postSaveRequest.getDescription())
+                .content(postSaveRequest.getContent())
+                .date(postSaveRequest.getDate())
+                .shown(postSaveRequest.isShown())
                 .build();
-
-        System.out.println("**** Post Info ****");
-        System.out.println("Title: " + postSaveRequestDto.getTitle());
-        System.out.println("Description: " + postSaveRequestDto.getDescription());
-        System.out.println("Content: " + postSaveRequestDto.getContent());
-        System.out.println("*******************");
 
         postRepository.save(post);
 
         return post.getPostId();
     }
 
-    public PostResponseDto findPost(int postId){
+    public PostResponse findPost(int postId){
         Post post = postRepository.findByPostId(postId);
 
-        return PostResponseDto.builder()
+        return PostResponse.builder()
                 .userId(post.getUserId())
                 .title(post.getTitle())
                 .description(post.getDescription())
@@ -60,13 +54,13 @@ public class PostService {
         return postId;
     }
 
-    public List<PostResponseDto> showAllPost() {
+    public List<PostResponse> showAllPost() {
         List<Post> posts = postRepository.findByShownTrue();
-        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+        List<PostResponse> postResponses = new ArrayList<>();
 
         for (Post currPost : posts) {
-            postResponseDtos.add(
-                    PostResponseDto.builder()
+            postResponses.add(
+                    PostResponse.builder()
                             .userId(currPost.getUserId())
                             .title(currPost.getTitle())
                             .content(currPost.getContent())
@@ -76,22 +70,16 @@ public class PostService {
             );
         }
 
-        return postResponseDtos;
+        return postResponses;
     }
 
-    public int updatePost(PostUpdateRequestDto updatedPost) {
-        Post post = postRepository.findByPostId(updatedPost.getPostId());
+    public int updatePost(int postId, PostUpdateRequest updatedPost) {
+        Post post = postRepository.findByPostId(postId);
 
         post.setContent(updatedPost.getContent());
         post.setTitle(updatedPost.getTitle());
         post.setDescription(updatedPost.getDescription());
         post.setDate(updatedPost.getUpdateDate());
-
-        System.out.println("**** Post Info ****");
-        System.out.println("Title: " + post.getTitle());
-        System.out.println("Description: " + post.getDescription());
-        System.out.println("Content: " + post.getContent());
-        System.out.println("*******************");
 
         postRepository.save(post);
 
