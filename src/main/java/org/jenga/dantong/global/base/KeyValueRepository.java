@@ -7,11 +7,12 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.redis.model.RedisCacheObject;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 @RequiredArgsConstructor
+@Slf4j
 public class KeyValueRepository {
 
     private final StringRedisTemplate redisTemplate;
@@ -61,7 +62,7 @@ public class KeyValueRepository {
                 remove(key);
                 return Optional.empty();
             }
-            return Optional.empty();
+            return Optional.of(auth);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

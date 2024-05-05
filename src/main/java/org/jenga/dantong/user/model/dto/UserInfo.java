@@ -7,7 +7,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserInfo {
 
-    private final String name;
     private final String studentId;
-    private final String majorName;
 }
