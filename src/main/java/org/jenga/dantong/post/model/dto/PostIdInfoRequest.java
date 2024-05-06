@@ -1,11 +1,11 @@
 package org.jenga.dantong.post.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-public class PostIdInfoRequestDto {
+@AllArgsConstructor
+public class PostIdInfoRequest {
 
     private int postId;
 }

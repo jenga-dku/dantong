@@ -1,0 +1,9 @@
+package org.jenga.dantong.survey.model.repository;
+
+import org.jenga.dantong.survey.model.entity.SurveyReply;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface SurveyReplyRepository extends JpaRepository<SurveyReply, Long> {
+}
