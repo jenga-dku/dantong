@@ -1,5 +1,6 @@
 package org.jenga.dantong.post.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.post.model.dto.PostResponse;
 import org.jenga.dantong.post.model.dto.PostSaveRequest;
 import org.jenga.dantong.post.model.dto.PostUpdateRequest;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class PostService {
 
@@ -37,13 +39,17 @@ public class PostService {
     public PostResponse findPost(int postId) {
         Post post = postRepository.findByPostId(postId);
 
-        return PostResponse.builder()
+        log.info(String.valueOf(post.getPostId()));
+
+        PostResponse response = PostResponse.builder()
                 .userId(post.getUserId())
                 .title(post.getTitle())
                 .description(post.getDescription())
                 .content(post.getContent())
                 .date(post.getDate())
                 .build();
+
+        return response;
     }
 
     public int deletePost(int postId) {
