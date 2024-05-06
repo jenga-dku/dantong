@@ -34,14 +34,14 @@ public class SurveyController {
         return "Update survey succeed!";
     }
 
-    @PostMapping("/{surveyId}/delete")
+    @GetMapping("/{surveyId}/delete")
     public String deleteSurvey(@ModelAttribute SurveyIdInfoRequest surveyInfo) {
         surveyService.deleteSurvey(surveyInfo.getSurveyId());
 
         return "delete survey succeed!";
     }
 
-    @PostMapping("/{surveyId}/{surveyItemId}/delete")
+    @GetMapping("/{surveyId}/{surveyItemId}/delete")
     public String deleteSurveyItem(@ModelAttribute SurveyIdInfoRequest surveyInfo, @ModelAttribute SurveyItemIdInfoRequest surveyItemInfo) {
         surveyService.deleteSurveyItem(surveyInfo.getSurveyId(), surveyItemInfo.getSurveyItemId());
 
