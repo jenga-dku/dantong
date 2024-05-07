@@ -30,6 +30,7 @@ public class Survey {
     private Post post;
 
     @OneToMany(mappedBy = "survey")
+    @Builder.Default
     private List<SurveyItem> surveyItems = new ArrayList<>();
 
     @Column(name = "title")
@@ -45,6 +46,7 @@ public class Survey {
     private LocalDateTime endTime;
 
     @Column(name = "shown")
+    @Builder.Default
     private boolean shown = true;
 
     public Survey(String title, String description, LocalDateTime startTime, LocalDateTime endTime) {

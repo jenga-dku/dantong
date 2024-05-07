@@ -1,5 +1,6 @@
 package org.jenga.dantong.post.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.post.model.dto.PostResponse;
 import org.jenga.dantong.post.model.dto.PostSaveRequest;
@@ -13,13 +14,10 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
     private PostRepository postRepository;
-
-    public PostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
 
     public int savePost(PostSaveRequest postSaveRequest) {
         Post post = Post.builder()

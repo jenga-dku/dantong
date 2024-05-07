@@ -41,6 +41,7 @@ public class Post {
     private boolean shown;
 
     @OneToMany(mappedBy = "post")
+    @Builder.Default
     private List<Survey> surveys = new ArrayList<Survey>();
 
 }
