@@ -1,5 +1,6 @@
 package org.jenga.dantong.survey.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.survey.model.dto.SurveyItemResponse;
 import org.jenga.dantong.survey.model.dto.SurveyItemSaveRequest;
@@ -17,17 +18,12 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SurveyService {
 
-    private SurveyRepository surveyRepository;
-    private SurveyItemRepository surveyItemRepository;
-    private SurveyReplyRepository surveyReplyRepository;
-
-    public SurveyService(SurveyRepository surveyRepository, SurveyItemRepository surveyItemRepository, SurveyReplyRepository surveyReplyRepository) {
-        this.surveyRepository = surveyRepository;
-        this.surveyItemRepository = surveyItemRepository;
-        this.surveyReplyRepository = surveyReplyRepository;
-    }
+    private final SurveyRepository surveyRepository;
+    private final SurveyItemRepository surveyItemRepository;
+    private final SurveyReplyRepository surveyReplyRepository;
 
     public int create(SurveySaveRequest surveyCreate) {
 
