@@ -37,10 +37,20 @@ public class Post {
     @Column(name = "written_date")
     private LocalDateTime date;
 
+    @Column(name = "category")
+    private Category category;
+
     @Column(name = "shown")
     private boolean shown;
 
+    @Column(name = "start_date")
+    private LocalDateTime startDate;
+
+    @Column(name = "end_date")
+    private LocalDateTime endDate;
+
     @OneToMany(mappedBy = "post")
+    @Builder.Default
     private List<Survey> surveys = new ArrayList<Survey>();
 
 }
