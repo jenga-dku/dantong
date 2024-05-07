@@ -1,6 +1,7 @@
 package org.jenga.dantong.survey.model.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.jenga.dantong.survey.model.entity.Tag;
 
 @Getter
