@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/dantong
+    username: ${mysql.user}
+    password: ${mysql.password}
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        default_batch_fetch_size: 200
+        format_sql: true
+        show_sql: false
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+  mvc:
+    pathmatch:
+      matching-strategy:
+        ant-path-matcher
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+
+security:
+  jwt:
+    token:
+      secret-key: ${JWT-KEY}
+      expire-length: P1D
+      expire-length-refresh: P15D
+nhn:
+  email:
+    url: https://email.api.nhncloudservice.com/email/v2.1/appKeys/tFgOoSNZMSqsZuxx/sender/mail
+    secret-key: rf8N3WH9nCx8p6tk3EKw91DMBTdXkBU8
+    sender-mail: panzzang518@naver.com
+app:
+  auth:
+    email:
+      code-length: 6
+    signup-expires: PT1H
+  cors: "*"
