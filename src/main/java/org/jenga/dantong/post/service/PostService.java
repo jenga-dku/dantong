@@ -43,12 +43,23 @@ public class PostService {
 
         log.info(String.valueOf(post.getPostId()));
 
+        String progress;
+
+        if (post.getStartDate().isAfter(LocalDateTime.now()))
+            progress = "진행전";
+        else if (post.getStartDate().isBefore(LocalDateTime.now()) && post.getEndDate().isAfter(LocalDateTime.now()))
+            progress = "진행중";
+        else
+            progress = "종료";
+
         PostResponse response = PostResponse.builder()
                 .userId(post.getUserId())
                 .title(post.getTitle())
                 .description(post.getDescription())
                 .content(post.getContent())
                 .date(post.getDate())
+                .category(post.getCategory())
+                .status(progress)
                 .build();
 
         return response;
