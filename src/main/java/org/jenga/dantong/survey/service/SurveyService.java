@@ -21,9 +21,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SurveyService {
 
-    private SurveyRepository surveyRepository;
-    private SurveyItemRepository surveyItemRepository;
-    private SurveyReplyRepository surveyReplyRepository;
+    private final SurveyRepository surveyRepository;
+    private final SurveyItemRepository surveyItemRepository;
+    private final SurveyReplyRepository surveyReplyRepository;
 
     public int create(SurveySaveRequest surveyCreate) {
 

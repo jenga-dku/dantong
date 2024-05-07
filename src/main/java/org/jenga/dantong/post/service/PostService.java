@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
 
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
 
     public int savePost(PostSaveRequest postSaveRequest) {
         Post post = Post.builder()
