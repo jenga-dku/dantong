@@ -22,6 +22,7 @@ public class ApplicationException extends RuntimeException {
         this.arguments = arguments;
     }
 
+
     public ApplicationException(Throwable cause, HttpStatus status, String messageId,
         Object... arguments) {
         super(formatMessage(messageId, arguments), cause);
