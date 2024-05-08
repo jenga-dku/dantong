@@ -2,10 +2,7 @@ package org.jenga.dantong.survey.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jenga.dantong.survey.model.dto.SurveyItemResponse;
-import org.jenga.dantong.survey.model.dto.SurveyItemSaveRequest;
-import org.jenga.dantong.survey.model.dto.SurveyResponse;
-import org.jenga.dantong.survey.model.dto.SurveySaveRequest;
+import org.jenga.dantong.survey.model.dto.*;
 import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.survey.model.entity.SurveyItem;
 import org.jenga.dantong.survey.repository.SurveyItemRepository;
@@ -13,7 +10,6 @@ import org.jenga.dantong.survey.repository.SurveyReplyRepository;
 import org.jenga.dantong.survey.repository.SurveyRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +21,7 @@ public class SurveyService {
     private final SurveyItemRepository surveyItemRepository;
     private final SurveyReplyRepository surveyReplyRepository;
 
-    public int create(SurveySaveRequest surveyCreate) {
+    public int create(SurveyCreateRequest surveyCreate) {
 
         Survey survey = new Survey(
                 surveyCreate.getTitle(),
@@ -36,22 +32,16 @@ public class SurveyService {
 
         surveyRepository.save(survey);
 
-        for (SurveyItemSaveRequest currItem : surveyCreate.getSurveyItems()) {
-            SurveyItem item = SurveyItem.builder()
-                    .title(currItem.getTitle())
-                    .tag(currItem.getTag())
-                    .description(currItem.getDescription())
-                    .build();
+        List<SurveyItemCreateRequest> item = surveyCreate.getSurveyItems();
 
-            log.info(item.getTitle());
-            log.info(item.getDescription());
-            log.info(String.valueOf(item.getTag()));
-            log.info(String.valueOf(item.isShown()));
-
-
-            item.setSurvey(survey);
-            surveyItemRepository.save(item);
-        }
+        item.stream()
+                .map(currItem -> SurveyItem.builder()
+                        .survey(survey)
+                        .title(currItem.getTitle())
+                        .tag(currItem.getTag())
+                        .description(currItem.getDescription())
+                        .build())
+                .forEach(surveyItemRepository::save);
 
         log.info(survey.getTitle());
         log.info(survey.getDescription());
@@ -62,7 +52,7 @@ public class SurveyService {
     }
 
 
-    public int updateSurvey(int surveyId, SurveySaveRequest surveyUpdate) {
+    public int updateSurvey(int surveyId, SurveyUpdateRequest surveyUpdate) {
 
         Survey survey = surveyRepository.findBySurveyId(surveyId);
 
@@ -71,23 +61,30 @@ public class SurveyService {
         survey.setStartTime(surveyUpdate.getStartTime());
         survey.setEndTime(surveyUpdate.getEndTime());
 
-        List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyId(surveyId);
-        List<SurveyItemSaveRequest> itemUpdate = surveyUpdate.getSurveyItems();
+        List<SurveyItemUpdateRequest> itemUpdate = surveyUpdate.getSurveyItems();
 
-        int index = 0;
-        for (SurveyItem currItem : items) {
-            currItem.setTitle(itemUpdate.get(index).getTitle());
-            currItem.setTag(itemUpdate.get(index).getTag());
-            currItem.setDescription(itemUpdate.get(index).getDescription());
+        itemUpdate.stream()
+                .filter(currItem -> surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId()) == null || (surveyId == (surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId()).getSurvey().getSurveyId())))
+                .map(currItem -> {
+                    SurveyItem item = surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId());
 
-            log.info(currItem.getTitle());
-            log.info(currItem.getDescription());
-            log.info(String.valueOf(currItem.getTag()));
+                    if (item != null) {
+                        item.setTitle(currItem.getTitle());
+                        item.setTag(currItem.getTag());
+                        item.setDescription(currItem.getDescription());
 
-            surveyItemRepository.save(currItem);
-
-            index++;
-        }
+                        return item;
+                    } else {
+                        return SurveyItem.builder()
+                                .survey(survey)
+                                .surveyItemId(currItem.getSurveyItemId())
+                                .title(currItem.getTitle())
+                                .tag(currItem.getTag())
+                                .description(currItem.getDescription())
+                                .build();
+                    }
+                })
+                .forEach(surveyItemRepository::save);
 
         surveyRepository.save(survey);
 
@@ -112,16 +109,14 @@ public class SurveyService {
     public SurveyResponse viewSurvey(int surveyId) {
         Survey survey = surveyRepository.findBySurveyId(surveyId);
         List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyIdAndShownTrue(surveyId);
-        List<SurveyItemResponse> responseItems = new ArrayList<SurveyItemResponse>();
 
-        for (SurveyItem currItem : items) {
-            SurveyItemResponse item = new SurveyItemResponse();
-            item.setTag(currItem.getTag());
-            item.setTitle(currItem.getTitle());
-            item.setDescription(currItem.getDescription());
-
-            responseItems.add(item);
-        }
+        List<SurveyItemResponse> responseItems = items.stream()
+                .map(currItem -> SurveyItemResponse.builder()
+                        .surveyItemId(currItem.getSurveyItemId())
+                        .title(currItem.getTitle())
+                        .tag(currItem.getTag())
+                        .description(currItem.getDescription())
+                        .build()).toList();
 
         SurveyResponse response = SurveyResponse.builder()
                 .title(survey.getTitle())

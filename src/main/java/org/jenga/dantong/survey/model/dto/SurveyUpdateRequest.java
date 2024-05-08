@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SurveySaveRequest {
+public class SurveyUpdateRequest {
     private String title;
     private String description;
 
@@ -25,5 +25,5 @@ public class SurveySaveRequest {
     private LocalDateTime endTime;
 
     @Builder.Default
-    private List<SurveyItemSaveRequest> surveyItems = new ArrayList<SurveyItemSaveRequest>();
+    private List<SurveyItemUpdateRequest> surveyItems = new ArrayList<SurveyItemUpdateRequest>();
 }

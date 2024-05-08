@@ -10,7 +10,8 @@ import org.jenga.dantong.survey.model.entity.Tag;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SurveyItemSaveRequest {
+public class SurveyItemCreateRequest {
+
     private Tag tag;
     private String title;
     private String description;
