@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.auth.jwt.AuthenticationToken;
 import org.jenga.dantong.global.auth.jwt.JwtProvider;
+import org.jenga.dantong.user.exception.AlreadyUserExistException;
+import org.jenga.dantong.user.exception.UserNotFoundException;
 import org.jenga.dantong.user.model.dto.LoginRequest;
 import org.jenga.dantong.user.model.dto.LoginResponse;
 import org.jenga.dantong.user.model.dto.SignupRequest;
@@ -53,7 +55,7 @@ public class UserSignupService {
 
     public LoginResponse login(LoginRequest dto) {
         User user = userRepository.findByStudentId(dto.getStudentId())
-            .orElseThrow(RuntimeException::new);
+            .orElseThrow(UserNotFoundException::new);
 
         if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             AuthenticationToken token = jwtProvider.issue(user);
@@ -67,7 +69,7 @@ public class UserSignupService {
     private void checkUserExist(SignupRequest dto) {
         if (userRepository.findByStudentId(dto.getStudentId()).isPresent()) {
             //TODO specific exception으로 변경
-            throw new RuntimeException();
+            throw new AlreadyUserExistException();
         }
     }
 

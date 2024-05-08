@@ -8,6 +8,7 @@ import org.jenga.dantong.user.model.dto.SignupRequest;
 import org.jenga.dantong.user.model.entity.User;
 import org.jenga.dantong.user.service.UserSignupService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +28,9 @@ public class UserController {
         return ResponseEntity.ok(loginResponse);
     }
 
-    @PostMapping(path = "/signup")
-    public void signup(@Valid @RequestBody SignupRequest request, String signupToken) {
+    @PostMapping(path = "/signup/{signup-token}")
+    public void signup(@Valid @RequestBody SignupRequest request,
+        @PathVariable("signup-token") String signupToken) {
         User user = userSignupService.signup(request, signupToken);
     }
 }
