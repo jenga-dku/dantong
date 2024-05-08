@@ -26,6 +26,8 @@ spring:
       port: 10393
       password: ${redis.password}
       url: redis://${redis.password}@redis-10393.c294.ap-northeast-1-2.ec2.redns.redis-cloud.com:10393
+  messages:
+    basename: messages/messages
 security:
   jwt:
     token:
