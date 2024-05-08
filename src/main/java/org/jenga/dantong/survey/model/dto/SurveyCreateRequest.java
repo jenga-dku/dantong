@@ -1,30 +1,29 @@
-package org.jenga.dantong.post.model.dto;
-
+package org.jenga.dantong.survey.model.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.jenga.dantong.post.model.entity.Category;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostUpdateRequest {
-    private int userId;
+public class SurveyCreateRequest {
     private String title;
-    private String content;
     private String description;
-    private Category category;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime start_time;
+    private LocalDateTime startTime;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime end_time;
+    private LocalDateTime endTime;
 
-    private LocalDateTime updateDate = LocalDateTime.now();
-
+    @Builder.Default
+    private List<SurveyItemCreateRequest> surveyItems = new ArrayList<SurveyItemCreateRequest>();
 }

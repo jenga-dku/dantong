@@ -2,10 +2,11 @@ package org.jenga.dantong.post.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jenga.dantong.post.model.dto.PostCreateRequest;
 import org.jenga.dantong.post.model.dto.PostIdInfoRequest;
 import org.jenga.dantong.post.model.dto.PostResponse;
-import org.jenga.dantong.post.model.dto.PostSaveRequest;
 import org.jenga.dantong.post.model.dto.PostUpdateRequest;
+import org.jenga.dantong.post.model.entity.Category;
 import org.jenga.dantong.post.service.PostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/post")
-    public String post(@RequestBody PostSaveRequest postSaveRequest) throws Exception {
+    public String post(@RequestBody PostCreateRequest postSaveRequest) throws Exception {
 
         postService.savePost(postSaveRequest);
 
@@ -45,9 +46,15 @@ public class PostController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<PostResponse>> list() {
+    public ResponseEntity<List<PostResponse>> list(@RequestParam(required = false) Category category) {
 
-        List<PostResponse> posts = postService.showAllPost();
+        List<PostResponse> posts;
+
+        posts = postService.showAllPost();
+
+        if (category != null && !category.equals("")) {
+            posts = postService.showByCategory(category);
+        }
 
         return ResponseEntity.ok(posts);
     }

@@ -2,10 +2,7 @@ package org.jenga.dantong.survey.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jenga.dantong.survey.model.dto.SurveyIdInfoRequest;
-import org.jenga.dantong.survey.model.dto.SurveyItemIdInfoRequest;
-import org.jenga.dantong.survey.model.dto.SurveyResponse;
-import org.jenga.dantong.survey.model.dto.SurveySaveRequest;
+import org.jenga.dantong.survey.model.dto.*;
 import org.jenga.dantong.survey.service.SurveyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +16,15 @@ public class SurveyController {
     private final SurveyService surveyService;
 
     @PostMapping("/create")
-    public String create(@RequestBody SurveySaveRequest survey) throws Exception {
+    public String create(@RequestBody SurveyCreateRequest survey) throws Exception {
 
         surveyService.create(survey);
 
         return "Create survey succeed!";
     }
 
-    @PostMapping("/{surveyId}/update")
-    public String update(@ModelAttribute SurveyIdInfoRequest surveyInfo, @RequestBody SurveySaveRequest survey) throws Exception {
+    @PostMapping("/{surveyId}/edit")
+    public String update(@ModelAttribute SurveyIdInfoRequest surveyInfo, @RequestBody SurveyUpdateRequest survey) throws Exception {
 
         surveyService.updateSurvey(surveyInfo.getSurveyId(), survey);
 
