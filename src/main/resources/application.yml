@@ -22,10 +22,10 @@ spring:
         ant-path-matcher
   data:
     redis:
-      host: localhost
-      port: 6379
-      password:
-
+      host: redis-10393.c294.ap-northeast-1-2.ec2.redns.redis-cloud.com
+      port: 10393
+      password: ${redis.password}
+      url: redis://${redis.password}@redis-10393.c294.ap-northeast-1-2.ec2.redns.redis-cloud.com:10393
 security:
   jwt:
     token:
@@ -35,7 +35,7 @@ security:
 nhn:
   email:
     url: https://email.api.nhncloudservice.com/email/v2.1/appKeys/tFgOoSNZMSqsZuxx/sender/mail
-    secret-key: rf8N3WH9nCx8p6tk3EKw91DMBTdXkBU8
+    secret-key: ${nhn.secret-key}
     sender-mail: panzzang518@naver.com
 app:
   auth:
