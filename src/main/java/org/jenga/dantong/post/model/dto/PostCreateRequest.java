@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostSaveRequest {
+public class PostCreateRequest {
 
     private int userId;
     private String title;

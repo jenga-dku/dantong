@@ -2,9 +2,9 @@ package org.jenga.dantong.post.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jenga.dantong.post.model.dto.PostCreateRequest;
 import org.jenga.dantong.post.model.dto.PostIdInfoRequest;
 import org.jenga.dantong.post.model.dto.PostResponse;
-import org.jenga.dantong.post.model.dto.PostSaveRequest;
 import org.jenga.dantong.post.model.dto.PostUpdateRequest;
 import org.jenga.dantong.post.model.entity.Category;
 import org.jenga.dantong.post.service.PostService;
@@ -22,7 +22,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/post")
-    public String post(@RequestBody PostSaveRequest postSaveRequest) throws Exception {
+    public String post(@RequestBody PostCreateRequest postSaveRequest) throws Exception {
 
         postService.savePost(postSaveRequest);
 

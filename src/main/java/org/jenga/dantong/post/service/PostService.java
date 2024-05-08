@@ -2,8 +2,8 @@ package org.jenga.dantong.post.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jenga.dantong.post.model.dto.PostCreateRequest;
 import org.jenga.dantong.post.model.dto.PostResponse;
-import org.jenga.dantong.post.model.dto.PostSaveRequest;
 import org.jenga.dantong.post.model.dto.PostUpdateRequest;
 import org.jenga.dantong.post.model.entity.Category;
 import org.jenga.dantong.post.model.entity.Post;
@@ -20,7 +20,7 @@ public class PostService {
 
     private final PostRepository postRepository;
 
-    public int savePost(PostSaveRequest postSaveRequest) {
+    public int savePost(PostCreateRequest postSaveRequest) {
         Post post = Post.builder()
                 .userId(postSaveRequest.getUserId())
                 .title(postSaveRequest.getTitle())
