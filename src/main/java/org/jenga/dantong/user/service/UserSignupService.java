@@ -13,6 +13,7 @@ import org.jenga.dantong.user.model.dto.SignupRequest;
 import org.jenga.dantong.user.model.dto.UserInfo;
 import org.jenga.dantong.user.model.entity.Status;
 import org.jenga.dantong.user.model.entity.User;
+import org.jenga.dantong.user.model.entity.UserRole;
 import org.jenga.dantong.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ public class UserSignupService {
             .phoneNumber(dto.getPhoneNumber())
             .status(Status.INACTIVE)
             .password(encryptedPassword)
+            .userRole(UserRole.GUEST)
             .build();
 
         deleteSignupAuths(signupToken);
