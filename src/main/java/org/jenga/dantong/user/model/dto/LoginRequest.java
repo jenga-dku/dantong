@@ -2,14 +2,17 @@ package org.jenga.dantong.user.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@Setter
 public class LoginRequest {
-    @NotBlank
-    private final String studentId;
 
     @NotBlank
-    private final String password;
+    private String studentId;
+
+    @NotBlank
+    private String password;
 }

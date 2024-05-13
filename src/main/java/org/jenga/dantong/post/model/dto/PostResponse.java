@@ -1,16 +1,16 @@
 package org.jenga.dantong.post.model.dto;
 
-import lombok.Builder;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.jenga.dantong.post.model.entity.Category;
-
-import java.time.LocalDateTime;
+import org.jenga.dantong.post.model.entity.Post;
 
 @Getter
 @Setter
 public class PostResponse {
-    private int userId;
+
+    private int postId;
     private String title;
     private String description;
     private String content;
@@ -19,14 +19,13 @@ public class PostResponse {
     private Category category;
 
 
-    @Builder
-    public PostResponse(int userId, String title, String description, String content, LocalDateTime date, String status, Category category) {
-        this.userId = userId;
-        this.title = title;
-        this.description = description;
-        this.content = content;
-        this.date = date;
+    public PostResponse(Post post, String status) {
+        this.postId = post.getPostId();
+        this.title = post.getTitle();
+        this.description = post.getDescription();
+        this.content = post.getContent();
+        this.date = post.getDate();
         this.status = status;
-        this.category = category;
+        this.category = post.getCategory();
     }
 }
