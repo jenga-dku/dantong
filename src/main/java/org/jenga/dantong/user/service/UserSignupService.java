@@ -11,6 +11,7 @@ import org.jenga.dantong.user.model.dto.LoginRequest;
 import org.jenga.dantong.user.model.dto.LoginResponse;
 import org.jenga.dantong.user.model.dto.SignupRequest;
 import org.jenga.dantong.user.model.dto.UserInfo;
+import org.jenga.dantong.user.model.dto.UserResponse;
 import org.jenga.dantong.user.model.entity.Status;
 import org.jenga.dantong.user.model.entity.User;
 import org.jenga.dantong.user.model.entity.UserRole;
@@ -75,4 +76,9 @@ public class UserSignupService {
         }
     }
 
+    public UserResponse userInfo(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        return new UserResponse(user);
+    }
 }

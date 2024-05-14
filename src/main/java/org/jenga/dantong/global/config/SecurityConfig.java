@@ -31,6 +31,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
@@ -153,7 +154,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,
+        HandlerMappingIntrospector introspector) throws Exception {
         return http
             .cors(httpSecurityCorsConfigurer -> corsConfigurationSource())
             .csrf(AbstractHttpConfigurer::disable)
@@ -161,6 +163,9 @@ public class SecurityConfig {
                 SessionCreationPolicy.STATELESS))
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(authorizeRequests -> {
+                authorizeRequests.requestMatchers(PUBLIC_URI).permitAll();
+            })
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class)
             .exceptionHandling(c -> c.authenticationEntryPoint(customAuthenticationEntryPoint())
