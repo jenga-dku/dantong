@@ -40,6 +40,7 @@ public class UserSignupService {
         User user = User.builder()
             .studentId(info.getStudentId())
             .name(dto.getName())
+            .major(dto.getMajor())
             .phoneNumber(dto.getPhoneNumber())
             .status(Status.INACTIVE)
             .password(encryptedPassword)

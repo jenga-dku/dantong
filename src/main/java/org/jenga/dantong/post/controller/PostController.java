@@ -1,7 +1,10 @@
 package org.jenga.dantong.post.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jenga.dantong.global.auth.jwt.AppAuthentication;
+import org.jenga.dantong.global.base.UserAuth;
 import org.jenga.dantong.post.model.dto.PostCreateRequest;
 import org.jenga.dantong.post.model.dto.PostIdInfoRequest;
 import org.jenga.dantong.post.model.dto.PostResponse;
@@ -9,68 +12,62 @@ import org.jenga.dantong.post.model.dto.PostUpdateRequest;
 import org.jenga.dantong.post.model.entity.Category;
 import org.jenga.dantong.post.service.PostService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RequestMapping("/board")
+@RequestMapping("/post")
 @RestController
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
 
-    @PostMapping("/post")
-    public String post(@RequestBody PostCreateRequest postSaveRequest) throws Exception {
+    @PostMapping()
+    @UserAuth
+    public void post(@RequestBody PostCreateRequest postSaveRequest, AppAuthentication auth)
+        throws Exception {
 
-        postService.savePost(postSaveRequest);
-
-        return "redirect:list";
+        postService.savePost(postSaveRequest, auth);
     }
 
-    @GetMapping("/{postId}/edit")
-    public ResponseEntity<PostResponse> goToUpdate(@ModelAttribute PostIdInfoRequest postInfo) {
+    @GetMapping()
+    public ResponseEntity<PostResponse> findPost(@ModelAttribute PostIdInfoRequest postInfo) {
 
         PostResponse post = postService.findPost(postInfo.getPostId());
 
         return ResponseEntity.ok(post);
     }
 
-    @PostMapping("/{postId}/edit")
-    public String update(@ModelAttribute PostIdInfoRequest postInfo, @RequestBody PostUpdateRequest post) throws Exception {
+    @PatchMapping("/edit")
+    @UserAuth
+    public void edit(@RequestBody PostUpdateRequest post, AppAuthentication auth) {
 
-        postService.updatePost(postInfo.getPostId(), post);
-
-        return "redirect:list";
+        postService.updatePost(post, auth);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<PostResponse>> list(@RequestParam(required = false) Category category) {
+    public ResponseEntity<List<PostResponse>> list(
+        @RequestParam(required = false) Category category) {
 
         List<PostResponse> posts;
-
         posts = postService.showAllPost();
-
-        if (category != null && !category.equals("")) {
+        if (category != null) {
             posts = postService.showByCategory(category);
         }
 
         return ResponseEntity.ok(posts);
     }
 
-    @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> view(@ModelAttribute PostIdInfoRequest postId) {
-
-        PostResponse post = postService.findPost(postId.getPostId());
-
-        return ResponseEntity.ok(post);
-    }
-
-    @GetMapping("/{postId}/delete")
-    public String delete(@ModelAttribute PostIdInfoRequest postId) throws Exception {
+    @DeleteMapping("/delete")
+    public void delete(@ModelAttribute PostIdInfoRequest postId) throws Exception {
         postService.deletePost(postId.getPostId());
-
-        return "redirect:list";
     }
 }

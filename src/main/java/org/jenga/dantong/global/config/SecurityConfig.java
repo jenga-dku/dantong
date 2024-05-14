@@ -27,6 +27,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -164,7 +165,13 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorizeRequests -> {
-                authorizeRequests.requestMatchers(PUBLIC_URI).permitAll();
+                authorizeRequests.requestMatchers(
+                    new MvcRequestMatcher(introspector, "/swagger-ui/**")).permitAll();
+                authorizeRequests.requestMatchers("/v3/api-docs/**",
+                    "/webjars/**").permitAll();
+                authorizeRequests.requestMatchers("/post/**").permitAll();
+                authorizeRequests.requestMatchers("/user/**").permitAll();
+
             })
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class)

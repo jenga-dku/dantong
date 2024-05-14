@@ -1,6 +1,5 @@
 package org.jenga.dantong.post.model.dto;
 
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.jenga.dantong.post.model.entity.Category;
@@ -14,7 +13,6 @@ public class PostResponse {
     private String title;
     private String description;
     private String content;
-    private LocalDateTime date;
     private String status;
     private Category category;
 
@@ -24,7 +22,6 @@ public class PostResponse {
         this.title = post.getTitle();
         this.description = post.getDescription();
         this.content = post.getContent();
-        this.date = post.getDate();
         this.status = status;
         this.category = post.getCategory();
     }

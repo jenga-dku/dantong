@@ -1,12 +1,26 @@
 package org.jenga.dantong.post.model.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.jenga.dantong.survey.model.entity.Survey;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.jenga.dantong.survey.model.entity.Survey;
+import org.jenga.dantong.user.model.entity.User;
 
 @Table(name = "post")
 @NoArgsConstructor
@@ -22,8 +36,9 @@ public class Post {
     @Column(name = "post_id", insertable = false, updatable = false)
     private int postId;
 
-    @Column(name = "user_id")
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "title")
     private String title;
@@ -34,10 +49,8 @@ public class Post {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "written_date")
-    private LocalDateTime date;
-
     @Column(name = "category")
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     @Column(name = "shown")
@@ -51,6 +64,6 @@ public class Post {
 
     @OneToMany(mappedBy = "post")
     @Builder.Default
-    private List<Survey> surveys = new ArrayList<Survey>();
+    private List<Survey> surveys = new ArrayList<>();
 
 }
