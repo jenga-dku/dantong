@@ -33,9 +33,11 @@ public class EmailController {
 
     /**
      * 단국대학교 이메일 인증
+     *
      * @param request
      * @return 회원가입용 토큰과 학생
      */
+    @PostMapping("/verify")
     public StudentVerifyResponse verifyDKUEmail(@Valid @RequestBody EmailVerifyRequest request) {
         return emailService.validateEmailCode(request);
     }

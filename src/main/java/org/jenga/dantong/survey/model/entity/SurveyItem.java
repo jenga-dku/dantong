@@ -1,7 +1,10 @@
 package org.jenga.dantong.survey.model.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Table(name = "survey_item")
 @Entity
@@ -55,5 +58,9 @@ public class SurveyItem {
 
     public void setShown(boolean shown) {
         this.shown = shown;
+    }
+
+    public void setSurveyReply(SurveyReply reply) {
+        this.surveyReply = reply;
     }
 }

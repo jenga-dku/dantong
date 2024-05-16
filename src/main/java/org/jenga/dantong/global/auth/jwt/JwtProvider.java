@@ -1,19 +1,23 @@
 package org.jenga.dantong.global.auth.jwt;
 
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import org.jenga.dantong.user.model.entity.User;
-import org.jenga.dantong.user.model.entity.UserRole;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.jenga.dantong.user.model.entity.User;
+import org.jenga.dantong.user.model.entity.UserRole;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -38,7 +42,6 @@ public class JwtProvider implements AuthenticationProvider {
         String header = request.getHeader(AUTHORIZATION);
         if (header != null) {
             if (!header.toLowerCase().startsWith("bearer ")) {
-                //TODO 커스텀 exception으로 변경
                 throw new RuntimeException();
             }
             return header.substring(7);

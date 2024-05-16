@@ -7,7 +7,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-public class SurveyItemIdInfoRequest {
+@NoArgsConstructor
+@Builder
+public class SurveyReplyCreateRequest {
 
     private int surveyItemId;
+    private String content;
+
+    private int userId;
 }

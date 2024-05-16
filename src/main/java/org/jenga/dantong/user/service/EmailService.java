@@ -5,14 +5,17 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.util.CodeGenerator;
 import org.jenga.dantong.global.util.TextTemplateEngine;
 import org.jenga.dantong.infra.nhn.service.NHNEmailService;
+import org.jenga.dantong.user.exception.AlreadyStudentIdException;
+import org.jenga.dantong.user.exception.EmailCodeNotMatchException;
+import org.jenga.dantong.user.exception.InvalidatedTokenException;
 import org.jenga.dantong.user.model.dto.EmailRequest;
 import org.jenga.dantong.user.model.dto.EmailVerifyRequest;
 import org.jenga.dantong.user.model.dto.StudentVerifyResponse;
 import org.jenga.dantong.user.model.dto.UserInfo;
-import org.jenga.dantong.user.model.entity.Major;
 import org.jenga.dantong.user.model.entity.User;
 import org.jenga.dantong.user.repository.SignupRedisRepository;
 import org.jenga.dantong.user.repository.UserRepository;
@@ -22,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmailService {
 
     private static final String DKU_AUTH_NAME = "dku";
@@ -41,7 +45,7 @@ public class EmailService {
         String emailCode = CodeGenerator.generateHexCode(codeLength);
         String studentId = dto.getStudentId();
         Instant now = Instant.now(clock);
-
+        log.info(now.toString());
         checkAlreadyStudentId(studentId);
         signupRedisRepository.setAuthPayload(studentId, EMAIL_AUTH_NAME, emailCode, now);
 
@@ -55,7 +59,7 @@ public class EmailService {
     private void checkAlreadyStudentId(String studentId) {
         Optional<User> alreadyUser = userRepository.findByStudentId(studentId);
         if (alreadyUser.isPresent()) {
-            throw new RuntimeException();
+            throw new AlreadyStudentIdException();
         }
     }
 
@@ -69,11 +73,10 @@ public class EmailService {
             now).orElseThrow(RuntimeException::new);
 
         if (!emailCode.equalsIgnoreCase(request.getEmailCode())) {
-            throw new RuntimeException();
+            throw new EmailCodeNotMatchException();
         }
 
-        UserInfo info = new UserInfo(request.getStudentName(), request.getStudentId(),
-            request.getMajor().name());
+        UserInfo info = new UserInfo(request.getStudentId());
 
         signupRedisRepository.setAuthPayload(signupToken, DKU_AUTH_NAME, info, now);
 
@@ -83,7 +86,7 @@ public class EmailService {
     public UserInfo getStudentInfo(String signupToken) {
         Instant now = Instant.now(clock);
         return signupRedisRepository.getAuthPayload(signupToken, DKU_AUTH_NAME, UserInfo.class, now)
-            .orElseThrow(RuntimeException::new);
+            .orElseThrow(InvalidatedTokenException::new);
     }
 
     private String makeTemplatedEmail(String studentId, String buttonContent) {

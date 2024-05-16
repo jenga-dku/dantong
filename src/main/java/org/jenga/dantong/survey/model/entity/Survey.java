@@ -1,7 +1,10 @@
 package org.jenga.dantong.survey.model.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.jenga.dantong.post.model.entity.Post;
 
 import java.time.LocalDateTime;
@@ -42,7 +45,16 @@ public class Survey {
     private LocalDateTime endTime;
 
     @Column(name = "shown")
+    @Builder.Default
     private boolean shown = true;
+
+    public Survey(String title, String description, LocalDateTime startTime, LocalDateTime endTime) {
+        this.title = title;
+        this.description = description;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.shown = true;
+    }
 
     public void setTitle(String title) {
         this.title = title;
@@ -62,13 +74,6 @@ public class Survey {
 
     public void setShown(boolean shown) {
         this.shown = shown;
-    }
-
-    public Survey(String title, String description, LocalDateTime startTime, LocalDateTime endTime) {
-        this.title = title;
-        this.description = description;
-        this.startTime = startTime;
-        this.endTime = endTime;
     }
 
 }

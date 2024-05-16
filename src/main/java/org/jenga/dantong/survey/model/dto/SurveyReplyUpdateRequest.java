@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.jenga.dantong.survey.model.entity.Tag;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SurveyItemSaveRequest {
-    private Tag tag;
-    private String title;
-    private String description;
+public class SurveyReplyUpdateRequest {
+
+    private int replyId;
+    private int surveyItemId;
+    private String content;
+
+    private int userId;
 }

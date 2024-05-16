@@ -29,6 +29,8 @@ public class User extends BaseEntity {
     @NotNull
     @Column(unique = true)
     private String studentId;
+
+    @Enumerated(EnumType.STRING)
     private Major major;
     @Column(unique = true)
     private String phoneNumber;
