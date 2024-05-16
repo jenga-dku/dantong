@@ -69,11 +69,6 @@ public class SurveyService {
                         .build())
                 .forEach(surveyItemRepository::save);
 
-        log.info(survey.getTitle());
-        log.info(survey.getDescription());
-        log.info(String.valueOf(survey.getStartTime()));
-        log.info(String.valueOf(survey.getEndTime()));
-
         return survey.getSurveyId();
     }
 
@@ -127,15 +122,4 @@ public class SurveyService {
 
         item.setShown(false);
     }
-
-
-    public int reply() {
-        return 1234;
-    }
-
-
-    public int updateReply() {
-        return 1234;
-    }
-
 }

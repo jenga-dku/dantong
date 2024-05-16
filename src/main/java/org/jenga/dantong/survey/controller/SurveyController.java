@@ -2,7 +2,9 @@ package org.jenga.dantong.survey.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jenga.dantong.survey.model.dto.*;
+import org.jenga.dantong.survey.model.dto.SurveyCreateRequest;
+import org.jenga.dantong.survey.model.dto.SurveyResponse;
+import org.jenga.dantong.survey.model.dto.SurveyUpdateRequest;
 import org.jenga.dantong.survey.service.SurveyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,9 @@ public class SurveyController {
 
     private final SurveyService surveyService;
 
-    @GetMapping()
-    public ResponseEntity<SurveyResponse> findSurvey(@ModelAttribute SurveyIdInfoRequest surveyInfo) {
-        SurveyResponse response = surveyService.findSurvey(surveyInfo.getSurveyId());
+    @GetMapping("/{surveyId}")
+    public ResponseEntity<SurveyResponse> findSurvey(@PathVariable("surveyId") int surveyId) {
+        SurveyResponse response = surveyService.findSurvey(surveyId);
 
         return ResponseEntity.ok(response);
     }
@@ -34,15 +36,15 @@ public class SurveyController {
         surveyService.updateSurvey(survey);
     }
 
-    @DeleteMapping("/deleteSurvey")
-    public void deleteSurvey(@ModelAttribute SurveyIdInfoRequest surveyInfo) {
+    @DeleteMapping("/deleteSurvey/{surveyId}")
+    public void deleteSurvey(@PathVariable("surveyId") int surveyId) {
 
-        surveyService.deleteSurvey(surveyInfo.getSurveyId());
+        surveyService.deleteSurvey(surveyId);
     }
 
-    @DeleteMapping("/deleteItem")
-    public void deleteSurveyItem(@ModelAttribute SurveyIdInfoRequest surveyInfo, @ModelAttribute SurveyItemIdInfoRequest surveyItemInfo) {
+    @DeleteMapping("/deleteItem/{surveyId}/{surveyItemId}")
+    public void deleteSurveyItem(@PathVariable("surveyId") int surveyId, @PathVariable("surveyItemId") int surveyItemId) {
 
-        surveyService.deleteSurveyItem(surveyInfo.getSurveyId(), surveyItemInfo.getSurveyItemId());
+        surveyService.deleteSurveyItem(surveyId, surveyItemId);
     }
 }
