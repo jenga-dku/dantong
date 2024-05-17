@@ -33,13 +33,13 @@ public class SurveyReplyController {
         surveyReplyService.createReply(survey);
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping()
     public void updateReply(@RequestBody List<SurveyReplyUpdateRequest> survey) {
 
         surveyReplyService.updateReply(survey);
     }
 
-    @DeleteMapping("/delete/{replyId}")
+    @DeleteMapping("/{replyId}")
     public void deleteReply(@PathVariable(name = "replyId") int replyId) {
 
         surveyReplyService.deleteReply(replyId);
