@@ -59,4 +59,8 @@ public class SurveyItem {
     public void setShown(boolean shown) {
         this.shown = shown;
     }
+
+    public void setSurveyReply(SurveyReply reply) {
+        this.surveyReply = reply;
+    }
 }
