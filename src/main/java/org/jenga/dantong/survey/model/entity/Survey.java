@@ -53,6 +53,7 @@ public class Survey {
         this.description = description;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.shown = true;
     }
 
     public void setTitle(String title) {
