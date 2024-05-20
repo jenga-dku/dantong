@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SurveyUpdateRequest {
+    private int surveyId;
     private String title;
     private String description;
 

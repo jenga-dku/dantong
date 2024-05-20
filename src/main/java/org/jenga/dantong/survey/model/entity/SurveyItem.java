@@ -68,4 +68,8 @@ public class SurveyItem extends BaseEntity {
     public void setShown(boolean shown) {
         this.shown = shown;
     }
+
+    public void setSurveyReply(SurveyReply reply) {
+        this.surveyReply = reply;
+    }
 }

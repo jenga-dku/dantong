@@ -61,6 +61,7 @@ public class Survey extends BaseEntity {
         this.description = description;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.shown = true;
     }
 
     public void setTitle(String title) {
