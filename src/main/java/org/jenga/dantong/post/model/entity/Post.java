@@ -1,5 +1,6 @@
 package org.jenga.dantong.post.model.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,6 +20,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jenga.dantong.global.base.BaseEntity;
 import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.user.model.entity.User;
 
@@ -29,7 +31,7 @@ import org.jenga.dantong.user.model.entity.User;
 @Entity
 @Getter
 @Setter
-public class Post {
+public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -65,5 +67,8 @@ public class Post {
     @OneToMany(mappedBy = "post")
     @Builder.Default
     private List<Survey> surveys = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<PostFile> files = new ArrayList<>();
 
 }
