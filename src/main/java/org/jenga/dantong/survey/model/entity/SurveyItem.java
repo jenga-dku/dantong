@@ -23,9 +23,6 @@ public class SurveyItem {
     @JoinColumn(name = "survey_id")
     private Survey survey;
 
-    @Column(name = "tag")
-    private Tag tag;
-
     @Column(name = "title")
     private String title;
 
@@ -42,10 +39,6 @@ public class SurveyItem {
     public void setSurvey(Survey survey) {
         this.survey = survey;
         survey.getSurveyItems().add(this);
-    }
-
-    public void setTag(Tag tag) {
-        this.tag = tag;
     }
 
     public void setTitle(String title) {

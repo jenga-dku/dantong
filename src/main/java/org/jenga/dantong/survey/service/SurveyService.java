@@ -31,12 +31,12 @@ public class SurveyService {
                 .map(currItem -> SurveyItemResponse.builder()
                         .surveyItemId(currItem.getSurveyItemId())
                         .title(currItem.getTitle())
-                        .tag(currItem.getTag())
                         .description(currItem.getDescription())
                         .build()).toList();
 
         SurveyResponse response = SurveyResponse.builder()
                 .title(survey.getTitle())
+                .tag(survey.getTag())
                 .description(survey.getDescription())
                 .startTime(survey.getStartTime())
                 .endTime(survey.getEndTime())
@@ -51,6 +51,7 @@ public class SurveyService {
 
         Survey survey = new Survey(
                 surveyCreate.getTitle(),
+                surveyCreate.getTag(),
                 surveyCreate.getDescription(),
                 surveyCreate.getStartTime(),
                 surveyCreate.getEndTime()
@@ -64,7 +65,6 @@ public class SurveyService {
                 .map(currItem -> SurveyItem.builder()
                         .survey(survey)
                         .title(currItem.getTitle())
-                        .tag(currItem.getTag())
                         .description(currItem.getDescription())
                         .build())
                 .forEach(surveyItemRepository::save);
@@ -78,6 +78,7 @@ public class SurveyService {
         Survey survey = surveyRepository.findBySurveyId(request.getSurveyId());
 
         survey.setTitle(request.getTitle());
+        survey.setTag(request.getTag());
         survey.setDescription(request.getDescription());
         survey.setStartTime(request.getStartTime());
         survey.setEndTime(request.getEndTime());
@@ -91,7 +92,6 @@ public class SurveyService {
 
                     if (item != null) {
                         item.setTitle(currItem.getTitle());
-                        item.setTag(currItem.getTag());
                         item.setDescription(currItem.getDescription());
 
                         return item;
@@ -100,7 +100,6 @@ public class SurveyService {
                                 .survey(survey)
                                 .surveyItemId(currItem.getSurveyItemId())
                                 .title(currItem.getTitle())
-                                .tag(currItem.getTag())
                                 .description(currItem.getDescription())
                                 .build();
                     }
