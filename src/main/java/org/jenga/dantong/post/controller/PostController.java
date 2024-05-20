@@ -39,7 +39,7 @@ public class PostController {
         return ResponseEntity.ok(post);
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping()
     @UserAuth
     public void edit(@RequestBody PostUpdateRequest post, AppAuthentication auth) {
 
@@ -60,7 +60,9 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-    @DeleteMapping("/delete")
-    public void delete(@ModelAttribute PostIdInfoRequest postId) {
-        postService.deletePost(postId.getPostId());
+
+    @DeleteMapping("/{postId}")
+    public void delete(@PathVariable("postId") int postId) throws Exception {
+        postService.deletePost(postId);
+    }
 }
