@@ -87,21 +87,24 @@ public class SurveyService {
 
         itemUpdate.stream()
                 .filter(currItem -> surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId()) == null || (request.getSurveyId() == (surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId()).getSurvey().getSurveyId())))
-                .map(currItem -> {
+                .forEach(currItem -> {
                     SurveyItem item = surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId());
 
                     if (item != null) {
+                        log.info("Item detected");
                         item.setTitle(currItem.getTitle());
                         item.setDescription(currItem.getDescription());
-
-                        return item;
                     } else {
-                        return SurveyItem.builder()
+                        log.info("New Item detected");
+
+                        SurveyItem newItem = SurveyItem.builder()
                                 .survey(survey)
                                 .surveyItemId(currItem.getSurveyItemId())
                                 .title(currItem.getTitle())
                                 .description(currItem.getDescription())
                                 .build();
+
+                        surveyItemRepository.save(newItem);
                     }
                 });
 
