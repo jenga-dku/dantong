@@ -36,6 +36,7 @@ public class Survey {
     private String title;
 
     @Column(name = "tag")
+    @Enumerated(EnumType.STRING)
     private Tag tag;
 
     @Column(name = "description")
