@@ -39,9 +39,9 @@ public class SurveyReplyController {
         surveyReplyService.updateReply(survey);
     }
 
-    @DeleteMapping("/{replyId}")
-    public void deleteReply(@PathVariable(name = "replyId") int replyId) {
+    @DeleteMapping("/{surveyId}")
+    public void deleteReply(@PathVariable(name = "surveyId") int surveyId) {
 
-        surveyReplyService.deleteReply(replyId);
+        surveyReplyService.deleteReply(surveyId);
     }
 }

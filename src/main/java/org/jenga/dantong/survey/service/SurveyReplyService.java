@@ -64,12 +64,15 @@ public class SurveyReplyService {
         });
     }
 
-    //To do
-    //Delete algorithm 바꾸기..!
     @Transactional
-    public void deleteReply(int replyId) {
-        SurveyReply reply = surveyReplyRepository.findByReplyId(replyId);
+    public void deleteReply(int surveyId) {
 
-        reply.deleteReply();
+        List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyId(surveyId);
+
+        List<SurveyReply> reply = items.stream()
+                .map(currItem ->
+                        surveyReplyRepository.findBySurveyItem_SurveyItemId(currItem.getSurveyItemId())).toList();
+
+        reply.forEach(SurveyReply::deleteReply);
     }
 }
