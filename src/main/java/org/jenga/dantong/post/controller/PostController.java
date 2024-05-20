@@ -9,6 +9,7 @@ import org.jenga.dantong.post.model.dto.PostResponse;
 import org.jenga.dantong.post.model.dto.PostUpdateRequest;
 import org.jenga.dantong.post.model.entity.Category;
 import org.jenga.dantong.post.service.PostService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class PostController {
     public void post(@RequestBody PostCreateRequest postSaveRequest, AppAuthentication auth)
             throws Exception {
 
-        postService.savePost(postSaveRequest, auth);
+        postService.savePost(postSaveRequest, auth.getUserId());
     }
 
     @GetMapping("/{postId}")
@@ -42,14 +43,15 @@ public class PostController {
     @UserAuth
     public void edit(@RequestBody PostUpdateRequest post, AppAuthentication auth) {
 
-        postService.updatePost(post, auth);
+        postService.updatePost(post, auth.getUserId());
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<PostResponse>> list(
-            @RequestParam(required = false) Category category) {
+    public ResponseEntity<Page<PostResponse>> list(
+        @RequestParam(required = false) Category category) {
 
-        List<PostResponse> posts;
+
+        Page<PostResponse> posts;
         posts = postService.showAllPost();
         if (category != null) {
             posts = postService.showByCategory(category);
@@ -57,6 +59,7 @@ public class PostController {
 
         return ResponseEntity.ok(posts);
     }
+
 
     @DeleteMapping("/{postId}")
     public void delete(@PathVariable("postId") int postId) throws Exception {
