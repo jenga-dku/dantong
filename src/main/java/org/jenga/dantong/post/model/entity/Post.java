@@ -69,6 +69,7 @@ public class Post extends BaseEntity {
     private List<Survey> surveys = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @Builder.Default
     private List<PostFile> files = new ArrayList<>();
 
 }

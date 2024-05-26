@@ -38,11 +38,18 @@ public class PostService {
     @Transactional
     public int savePost(PostCreateRequest request, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        Post post = request.toEntity(user);
+        Post post = Post.builder()
+            .user(user)
+            .title(request.getTitle())
+            .description(request.getDescription())
+            .content(request.getContent())
+            .category(request.getCategory())
+            .startDate(request.getStartTime())
+            .endDate(request.getEndTime())
+            .build();
         log.info(request.getTitle());
         if (request.getImageFiles() != null) {
             saveFiles(request.getImageFiles(), post);
-            log.info("여기 들어왔나");
         }
         Post savedPost = postRepository.save(post);
         return savedPost.getPostId();
@@ -131,6 +138,10 @@ public class PostService {
                 .fileId(file.getFileId());
 
             postFiles.add(builder.build());
+        }
+
+        for (PostFile file : postFiles) {
+            file.setPost(post);
         }
     }
 }
