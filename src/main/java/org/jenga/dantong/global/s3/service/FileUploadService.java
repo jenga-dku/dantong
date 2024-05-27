@@ -126,4 +126,8 @@ public class FileUploadService {
             throw new IOException();
         }
     }
+
+    public String getFileUrl(String fileName) {
+        return amazonS3.getUrl(bucketName, fileName).toString();
+    }
 }

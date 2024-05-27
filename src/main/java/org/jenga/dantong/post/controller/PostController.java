@@ -40,7 +40,7 @@ public class PostController {
     }
 
     @GetMapping()
-    public ResponseEntity<PostResponse> findPost(@ModelAttribute PostIdInfoRequest postInfo) {
+    public ResponseEntity<PostResponse> findPost(@RequestBody PostIdInfoRequest postInfo) {
 
         PostResponse post = postService.findPost(postInfo.getPostId());
 
@@ -56,7 +56,7 @@ public class PostController {
 
     @GetMapping("/list")
     public ResponseEntity<Page<PostResponse>> list(
-        @RequestParam(required = false) Category category,
+        @RequestParam(required = false, name = "category") Category category,
         Pageable pageable) {
         Page<PostResponse> posts;
         posts = postService.showAllPost(pageable);
@@ -68,7 +68,7 @@ public class PostController {
     }
 
     @DeleteMapping("/delete")
-    public void delete(@ModelAttribute PostIdInfoRequest postId) {
+    public void delete(@RequestBody PostIdInfoRequest postId) {
         postService.deletePost(postId.getPostId());
     }
 }
