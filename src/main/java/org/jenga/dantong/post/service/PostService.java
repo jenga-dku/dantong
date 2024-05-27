@@ -1,22 +1,32 @@
 package org.jenga.dantong.post.service;
 
 import jakarta.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jenga.dantong.global.s3.model.dto.FileUploadRequest;
+import org.jenga.dantong.global.s3.model.dto.RequestFile;
+import org.jenga.dantong.global.s3.service.FileUploadService;
+import org.jenga.dantong.global.util.Util;
 import org.jenga.dantong.post.exception.PermissionDeniedException;
 import org.jenga.dantong.post.exception.PostNofFoundException;
 import org.jenga.dantong.post.model.dto.PostCreateRequest;
+import org.jenga.dantong.post.model.dto.PostFileResponse;
 import org.jenga.dantong.post.model.dto.PostResponse;
 import org.jenga.dantong.post.model.dto.PostUpdateRequest;
 import org.jenga.dantong.post.model.entity.Category;
 import org.jenga.dantong.post.model.entity.Post;
+import org.jenga.dantong.post.model.entity.PostFile;
 import org.jenga.dantong.post.repository.PostRepository;
 import org.jenga.dantong.user.exception.UserNotFoundException;
 import org.jenga.dantong.user.model.entity.User;
 import org.jenga.dantong.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -25,27 +35,43 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final FileUploadService fileUploadService;
 
     @Transactional
     public int savePost(PostCreateRequest request, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        Post post = request.toEntity(user);
-        postRepository.save(post);
-
-        return post.getPostId();
+        Post post = Post.builder()
+            .user(user)
+            .title(request.getTitle())
+            .description(request.getDescription())
+            .content(request.getContent())
+            .category(request.getCategory())
+            .startDate(request.getStartTime())
+            .endDate(request.getEndTime())
+            .build();
+        log.info(request.getTitle());
+        if (request.getImageFiles() != null) {
+            saveFiles(request.getImageFiles(), post);
+        }
+        Post savedPost = postRepository.save(post);
+        return savedPost.getPostId();
     }
 
     @Transactional
     public PostResponse findPost(int postId) {
-        Post post = postRepository.findByPostId(postId).orElseThrow(PostNofFoundException::new);
-        String progress = getProgress(post);
-
-        return new PostResponse(post, progress);
+        Post post = postRepository.findById(postId).orElseThrow(PostNofFoundException::new);
+        String progress = Util.getProgress(post);
+        List<PostFileResponse> files = post.getFiles().stream()
+            .map(file -> {
+                String url = fileUploadService.getFileUrl(file.getFileId());
+                return new PostFileResponse(file, url);
+            }).collect(Collectors.toList());
+        return new PostResponse(post, progress, files);
     }
 
     @Transactional
     public int deletePost(int postId) {
-        Post post = postRepository.findByPostId(postId).orElseThrow(PostNofFoundException::new);
+        Post post = postRepository.findById(postId).orElseThrow(PostNofFoundException::new);
         post.setShown(false);
         postRepository.save(post);
 
@@ -53,32 +79,32 @@ public class PostService {
     }
 
     @Transactional
-    public Page<PostResponse> showAllPost() {
-        Page<Post> posts = postRepository.findByShownTrue();
-
-        Page<PostResponse> postResponses = posts.map(currPost -> {
-            String progress = getProgress(currPost);
-            return new PostResponse(currPost, progress);
-        });
-
-        return postResponses;
+    public Page<PostResponse> showAllPost(Pageable pageable) {
+        Page<Post> posts = postRepository.findByShownTrue(pageable);
+        return getPostResponses(posts);
     }
 
     @Transactional
-    public Page<PostResponse> showByCategory(Category category) {
-        Page<Post> posts = postRepository.findByCategoryAndShownTrue(category);
+    public Page<PostResponse> showByCategory(Category category, Pageable pageable) {
+        Page<Post> posts = postRepository.findByCategory(category, pageable);
+        return getPostResponses(posts);
+    }
 
-        Page<PostResponse> postResponses = posts.map(currPost -> {
-            String progress = getProgress(currPost);
-            return new PostResponse(currPost, progress);
+    private Page<PostResponse> getPostResponses(Page<Post> posts) {
+        return posts.map(currPost -> {
+            List<PostFileResponse> files = currPost.getFiles().stream()
+                .map(file -> {
+                    String url = fileUploadService.getFileUrl(file.getFileId());
+                    return new PostFileResponse(file, url);
+                }).collect(Collectors.toList());
+            String progress = Util.getProgress(currPost);
+            return new PostResponse(currPost, progress, files);
         });
-
-        return postResponses;
     }
 
     @Transactional
     public int updatePost(PostUpdateRequest request, Long userId) {
-        Post post = postRepository.findByPostId(request.getPostId())
+        Post post = postRepository.findById(request.getPostId())
             .orElseThrow(PostNofFoundException::new);
         if (!userId.equals(post.getUser().getId())) {
             throw new PermissionDeniedException();
@@ -93,16 +119,22 @@ public class PostService {
         return post.getPostId();
     }
 
-    private static String getProgress(Post post) {
-        String progress;
-        if (post.getStartDate().isAfter(LocalDateTime.now())) {
-            progress = "진행전";
-        } else if (post.getStartDate().isBefore(LocalDateTime.now()) && post.getEndDate()
-            .isAfter(LocalDateTime.now())) {
-            progress = "진행중";
-        } else {
-            progress = "종료";
+    private void saveFiles(List<MultipartFile> files, Post post) {
+        List<RequestFile> requestFiles = fileUploadService.uploadFiles(
+            FileUploadRequest.ofList(files));
+        List<PostFile> postFiles = new ArrayList<>();
+
+        for (RequestFile file : requestFiles) {
+            PostFile.PostFileBuilder builder = PostFile.builder()
+                .fileName(file.getOriginalName())
+                .mediaType(file.getMediaType().toString())
+                .fileId(file.getFileId());
+
+            postFiles.add(builder.build());
         }
-        return progress;
+
+        for (PostFile file : postFiles) {
+            file.setPost(post);
+        }
     }
 }
