@@ -5,15 +5,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 import org.jenga.dantong.global.base.UserAuth;
 import org.jenga.dantong.post.model.dto.PostCreateRequest;
+import org.jenga.dantong.post.model.dto.PostIdInfoRequest;
 import org.jenga.dantong.post.model.dto.PostResponse;
 import org.jenga.dantong.post.model.dto.PostUpdateRequest;
 import org.jenga.dantong.post.model.entity.Category;
 import org.jenga.dantong.post.service.PostService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequestMapping("/post")
@@ -23,23 +32,22 @@ public class PostController {
 
     private final PostService postService;
 
-    @PostMapping()
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @UserAuth
-    public void post(@RequestBody PostCreateRequest postSaveRequest, AppAuthentication auth)
-            throws Exception {
+    public void post(@ModelAttribute PostCreateRequest postSaveRequest, AppAuthentication auth) {
 
         postService.savePost(postSaveRequest, auth.getUserId());
     }
 
-    @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> findPost(@PathVariable("postId") int postId) {
+    @GetMapping()
+    public ResponseEntity<PostResponse> findPost(@RequestBody PostIdInfoRequest postInfo) {
 
-        PostResponse post = postService.findPost(postId);
+        PostResponse post = postService.findPost(postInfo.getPostId());
 
         return ResponseEntity.ok(post);
     }
 
-    @PatchMapping()
+    @PatchMapping("/edit")
     @UserAuth
     public void edit(@RequestBody PostUpdateRequest post, AppAuthentication auth) {
 
@@ -48,21 +56,19 @@ public class PostController {
 
     @GetMapping("/list")
     public ResponseEntity<Page<PostResponse>> list(
-        @RequestParam(required = false) Category category) {
-
-
+        @RequestParam(required = false, name = "category") Category category,
+        Pageable pageable) {
         Page<PostResponse> posts;
-        posts = postService.showAllPost();
+        posts = postService.showAllPost(pageable);
         if (category != null) {
-            posts = postService.showByCategory(category);
+            posts = postService.showByCategory(category, pageable);
         }
 
         return ResponseEntity.ok(posts);
     }
 
-
-    @DeleteMapping("/{postId}")
-    public void delete(@PathVariable("postId") int postId) throws Exception {
-        postService.deletePost(postId);
+    @DeleteMapping("/delete")
+    public void delete(@RequestBody PostIdInfoRequest postId) {
+        postService.deletePost(postId.getPostId());
     }
 }
