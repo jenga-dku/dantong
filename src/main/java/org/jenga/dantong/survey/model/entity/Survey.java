@@ -43,6 +43,10 @@ public class Survey extends BaseEntity {
     @Column(name = "title")
     private String title;
 
+    @Column(name = "tag")
+    @Enumerated(EnumType.STRING)
+    private Tag tag;
+
     @Column(name = "description")
     private String description;
 
@@ -56,9 +60,9 @@ public class Survey extends BaseEntity {
     @Builder.Default
     private boolean shown = true;
 
-    public Survey(String title, String description, LocalDateTime startTime,
-        LocalDateTime endTime) {
+    public Survey(String title, Tag tag, String description, LocalDateTime startTime, LocalDateTime endTime) {
         this.title = title;
+        this.tag = tag;
         this.description = description;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -67,6 +71,10 @@ public class Survey extends BaseEntity {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setTag(Tag tag) {
+        this.tag = tag;
     }
 
     public void setDescription(String description) {
