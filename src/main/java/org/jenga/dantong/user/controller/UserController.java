@@ -1,5 +1,6 @@
 package org.jenga.dantong.user.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
