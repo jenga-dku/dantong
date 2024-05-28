@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.jenga.dantong.global.auth.jwt.exception.JwtTokenException;
+import org.jenga.dantong.global.auth.jwt.exception.TokenExpiredException;
 import org.jenga.dantong.user.model.entity.User;
 import org.jenga.dantong.user.model.entity.UserRole;
 import org.springframework.stereotype.Component;
@@ -127,11 +129,9 @@ public class JwtProvider implements AuthenticationProvider {
                 .setSigningKey(secretKey.getJwtSecretKey().getBytes())
                 .parseClaimsJws(accessToken);
         } catch (ExpiredJwtException e) {
-            //TODO 커스텀 exception으로 변경
-            throw new RuntimeException();
+            throw new TokenExpiredException();
         } catch (JwtException e) {
-            //TODO 커스텀 exception으로 변경
-            throw new RuntimeException();
+            throw new JwtTokenException();
         }
     }
 

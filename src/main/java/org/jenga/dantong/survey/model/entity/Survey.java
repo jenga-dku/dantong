@@ -2,6 +2,8 @@ package org.jenga.dantong.survey.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -60,7 +62,8 @@ public class Survey extends BaseEntity {
     @Builder.Default
     private boolean shown = true;
 
-    public Survey(String title, Tag tag, String description, LocalDateTime startTime, LocalDateTime endTime) {
+    public Survey(String title, Tag tag, String description, LocalDateTime startTime,
+        LocalDateTime endTime) {
         this.title = title;
         this.tag = tag;
         this.description = description;
