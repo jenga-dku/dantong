@@ -26,6 +26,7 @@ public class UserController {
     private final UserSignupService userSignupService;
 
     @UserAuth
+    @SecurityRequirement(name = "JWT Token")
     @GetMapping
     public UserResponse info(AppAuthentication authentication) {
         return userSignupService.userInfo(authentication.getUserId());
