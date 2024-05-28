@@ -6,7 +6,7 @@ spring:
     password: ${mysql.password}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         default_batch_fetch_size: 200
@@ -46,3 +46,14 @@ app:
       code-length: 6
     signup-expires: PT1H
   cors: "*"
+cloud:
+  aws:
+    s3:
+      bucketName: dantong
+    region:
+      static: ap-southeast-2
+    credentials:
+      access-key: ${aws.s3.access-key}
+      secret-key: ${aws.s3.secret-key}
+    stack:
+      auto: false
