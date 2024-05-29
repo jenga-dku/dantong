@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/dantong
+    url: ${database.url}
     username: ${mysql.user}
     password: ${mysql.password}
   jpa:
@@ -22,10 +22,10 @@ spring:
         ant-path-matcher
   data:
     redis:
-      host: redis-10393.c294.ap-northeast-1-2.ec2.redns.redis-cloud.com
+      host: ${redis.url}
       port: 10393
       password: ${redis.password}
-      url: redis://${redis.password}@redis-10393.c294.ap-northeast-1-2.ec2.redns.redis-cloud.com:10393
+      url: redis://${redis.password}@${redis.url}:10393
   messages:
     basename: messages/messages
 
@@ -37,9 +37,9 @@ security:
       expire-length-refresh: P15D
 nhn:
   email:
-    url: https://email.api.nhncloudservice.com/email/v2.1/appKeys/tFgOoSNZMSqsZuxx/sender/mail
+    url: ${nhn.url}
     secret-key: ${nhn.secret-key}
-    sender-mail: panzzang518@naver.com
+    sender-mail: ${sender.mail}
 app:
   auth:
     email:
@@ -57,3 +57,6 @@ cloud:
       secret-key: ${aws.s3.secret-key}
     stack:
       auto: false
+
+file:
+  path: ${user.home}/
