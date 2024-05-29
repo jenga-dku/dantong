@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 import org.jenga.dantong.global.base.UserAuth;
 import org.jenga.dantong.post.model.dto.PostCreateRequest;
-import org.jenga.dantong.post.model.dto.PostIdInfoRequest;
 import org.jenga.dantong.post.model.dto.PostResponse;
 import org.jenga.dantong.post.model.dto.PostUpdateRequest;
 import org.jenga.dantong.post.model.entity.Category;
@@ -42,10 +41,9 @@ public class PostController {
         postService.savePost(postSaveRequest, auth.getUserId());
     }
 
-    @GetMapping()
-    public ResponseEntity<PostResponse> findPost(@RequestBody PostIdInfoRequest postInfo) {
-
-        PostResponse post = postService.findPost(postInfo.getPostId());
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponse> findPost(@PathVariable("postId") int postId) {
+        PostResponse post = postService.findPost(postId);
 
         return ResponseEntity.ok(post);
     }
