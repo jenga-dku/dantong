@@ -56,6 +56,10 @@ dependencies {
     implementation 'javax.xml.bind:jaxb-api:2.3.0'
 
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    implementation group: 'org.apache.poi', name: 'poi', version: '4.1.2'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
+
 }
 tasks.named('test') {
     outputs.dir snippetsDir
