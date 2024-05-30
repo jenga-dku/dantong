@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SurveyReplyCreateRequest {
 
-    private int surveyItemId;
+    private Long surveyItemId;
     private String content;
 
-    private int userId;
+    private Long userId;
 }

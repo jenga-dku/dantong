@@ -3,10 +3,12 @@ package org.jenga.dantong.survey.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.survey.model.dto.SurveyReplyCreateRequest;
-import org.jenga.dantong.survey.model.dto.SurveyReplyResponse;
 import org.jenga.dantong.survey.model.dto.SurveyReplyUpdateRequest;
+import org.jenga.dantong.survey.model.dto.SurveyUserReplyResponse;
 import org.jenga.dantong.survey.service.SurveyReplyService;
+import org.jenga.dantong.user.model.entity.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,9 +22,17 @@ public class SurveyReplyController {
     private final SurveyReplyService surveyReplyService;
 
     @GetMapping("/{surveyId}")
-    public ResponseEntity<List<SurveyReplyResponse>> findReply(@PathVariable("surveyId") int surveyId) {
+    public ResponseEntity<List<SurveyUserReplyResponse>> findAllReply(@PathVariable("surveyId") Long surveyId) {
 
-        List<SurveyReplyResponse> reply = surveyReplyService.findReply(surveyId);
+        List<SurveyUserReplyResponse> reply = surveyReplyService.findAllReply(surveyId);
+
+        return ResponseEntity.ok(reply);
+    }
+
+    @GetMapping("/user/{surveyId}")
+    public ResponseEntity<List<SurveyUserReplyResponse>> findUserReply(@PathVariable("surveyId") Long surveyId, @AuthenticationPrincipal User user) {
+
+        List<SurveyUserReplyResponse> reply = surveyReplyService.findUserReply(surveyId, user.getId());
 
         return ResponseEntity.ok(reply);
     }
@@ -33,14 +43,14 @@ public class SurveyReplyController {
         surveyReplyService.createReply(survey);
     }
 
-    @PatchMapping()
+    @PatchMapping("/{surveyId}")
     public void updateReply(@RequestBody List<SurveyReplyUpdateRequest> survey) {
 
         surveyReplyService.updateReply(survey);
     }
 
     @DeleteMapping("/{surveyId}")
-    public void deleteReply(@PathVariable(name = "surveyId") int surveyId) {
+    public void deleteReply(@PathVariable(name = "surveyId") Long surveyId) {
 
         surveyReplyService.deleteReply(surveyId);
     }

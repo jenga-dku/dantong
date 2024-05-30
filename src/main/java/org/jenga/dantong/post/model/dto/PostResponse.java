@@ -1,16 +1,17 @@
 package org.jenga.dantong.post.model.dto;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.jenga.dantong.post.model.entity.Category;
 import org.jenga.dantong.post.model.entity.Post;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class PostResponse {
 
-    private int postId;
+    private Long postId;
     private String title;
     private String description;
     private String content;

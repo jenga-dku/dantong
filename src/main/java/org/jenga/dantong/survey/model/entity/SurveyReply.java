@@ -17,7 +17,7 @@ public class SurveyReply {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "reply_id", insertable = false, updatable = false)
-    private int replyId;
+    private Long replyId;
 
     @OneToOne
     @JoinColumn(name = "survey_item_id")
@@ -27,9 +27,9 @@ public class SurveyReply {
     private String content;
 
     @Column(name = "user_id")
-    private int userId;
+    private Long userId;
 
-    public SurveyReply(String content, int userId) {
+    public SurveyReply(String content, Long userId) {
         this.content = content;
         this.userId = userId;
     }

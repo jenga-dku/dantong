@@ -1,25 +1,16 @@
 package org.jenga.dantong.survey.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jenga.dantong.global.base.BaseEntity;
 import org.jenga.dantong.post.model.entity.Post;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "survey")
 @Entity
@@ -32,8 +23,7 @@ public class Survey extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "survey_id", insertable = false, updatable = false)
-
-    private int surveyId;
+    private Long surveyId;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -44,10 +34,6 @@ public class Survey extends BaseEntity {
 
     @Column(name = "title")
     private String title;
-
-    @Column(name = "tag")
-    @Enumerated(EnumType.STRING)
-    private Tag tag;
 
     @Column(name = "description")
     private String description;
@@ -62,11 +48,10 @@ public class Survey extends BaseEntity {
     @Builder.Default
     private boolean shown = true;
 
-    public Survey(String title, Tag tag, String description, LocalDateTime startTime,
-        LocalDateTime endTime) {
+    public Survey(String title, String description, Post post, LocalDateTime startTime, LocalDateTime endTime) {
         this.title = title;
-        this.tag = tag;
         this.description = description;
+        this.post = post;
         this.startTime = startTime;
         this.endTime = endTime;
         this.shown = true;
@@ -76,12 +61,12 @@ public class Survey extends BaseEntity {
         this.title = title;
     }
 
-    public void setTag(Tag tag) {
-        this.tag = tag;
-    }
-
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public void setStartTime(LocalDateTime startTime) {

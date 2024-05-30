@@ -4,8 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.survey.model.dto.SurveyReplyCreateRequest;
-import org.jenga.dantong.survey.model.dto.SurveyReplyResponse;
 import org.jenga.dantong.survey.model.dto.SurveyReplyUpdateRequest;
+import org.jenga.dantong.survey.model.dto.SurveyUserReplyResponse;
 import org.jenga.dantong.survey.model.entity.SurveyItem;
 import org.jenga.dantong.survey.model.entity.SurveyReply;
 import org.jenga.dantong.survey.repository.SurveyItemRepository;
@@ -23,21 +23,39 @@ public class SurveyReplyService {
     private final SurveyItemRepository surveyItemRepository;
 
     @Transactional
-    public List<SurveyReplyResponse> findReply(int surveyId) {
+    public List<SurveyUserReplyResponse> findAllReply(Long surveyId) {
         List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyId(surveyId);
 
         List<SurveyReply> reply = items.stream()
                 .map(currItem ->
                         surveyReplyRepository.findBySurveyItem_SurveyItemId(currItem.getSurveyItemId())).toList();
 
-        List<SurveyReplyResponse> responseReplys = reply.stream()
-                .map(currReply -> SurveyReplyResponse.builder()
+        List<SurveyUserReplyResponse> responseReplys = reply.stream()
+                .map(currReply -> SurveyUserReplyResponse.builder()
                         .surveyItemId(currReply.getSurveyItem().getSurveyItemId())
                         .content(currReply.getContent())
                         .build()).toList();
 
         return responseReplys;
     }
+
+    @Transactional
+    public List<SurveyUserReplyResponse> findUserReply(Long surveyId, Long userId) {
+        List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyId(surveyId);
+
+        List<SurveyReply> reply = items.stream()
+                .map(currItem ->
+                        surveyReplyRepository.findBySurveyItem_SurveyItemIdAndUserId(currItem.getSurveyItemId(), userId)).toList();
+
+        List<SurveyUserReplyResponse> responseReplys = reply.stream()
+                .map(currReply -> SurveyUserReplyResponse.builder()
+                        .surveyItemId(currReply.getSurveyItem().getSurveyItemId())
+                        .content(currReply.getContent())
+                        .build()).toList();
+
+        return responseReplys;
+    }
+
 
     @Transactional
     public void createReply(List<SurveyReplyCreateRequest> request) {
@@ -65,7 +83,7 @@ public class SurveyReplyService {
     }
 
     @Transactional
-    public void deleteReply(int surveyId) {
+    public void deleteReply(Long surveyId) {
 
         List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyId(surveyId);
 
