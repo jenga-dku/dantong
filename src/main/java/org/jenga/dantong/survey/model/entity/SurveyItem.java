@@ -1,19 +1,14 @@
 package org.jenga.dantong.survey.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jenga.dantong.global.base.BaseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "survey_item")
 @Entity
@@ -35,8 +30,13 @@ public class SurveyItem extends BaseEntity {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "tag")
+    @Enumerated(EnumType.STRING)
+    private Tag tag;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "options")
+    private List<String> options = new ArrayList<String>();
 
     @Column(name = "shown")
     @Builder.Default
@@ -44,6 +44,13 @@ public class SurveyItem extends BaseEntity {
 
     @OneToOne(mappedBy = "surveyItem")
     private SurveyReply surveyReply;
+
+    public SurveyItem(Survey survey, String title, Tag tag) {
+        this.survey = survey;
+        this.title = title;
+        this.tag = tag;
+        this.shown = true;
+    }
 
     public void setSurvey(Survey survey) {
         this.survey = survey;
@@ -54,8 +61,8 @@ public class SurveyItem extends BaseEntity {
         this.title = title;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTag(Tag tag) {
+        this.tag = tag;
     }
 
     public void setShown(boolean shown) {
