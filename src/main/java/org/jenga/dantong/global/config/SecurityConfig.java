@@ -158,21 +158,22 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http,
         HandlerMappingIntrospector introspector) throws Exception {
         return http
-                .cors(httpSecurityCorsConfigurer -> corsConfigurationSource())
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS))
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizeRequests -> {
-                    authorizeRequests.requestMatchers(
-                            new MvcRequestMatcher(introspector, "/swagger-ui/**")).permitAll();
-                    authorizeRequests.requestMatchers("/v3/api-docs/**",
-                            "/webjars/**").permitAll();
-                    authorizeRequests.requestMatchers("/post/**").permitAll();
-                    authorizeRequests.requestMatchers("/user/**").permitAll();
-                    authorizeRequests.requestMatchers("/survey/**").permitAll();
-                    authorizeRequests.requestMatchers("/reply/**").permitAll();
+            .cors(httpSecurityCorsConfigurer -> corsConfigurationSource())
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
+                SessionCreationPolicy.STATELESS))
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(authorizeRequests -> {
+                authorizeRequests.requestMatchers(
+                    new MvcRequestMatcher(introspector, "/swagger-ui/**")).permitAll();
+                authorizeRequests.requestMatchers("/v3/api-docs/**",
+                    "/webjars/**").permitAll();
+                authorizeRequests.requestMatchers("/post/**").permitAll();
+                authorizeRequests.requestMatchers("/user/**").permitAll();
+                authorizeRequests.requestMatchers("/survey/**").permitAll();
+                authorizeRequests.requestMatchers("/reply/**").permitAll();
+                authorizeRequests.requestMatchers("/excel/**").permitAll();
 
             })
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
