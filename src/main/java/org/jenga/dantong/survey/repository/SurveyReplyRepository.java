@@ -6,9 +6,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SurveyReplyRepository extends JpaRepository<SurveyReply, Long> {
-    SurveyReply findByReplyId(int replyId);
+    SurveyReply findByReplyId(Long replyId);
 
-    SurveyReply findBySurveyItem_SurveyItemId(int surveyItemId);
+    SurveyReply findBySurveyItem_SurveyItemId(Long surveyItemId);
 
-    SurveyReply findBySurveyItem_SurveyItemIdAndReplyId(int surveyItemId, int replyId);
+    SurveyReply findBySurveyItem_SurveyItemIdAndUserId(Long surveyItemId, Long userId);
+
+    SurveyReply findBySurveyItem_SurveyItemIdAndReplyId(Long surveyItemId, Long replyId);
 }

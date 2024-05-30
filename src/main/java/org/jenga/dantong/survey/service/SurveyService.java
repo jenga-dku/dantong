@@ -3,15 +3,17 @@ package org.jenga.dantong.survey.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jenga.dantong.post.model.entity.Post;
+import org.jenga.dantong.post.repository.PostRepository;
 import org.jenga.dantong.survey.model.dto.*;
 import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.survey.model.entity.SurveyItem;
 import org.jenga.dantong.survey.repository.SurveyItemRepository;
-import org.jenga.dantong.survey.repository.SurveyReplyRepository;
 import org.jenga.dantong.survey.repository.SurveyRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -20,24 +22,33 @@ public class SurveyService {
 
     private final SurveyRepository surveyRepository;
     private final SurveyItemRepository surveyItemRepository;
-    private final SurveyReplyRepository surveyReplyRepository;
+    private final PostRepository postRepository;
 
     @Transactional
-    public SurveyResponse findSurvey(int surveyId) {
+    public SurveyResponse findSurvey(Long surveyId) {
         Survey survey = surveyRepository.findBySurveyId(surveyId);
+
+        if (!survey.isShown()) {
+            return SurveyResponse.builder()
+                    .description("Deleted Survey")
+                    .build();
+        }
+
         List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyIdAndShownTrue(surveyId);
 
         List<SurveyItemResponse> responseItems = items.stream()
                 .map(currItem -> SurveyItemResponse.builder()
                         .surveyItemId(currItem.getSurveyItemId())
                         .title(currItem.getTitle())
-                        .description(currItem.getDescription())
-                        .build()).toList();
+                        .tag(currItem.getTag())
+                        .options(currItem.getOptions())
+                        .build())
+                .toList();
 
         SurveyResponse response = SurveyResponse.builder()
                 .title(survey.getTitle())
-                .tag(survey.getTag())
                 .description(survey.getDescription())
+                .postId(Objects.isNull(survey.getPost()) ? 0 : survey.getPost().getPostId())
                 .startTime(survey.getStartTime())
                 .endTime(survey.getEndTime())
                 .surveyItems(responseItems)
@@ -47,12 +58,13 @@ public class SurveyService {
     }
 
     @Transactional
-    public int create(SurveyCreateRequest surveyCreate) {
+    public Long create(SurveyCreateRequest surveyCreate) {
+        Post post = postRepository.findByPostId(surveyCreate.getPostId());
 
         Survey survey = new Survey(
                 surveyCreate.getTitle(),
-                surveyCreate.getTag(),
                 surveyCreate.getDescription(),
+                post,
                 surveyCreate.getStartTime(),
                 surveyCreate.getEndTime()
         );
@@ -65,7 +77,8 @@ public class SurveyService {
                 .map(currItem -> SurveyItem.builder()
                         .survey(survey)
                         .title(currItem.getTitle())
-                        .description(currItem.getDescription())
+                        .tag(currItem.getTag())
+                        .options(currItem.getOptions())
                         .build())
                 .forEach(surveyItemRepository::save);
 
@@ -73,27 +86,32 @@ public class SurveyService {
     }
 
     @Transactional
-    public int updateSurvey(SurveyUpdateRequest request) {
+    public Long updateSurvey(Long surveyId, SurveyUpdateRequest request) {
 
-        Survey survey = surveyRepository.findBySurveyId(request.getSurveyId());
+        Survey survey = surveyRepository.findBySurveyId(surveyId);
+        Post post = postRepository.findByPostId(request.getPostId());
 
         survey.setTitle(request.getTitle());
-        survey.setTag(request.getTag());
         survey.setDescription(request.getDescription());
+        survey.setPost(post);
         survey.setStartTime(request.getStartTime());
         survey.setEndTime(request.getEndTime());
 
         List<SurveyItemUpdateRequest> itemUpdate = request.getSurveyItems();
 
         itemUpdate.stream()
-                .filter(currItem -> surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId()) == null || (request.getSurveyId() == (surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId()).getSurvey().getSurveyId())))
+                .filter(currItem -> surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId()) == null || (surveyId == (surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId()).getSurvey().getSurveyId())))
                 .forEach(currItem -> {
                     SurveyItem item = surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId());
 
                     if (item != null) {
                         log.info("Item detected");
                         item.setTitle(currItem.getTitle());
-                        item.setDescription(currItem.getDescription());
+                        item.setTag(currItem.getTag());
+                        item.getOptions().clear();
+                        currItem.getOptions().forEach(option -> {
+                            item.getOptions().add(option);
+                        });
                     } else {
                         log.info("New Item detected");
 
@@ -101,7 +119,8 @@ public class SurveyService {
                                 .survey(survey)
                                 .surveyItemId(currItem.getSurveyItemId())
                                 .title(currItem.getTitle())
-                                .description(currItem.getDescription())
+                                .tag(currItem.getTag())
+                                .options(currItem.getOptions())
                                 .build();
 
                         surveyItemRepository.save(newItem);
@@ -112,14 +131,14 @@ public class SurveyService {
     }
 
     @Transactional
-    public void deleteSurvey(int surveyId) {
+    public void deleteSurvey(Long surveyId) {
         Survey survey = surveyRepository.findBySurveyId(surveyId);
 
         survey.setShown(false);
     }
 
     @Transactional
-    public void deleteSurveyItem(int surveyId, int itemId) {
+    public void deleteSurveyItem(Long surveyId, Long itemId) {
         SurveyItem item = surveyItemRepository.findBySurvey_SurveyIdAndSurveyItemId(surveyId, itemId);
 
         item.setShown(false);

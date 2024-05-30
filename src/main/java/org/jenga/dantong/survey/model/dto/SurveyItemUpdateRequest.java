@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jenga.dantong.survey.model.entity.Tag;
+
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -11,7 +14,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SurveyItemUpdateRequest {
 
-    private int surveyItemId;
+    private Long surveyItemId;
     private String title;
-    private String description;
+    private Tag tag;
+    private List<String> options;
 }

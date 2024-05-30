@@ -2,10 +2,6 @@ package org.jenga.dantong.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.jenga.dantong.global.auth.CustomAccessDeniedHandler;
 import org.jenga.dantong.global.auth.CustomAuthenticationEntryPoint;
@@ -36,21 +32,30 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Bean
-    AuthenticationManager authenticationManager(
-        AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
+    private static final String[] PUBLIC_URI = {
+            "/swagger-ui/**", "/api-docs/**", "/test/**"
+    };
+    private static final String[] ADMIN_URI = {
+            "/admin/**"
+    };
     private final JwtProvider jwtProvider;
-
     private final ObjectMapper objectMapper;
 
+    @Bean
+    AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
     @Bean
     public LocaleResolver localeResolver() {
@@ -59,14 +64,12 @@ public class SecurityConfig {
         return customLocaleResolver;
     }
 
-
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
         lci.setParamName("lang");
         return lci;
     }
-
 
     @Bean
     public MessageSource messageSource() {
@@ -81,30 +84,6 @@ public class SecurityConfig {
     @Bean(name = "messageSourceAccessor")
     public MessageSourceAccessor messageSourceAccessor(MessageSource messageSource) {
         return new MessageSourceAccessor(messageSource, Locale.getDefault());
-    }
-
-
-    public static class CustomLocaleResolver extends AcceptHeaderLocaleResolver {
-
-        String[] mLanguageCode = new String[]{"ko", "en"};
-        List<Locale> mLocales = Arrays.asList(new Locale("en"), new Locale("es"), new Locale("ko"));
-
-        @Override
-        public Locale resolveLocale(HttpServletRequest request) {
-            // 언어팩 변경
-            String acceptLanguage = request.getHeader(HttpHeaders.ACCEPT_LANGUAGE);
-            if (acceptLanguage == null || "".equals(acceptLanguage)) {
-                return Locale.getDefault();
-            }
-            List<Locale.LanguageRange> list = Locale.LanguageRange.parse(
-                request.getHeader("Accept-Language"));
-
-            mLocales = new ArrayList<>();
-            for (String code : mLanguageCode) {
-                mLocales.add(new Locale(code));
-            }
-            return Locale.lookup(list, mLocales);
-        }
     }
 
     @Bean
@@ -132,14 +111,6 @@ public class SecurityConfig {
         return new ExceptionHandlerFilter(objectMapper, messageSource());
     }
 
-    private static final String[] PUBLIC_URI = {
-        "/swagger-ui/**", "/api-docs/**", "/test/**"
-    };
-
-    private static final String[] ADMIN_URI = {
-        "/admin/**"
-    };
-
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -156,7 +127,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
-        HandlerMappingIntrospector introspector) throws Exception {
+                                           HandlerMappingIntrospector introspector) throws Exception {
         return http
                 .cors(httpSecurityCorsConfigurer -> corsConfigurationSource())
                 .csrf(AbstractHttpConfigurer::disable)
@@ -174,11 +145,34 @@ public class SecurityConfig {
                     authorizeRequests.requestMatchers("/survey/**").permitAll();
                     authorizeRequests.requestMatchers("/reply/**").permitAll();
 
-            })
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class)
-            .exceptionHandling(c -> c.authenticationEntryPoint(customAuthenticationEntryPoint())
-                .accessDeniedHandler(customAccessDeniedHandler()))
-            .build();
+                })
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class)
+                .exceptionHandling(c -> c.authenticationEntryPoint(customAuthenticationEntryPoint())
+                        .accessDeniedHandler(customAccessDeniedHandler()))
+                .build();
+    }
+
+    public static class CustomLocaleResolver extends AcceptHeaderLocaleResolver {
+
+        String[] mLanguageCode = new String[]{"ko", "en"};
+        List<Locale> mLocales = Arrays.asList(new Locale("en"), new Locale("es"), new Locale("ko"));
+
+        @Override
+        public Locale resolveLocale(HttpServletRequest request) {
+            // 언어팩 변경
+            String acceptLanguage = request.getHeader(HttpHeaders.ACCEPT_LANGUAGE);
+            if (acceptLanguage == null || "".equals(acceptLanguage)) {
+                return Locale.getDefault();
+            }
+            List<Locale.LanguageRange> list = Locale.LanguageRange.parse(
+                    request.getHeader("Accept-Language"));
+
+            mLocales = new ArrayList<>();
+            for (String code : mLanguageCode) {
+                mLocales.add(new Locale(code));
+            }
+            return Locale.lookup(list, mLocales);
+        }
     }
 }
