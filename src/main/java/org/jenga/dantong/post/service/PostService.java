@@ -80,7 +80,7 @@ public class PostService {
 
     @Transactional
     public Page<PostResponse> showAllPost(Pageable pageable) {
-        Page<Post> posts = postRepository.findByShownTrue(pageable);
+        Page<Post> posts = postRepository.findAll(pageable);
         return getPostResponses(posts);
     }
 
