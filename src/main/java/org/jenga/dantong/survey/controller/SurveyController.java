@@ -3,6 +3,7 @@ package org.jenga.dantong.survey.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.survey.model.dto.SurveyCreateRequest;
+import org.jenga.dantong.survey.model.dto.SurveyIdInfoResponse;
 import org.jenga.dantong.survey.model.dto.SurveyResponse;
 import org.jenga.dantong.survey.model.dto.SurveyUpdateRequest;
 import org.jenga.dantong.survey.service.SurveyService;
@@ -18,32 +19,36 @@ public class SurveyController {
     private final SurveyService surveyService;
 
     @GetMapping("/{surveyId}")
-    public ResponseEntity<SurveyResponse> findSurvey(@PathVariable("surveyId") int surveyId) {
+    public ResponseEntity<SurveyResponse> findSurvey(@PathVariable("surveyId") Long surveyId) {
         SurveyResponse response = surveyService.findSurvey(surveyId);
 
         return ResponseEntity.ok(response);
     }
 
     @PostMapping()
-    public void create(@RequestBody SurveyCreateRequest survey) throws Exception {
+    public ResponseEntity<SurveyIdInfoResponse> create(@RequestBody SurveyCreateRequest survey) throws Exception {
 
-        surveyService.create(survey);
+        Long surveyId = surveyService.create(survey);
+
+        return ResponseEntity.ok(SurveyIdInfoResponse.builder().surveyId(surveyId).build());
     }
 
-    @PatchMapping()
-    public void update(@RequestBody SurveyUpdateRequest survey) throws Exception {
+    @PatchMapping("/{surveyId}")
+    public ResponseEntity<SurveyIdInfoResponse> update(@PathVariable("surveyId") Long id, @RequestBody SurveyUpdateRequest survey) throws Exception {
 
-        surveyService.updateSurvey(survey);
+        Long surveyId = surveyService.updateSurvey(id, survey);
+
+        return ResponseEntity.ok(SurveyIdInfoResponse.builder().surveyId(surveyId).build());
     }
 
     @DeleteMapping("/{surveyId}")
-    public void deleteSurvey(@PathVariable("surveyId") int surveyId) {
+    public void deleteSurvey(@PathVariable("surveyId") Long surveyId) {
 
         surveyService.deleteSurvey(surveyId);
     }
 
     @DeleteMapping("/{surveyId}/{surveyItemId}")
-    public void deleteSurveyItem(@PathVariable("surveyId") int surveyId, @PathVariable("surveyItemId") int surveyItemId) {
+    public void deleteSurveyItem(@PathVariable("surveyId") Long surveyId, @PathVariable("surveyItemId") Long surveyItemId) {
 
         surveyService.deleteSurveyItem(surveyId, surveyItemId);
     }

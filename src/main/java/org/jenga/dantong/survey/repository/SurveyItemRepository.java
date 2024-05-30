@@ -8,11 +8,11 @@ import java.util.List;
 
 @Repository
 public interface SurveyItemRepository extends JpaRepository<SurveyItem, Long> {
-    SurveyItem findBySurveyItemId(int itemId);
+    SurveyItem findBySurveyItemId(Long itemId);
 
-    List<SurveyItem> findBySurvey_SurveyId(int surveyId);
+    List<SurveyItem> findBySurvey_SurveyId(Long surveyId);
 
-    SurveyItem findBySurvey_SurveyIdAndSurveyItemId(int surveyId, int surveyItemId);
+    SurveyItem findBySurvey_SurveyIdAndSurveyItemId(Long surveyId, Long surveyItemId);
 
-    List<SurveyItem> findBySurvey_SurveyIdAndShownTrue(int surveyId);
+    List<SurveyItem> findBySurvey_SurveyIdAndShownTrue(Long surveyId);
 }

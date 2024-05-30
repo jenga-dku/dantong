@@ -9,5 +9,5 @@ import lombok.Setter;
 @Setter
 public class PostIdInfoRequest {
 
-    private int postId;
+    private Long postId;
 }

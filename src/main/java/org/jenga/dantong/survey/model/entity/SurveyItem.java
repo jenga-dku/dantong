@@ -26,7 +26,7 @@ public class SurveyItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "survey_item_id", insertable = false, updatable = false)
-    private int surveyItemId;
+    private Long surveyItemId;
 
     @ManyToOne
     @JoinColumn(name = "survey_id")

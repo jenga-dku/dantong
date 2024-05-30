@@ -7,9 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class SurveyItemResponse {
+public class SurveyUserReplyResponse {
 
     private Long surveyItemId;
-    private String title;
-    private String description;
+    private String content;
 }
