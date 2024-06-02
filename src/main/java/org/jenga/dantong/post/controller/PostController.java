@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 import org.jenga.dantong.global.base.UserAuth;
 import org.jenga.dantong.post.model.dto.PostCreateRequest;
+import org.jenga.dantong.post.model.dto.PostPreviewResponse;
 import org.jenga.dantong.post.model.dto.PostResponse;
 import org.jenga.dantong.post.model.dto.PostUpdateRequest;
 import org.jenga.dantong.post.model.entity.Category;
@@ -56,10 +57,10 @@ public class PostController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Page<PostResponse>> list(
+    public ResponseEntity<Page<PostPreviewResponse>> list(
         @RequestParam(required = false, name = "category") Category category,
         Pageable pageable) {
-        Page<PostResponse> posts;
+        Page<PostPreviewResponse> posts;
         posts = postService.showAllPost(pageable);
         if (category != null) {
             posts = postService.showByCategory(category, pageable);
