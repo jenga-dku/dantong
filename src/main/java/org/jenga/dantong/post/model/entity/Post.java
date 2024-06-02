@@ -72,4 +72,8 @@ public class Post extends BaseEntity {
     @Builder.Default
     private List<PostFile> files = new ArrayList<>();
 
+    public boolean hasSurvey() {
+        return this.getSurvey() != null;
+    }
+
 }
