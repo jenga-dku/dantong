@@ -6,14 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface SurveyItemRepository extends JpaRepository<SurveyItem, Long> {
 
     List<SurveyItem> findBySurvey(Survey survey);
 
-    Optional<SurveyItem> findBySurvey_SurveyIdAndSurveyItemId(Long surveyId, Long surveyItemId);
-
-    List<SurveyItem> findBySurvey_SurveyIdAndShownTrue(Long surveyId);
+    List<SurveyItem> findBySurveyAndShownTrue(Survey survey);
 }
