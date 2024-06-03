@@ -15,7 +15,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequestMapping("/post")
@@ -40,12 +49,11 @@ public class PostController {
         return ResponseEntity.ok(post);
     }
 
-    @PatchMapping("/{postId}")
+    @PatchMapping("/edit")
     @UserAuth
-    @SecurityRequirement(name = "JWT Token")
-    public void edit(@PathVariable(name = "postId") Long postId, @RequestBody PostUpdateRequest post, AppAuthentication auth) {
+    public void edit(@RequestBody PostUpdateRequest post, AppAuthentication auth) {
 
-        postService.updatePost(postId, post, auth.getUserId());
+        postService.updatePost(post, auth.getUserId());
     }
 
     @GetMapping("/list")
@@ -63,9 +71,7 @@ public class PostController {
 
 
     @DeleteMapping("/{postId}")
-    @UserAuth
-    @SecurityRequirement(name = "JWT Token")
-    public void delete(@PathVariable("postId") Long postId, AppAuthentication user) throws Exception {
-        postService.deletePost(postId, user.getUserId());
+    public void delete(@PathVariable("postId") Long postId) throws Exception {
+        postService.deletePost(postId);
     }
 }

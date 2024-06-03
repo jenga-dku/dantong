@@ -55,13 +55,14 @@ public class Survey extends BaseEntity {
     @Builder.Default
     private boolean shown = true;
 
-    public Survey(String title, String description, Post post, LocalDateTime startTime, LocalDateTime endTime, boolean shown) {
+    public Survey(String title, String description, Post post, LocalDateTime startTime,
+        LocalDateTime endTime) {
         this.title = title;
         this.description = description;
         this.post = post;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.shown = shown;
+        this.shown = true;
     }
 
     public void setTitle(String title) {

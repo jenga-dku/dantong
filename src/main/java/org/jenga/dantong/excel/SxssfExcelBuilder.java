@@ -2,18 +2,25 @@ package org.jenga.dantong.excel;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.springframework.data.domain.Page;
 
 @Slf4j
 public class SxssfExcelBuilder {
@@ -37,16 +44,10 @@ public class SxssfExcelBuilder {
         , List<Map<String, Object>> list
         , int rowIdx
         , SXSSFWorkbook sxssfWorkbook) throws IOException {
-        /**
-         * 최초 생성이면 manual flush를 위해 new SXSSFWorkbook(-1);
-         * 이어서 작성일 경우 매개변수로 받은 sxssfWorkbook
-         */
+
         SXSSFWorkbook workbook = ObjectUtils.isNotEmpty(sxssfWorkbook)
             ? sxssfWorkbook : new SXSSFWorkbook(-1);
-        /**
-         * 최초 생성이면 SHEET_NAME 시트 생성
-         * 이어서 작성일 경우 SHEET_NAME에서 이어서 작성
-         */
+
         sheetName = StringUtils.isEmpty(sheetName)
             ? SHEET_NAME + (rowIdx / MAX_ROW + 1) : sheetName;
         boolean newSheet = ObjectUtils.isEmpty(workbook.getSheet(sheetName));
@@ -55,7 +56,6 @@ public class SxssfExcelBuilder {
         Row row = null;
         Cell cell = null;
 
-        // 매개변수로 받은 rowNo부터 이어서 작성
         int rowNo = rowIdx % MAX_ROW;
         int index = 0;
 
@@ -64,10 +64,6 @@ public class SxssfExcelBuilder {
         CellStyle bodyStyleLeft = makeBodyStyle(workbook, LEFT);
         CellStyle bodyStyleRight = makeBodyStyle(workbook, RIGHT);
 
-        /**
-         * 셀 내 개행을 위해 추가
-         * \r\n 추가 시 개행 가능
-         */
         bodyStyleCenter.setWrapText(true);
         bodyStyleLeft.setWrapText(true);
         bodyStyleRight.setWrapText(true);
@@ -143,118 +139,6 @@ public class SxssfExcelBuilder {
         return workbook;
     }
 
-    public static SXSSFWorkbook createExcelWithoutMap(String sheetName
-        , Page<ExampleVO> page
-        , int rowIdx
-        , SXSSFWorkbook sxssfWorkbook) throws IOException {
-        /**
-         * 최초 생성이면 manual flush를 위해 new SXSSFWorkbook(-1);
-         * 이어서 작성일 경우 매개변수로 받은 sxssfWorkbook
-         */
-        SXSSFWorkbook workbook = ObjectUtils.isNotEmpty(sxssfWorkbook)
-            ? sxssfWorkbook : new SXSSFWorkbook(-1);
-        /**
-         * 최초 생성이면 SHEET_NAME 시트 생성
-         * 이어서 작성일 경우 SHEET_NAME에서 이어서 작성
-         */
-        sheetName = StringUtils.isEmpty(sheetName)
-            ? SHEET_NAME + (rowIdx / MAX_ROW + 1) : sheetName;
-        boolean newSheet = ObjectUtils.isEmpty(workbook.getSheet(sheetName));
-        Sheet sheet = newSheet ? workbook.createSheet(sheetName) : workbook.getSheet(sheetName);
-
-        Row row = null;
-        Cell cell = null;
-
-        // 매개변수로 받은 rowNo부터 이어서 작성
-        int rowNo = rowIdx % MAX_ROW;
-        int index = 0;
-
-        CellStyle headStyle = makeHeadStyle(workbook);
-        CellStyle bodyStyleCenter = makeBodyStyle(workbook, CENTER);
-        CellStyle bodyStyleLeft = makeBodyStyle(workbook, LEFT);
-        CellStyle bodyStyleRight = makeBodyStyle(workbook, RIGHT);
-
-        /**
-         * 셀 내 개행을 위해 추가
-         * \r\n 추가 시 개행 가능
-         */
-        bodyStyleCenter.setWrapText(true);
-        bodyStyleLeft.setWrapText(true);
-        bodyStyleRight.setWrapText(true);
-
-        for (int i = 0; i < 7; i++) {
-            sheet.setColumnWidth(i, 50 * 256);
-        }
-
-        // 헤더 생성
-        if (newSheet) {
-            row = sheet.createRow(rowNo);
-
-            for (int i = 0; i < 7; i++) {
-                cell = row.createCell(i);
-                cell.setCellStyle(headStyle);
-                cell.setCellValue(getHeader(i));
-            }
-        }
-
-        // 데이터와 cell alignment
-        for (ExampleVO exampleVO : page) {
-            row = sheet.createRow(++rowNo);
-            index = 0;
-
-            cell = row.createCell(0);
-            cell.setCellStyle(bodyStyleCenter);
-            cell.setCellValue(exampleVO.getId());
-
-            cell = row.createCell(1);
-            cell.setCellStyle(bodyStyleCenter);
-            cell.setCellValue(exampleVO.getColumn1());
-
-            cell = row.createCell(2);
-            cell.setCellStyle(bodyStyleCenter);
-            cell.setCellValue(exampleVO.getColumn2());
-
-            cell = row.createCell(3);
-            cell.setCellStyle(bodyStyleCenter);
-            cell.setCellValue(exampleVO.getColumn3());
-
-            cell = row.createCell(4);
-            cell.setCellStyle(bodyStyleCenter);
-            cell.setCellValue(exampleVO.getColumn4());
-
-            cell = row.createCell(5);
-            cell.setCellStyle(bodyStyleCenter);
-            cell.setCellValue(exampleVO.getColumn5());
-
-            cell = row.createCell(6);
-            cell.setCellStyle(bodyStyleCenter);
-            cell.setCellValue(exampleVO.getColumn6());
-
-            if (rowNo % FLUSH_ROW_NUM == 0) {
-                ((SXSSFSheet) sheet).flushRows(FLUSH_ROW_NUM);
-            }
-        }
-
-        return workbook;
-    }
-
-    public static Map<String, Object> makeExcelDataMap(long listSize
-        , Object criteria
-        , List<String> keys
-        , List<String> headers
-        , List<String> widths
-        , String sheetName) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(ExcelConstants.HEADERS, headers);
-        map.put(ExcelConstants.CRITERIA, criteria);
-        map.put(ExcelConstants.KEYS, keys);
-        map.put(ExcelConstants.LIST_SIZE, listSize);
-        map.put(ExcelConstants.WIDTHS, widths);
-        map.put(ExcelConstants.SHEET_NAME, sheetName);
-
-        return map;
-    }
-
     public static CellStyle makeHeadStyle(SXSSFWorkbook workbook) {
         CellStyle headStyle = makeBodyStyle(workbook);
         headStyle.setFillForegroundColor(HSSFColor
@@ -299,26 +183,5 @@ public class SxssfExcelBuilder {
         }
 
         return bodyStyle;
-    }
-
-    public static String getHeader(int idx) {
-        switch (idx) {
-            case 0:
-                return "No.";
-            case 1:
-                return "첫번 째 칼럼";
-            case 2:
-                return "두번 째 칼럼";
-            case 3:
-                return "세번 째 칼럼";
-            case 4:
-                return "네번 째 칼럼";
-            case 5:
-                return "다섯번 째 칼럼";
-            case 6:
-                return "여섯번 째 칼럼";
-            default:
-                return null;
-        }
     }
 }

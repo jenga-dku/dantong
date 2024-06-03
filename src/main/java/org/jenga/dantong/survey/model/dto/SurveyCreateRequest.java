@@ -1,14 +1,13 @@
 package org.jenga.dantong.survey.model.dto;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -27,6 +26,4 @@ public class SurveyCreateRequest {
     private LocalDateTime endTime;
 
     private List<SurveyItemCreateRequest> surveyItems = new ArrayList<SurveyItemCreateRequest>();
-
-    private boolean shown;
 }

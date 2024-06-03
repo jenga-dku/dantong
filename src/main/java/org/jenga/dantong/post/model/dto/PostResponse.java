@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jenga.dantong.post.model.entity.Category;
 import org.jenga.dantong.post.model.entity.Post;
+import org.jenga.dantong.survey.model.dto.SurveySummaryResponse;
 import org.jenga.dantong.user.model.dto.UserResponse;
 
 @Getter
@@ -12,7 +13,7 @@ import org.jenga.dantong.user.model.dto.UserResponse;
 public class PostResponse {
 
     private Long postId;
-    private Long surveyId;
+    private SurveySummaryResponse surveySummaryResponse;
     private String title;
     private String description;
     private String content;
@@ -22,9 +23,8 @@ public class PostResponse {
     private UserResponse userResponse;
 
     public PostResponse(Post post, String status, List<PostFileResponse> postFileResponse,
-        Long surveyId, UserResponse userResponse) {
+        UserResponse userResponse) {
         this.userResponse = userResponse;
-        this.surveyId = surveyId;
         this.postId = post.getPostId();
         this.title = post.getTitle();
         this.description = post.getDescription();
