@@ -12,6 +12,7 @@ import org.jenga.dantong.survey.repository.SurveyItemRepository;
 import org.jenga.dantong.survey.repository.SurveyReplyRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -23,20 +24,26 @@ public class SurveyReplyService {
     private final SurveyItemRepository surveyItemRepository;
 
     @Transactional
-    public List<SurveyUserReplyResponse> findAllReply(Long surveyId) {
+    public List<List<SurveyUserReplyResponse>> findAllReply(Long surveyId) {
         List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyId(surveyId);
 
-        List<SurveyReply> reply = items.stream()
+        List<List<SurveyReply>> replys = items.stream()
                 .map(currItem ->
                         surveyReplyRepository.findBySurveyItem_SurveyItemId(currItem.getSurveyItemId())).toList();
 
-        List<SurveyUserReplyResponse> responseReplys = reply.stream()
-                .map(currReply -> SurveyUserReplyResponse.builder()
-                        .surveyItemId(currReply.getSurveyItem().getSurveyItemId())
-                        .content(currReply.getContent())
-                        .build()).toList();
+        List<List<SurveyUserReplyResponse>> response = new ArrayList<>();
 
-        return responseReplys;
+        for (List<SurveyReply> reply : replys) {
+            response.add(
+                    reply.stream()
+                            .map(currReply -> SurveyUserReplyResponse.builder()
+                                    .surveyItemId(currReply.getSurveyItem().getSurveyItemId())
+                                    .content(currReply.getContent())
+                                    .build()).toList()
+            );
+
+        }
+        return response;
     }
 
     @Transactional
@@ -83,13 +90,13 @@ public class SurveyReplyService {
     }
 
     @Transactional
-    public void deleteReply(Long surveyId) {
+    public void deleteUserReply(Long surveyId, Long userId) {
 
         List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyId(surveyId);
 
         List<SurveyReply> reply = items.stream()
                 .map(currItem ->
-                        surveyReplyRepository.findBySurveyItem_SurveyItemId(currItem.getSurveyItemId())).toList();
+                        surveyReplyRepository.findBySurveyItem_SurveyItemIdAndUserId(currItem.getSurveyItemId(), userId)).toList();
 
         reply.forEach(SurveyReply::deleteReply);
     }

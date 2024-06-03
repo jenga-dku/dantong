@@ -2,6 +2,7 @@ package org.jenga.dantong.survey.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jenga.dantong.global.base.UserAuth;
 import org.jenga.dantong.survey.model.dto.SurveyReplyCreateRequest;
 import org.jenga.dantong.survey.model.dto.SurveyReplyUpdateRequest;
 import org.jenga.dantong.survey.model.dto.SurveyUserReplyResponse;
@@ -22,13 +23,14 @@ public class SurveyReplyController {
     private final SurveyReplyService surveyReplyService;
 
     @GetMapping("/{surveyId}")
-    public ResponseEntity<List<SurveyUserReplyResponse>> findAllReply(@PathVariable("surveyId") Long surveyId) {
+    public ResponseEntity<List<List<SurveyUserReplyResponse>>> findAllReply(@PathVariable("surveyId") Long surveyId) {
 
-        List<SurveyUserReplyResponse> reply = surveyReplyService.findAllReply(surveyId);
+        List<List<SurveyUserReplyResponse>> reply = surveyReplyService.findAllReply(surveyId);
 
         return ResponseEntity.ok(reply);
     }
 
+    @UserAuth
     @GetMapping("/user/{surveyId}")
     public ResponseEntity<List<SurveyUserReplyResponse>> findUserReply(@PathVariable("surveyId") Long surveyId, @AuthenticationPrincipal User user) {
 
@@ -50,8 +52,8 @@ public class SurveyReplyController {
     }
 
     @DeleteMapping("/{surveyId}")
-    public void deleteReply(@PathVariable(name = "surveyId") Long surveyId) {
+    public void deleteUserReply(@PathVariable(name = "surveyId") Long surveyId, @AuthenticationPrincipal User user) {
 
-        surveyReplyService.deleteReply(surveyId);
+        surveyReplyService.deleteUserReply(surveyId, user.getId());
     }
 }
