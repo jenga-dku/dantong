@@ -72,12 +72,19 @@ public class PostService {
     }
 
     @Transactional
-    public Long deletePost(Long postId) {
+    public Long deletePost(Long postId, Long userId) throws PermissionDeniedException {
         Post post = postRepository.findById(postId).orElseThrow(PostNofFoundException::new);
-        post.setShown(false);
-        postRepository.save(post);
 
-        return postId;
+        if (userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new).getId() == post.getUser().getId()) {
+
+            post.setShown(false);
+            postRepository.save(post);
+
+            return postId;
+        } else {
+            throw new PermissionDeniedException();
+        }
     }
 
     @Transactional
