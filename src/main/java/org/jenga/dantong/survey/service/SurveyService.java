@@ -36,7 +36,7 @@ public class SurveyService {
                 .build();
         }
 
-        List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyIdAndShownTrue(surveyId);
+        List<SurveyItem> items = surveyItemRepository.findBySurveyAndShownTrue(survey);
 
         List<SurveyItemResponse> responseItems = items.stream()
             .map(currItem -> SurveyItemResponse.builder()
