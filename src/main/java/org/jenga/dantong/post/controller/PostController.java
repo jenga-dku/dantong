@@ -14,16 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequestMapping("/post")
@@ -48,17 +39,17 @@ public class PostController {
         return ResponseEntity.ok(post);
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping("/{postId}")
     @UserAuth
-    public void edit(@RequestBody PostUpdateRequest post, AppAuthentication auth) {
+    public void edit(@PathVariable(name = "postId") Long postId, @RequestBody PostUpdateRequest post, AppAuthentication auth) {
 
-        postService.updatePost(post, auth.getUserId());
+        postService.updatePost(postId, post, auth.getUserId());
     }
 
     @GetMapping("/list")
     public ResponseEntity<Page<PostResponse>> list(
-        @RequestParam(required = false, name = "category") Category category,
-        Pageable pageable) {
+            @RequestParam(required = false, name = "category") Category category,
+            Pageable pageable) {
         Page<PostResponse> posts;
         posts = postService.showAllPost(pageable);
         if (category != null) {

@@ -66,7 +66,8 @@ public class SurveyService {
                 surveyCreate.getDescription(),
                 post,
                 surveyCreate.getStartTime(),
-                surveyCreate.getEndTime()
+                surveyCreate.getEndTime(),
+                surveyCreate.isShown()
         );
 
         surveyRepository.save(survey);

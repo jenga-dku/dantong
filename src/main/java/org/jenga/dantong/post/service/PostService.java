@@ -49,6 +49,7 @@ public class PostService {
                 .category(request.getCategory())
                 .startDate(request.getStartTime())
                 .endDate(request.getEndTime())
+                .shown(request.isShown())
                 .build();
         log.info(request.getTitle());
         if (request.getImageFiles() != null) {
@@ -104,8 +105,8 @@ public class PostService {
     }
 
     @Transactional
-    public Long updatePost(PostUpdateRequest request, Long userId) {
-        Post post = postRepository.findById(request.getPostId())
+    public Long updatePost(Long postId, PostUpdateRequest request, Long userId) {
+        Post post = postRepository.findById(postId)
                 .orElseThrow(PostNofFoundException::new);
         if (!userId.equals(post.getUser().getId())) {
             throw new PermissionDeniedException();
