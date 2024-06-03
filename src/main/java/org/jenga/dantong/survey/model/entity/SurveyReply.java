@@ -19,7 +19,7 @@ public class SurveyReply {
     @Column(name = "reply_id", insertable = false, updatable = false)
     private Long replyId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "survey_item_id")
     private SurveyItem surveyItem;
 

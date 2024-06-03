@@ -1,26 +1,14 @@
 package org.jenga.dantong.survey.model.entity;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jenga.dantong.global.base.BaseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "survey_item")
 @Entity
@@ -57,8 +45,8 @@ public class SurveyItem extends BaseEntity {
     @Builder.Default
     private boolean shown = true;
 
-    @OneToOne(mappedBy = "surveyItem")
-    private SurveyReply surveyReply;
+    @OneToMany(mappedBy = "surveyItem")
+    private List<SurveyReply> surveyReplys = new ArrayList<>();
 
     public SurveyItem(Survey survey, String title, Tag tag) {
         this.survey = survey;
@@ -85,6 +73,6 @@ public class SurveyItem extends BaseEntity {
     }
 
     public void setSurveyReply(SurveyReply reply) {
-        this.surveyReply = reply;
+        getSurveyReplys().add(reply);
     }
 }

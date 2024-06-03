@@ -43,14 +43,15 @@ public class PostService {
     public Long savePost(PostCreateRequest request, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Post post = Post.builder()
-            .user(user)
-            .title(request.getTitle())
-            .description(request.getDescription())
-            .content(request.getContent())
-            .category(request.getCategory())
-            .startDate(request.getStartTime())
-            .endDate(request.getEndTime())
-            .build();
+                .user(user)
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .content(request.getContent())
+                .category(request.getCategory())
+                .startDate(request.getStartTime())
+                .endDate(request.getEndTime())
+                .shown(request.isShown())
+                .build();
         log.info(request.getTitle());
         if (request.getImageFiles() != null) {
             saveFiles(request.getImageFiles(), post);
@@ -76,12 +77,19 @@ public class PostService {
     }
 
     @Transactional
-    public Long deletePost(Long postId) {
+    public Long deletePost(Long postId, Long userId) throws PermissionDeniedException {
         Post post = postRepository.findById(postId).orElseThrow(PostNofFoundException::new);
-        post.setShown(false);
-        postRepository.save(post);
 
-        return postId;
+        if (userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new).getId() == post.getUser().getId()) {
+
+            post.setShown(false);
+            postRepository.save(post);
+
+            return postId;
+        } else {
+            throw new PermissionDeniedException();
+        }
     }
 
     @Transactional
@@ -110,9 +118,10 @@ public class PostService {
     }
 
     @Transactional
-    public Long updatePost(PostUpdateRequest request, Long userId) {
-        Post post = postRepository.findById(request.getPostId())
-            .orElseThrow(PostNofFoundException::new);
+    public Long updatePost(Long postId, PostUpdateRequest request, Long userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNofFoundException::new);
+      
         if (!userId.equals(post.getUser().getId())) {
             throw new PermissionDeniedException();
         }
