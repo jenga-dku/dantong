@@ -38,9 +38,10 @@ public class ExcelController {
     @GetMapping("/poi/async")
     public ResponseEntity<String> downloadPoiExcelAsyncVersion(
         @RequestParam(name = "fileName") String fileName,
+        @RequestParam(name = "surveyId") Long surveyId,
         HttpServletRequest request) {
         try {
-            SXSSFWorkbook workbook = getWorkbook();
+            SXSSFWorkbook workbook = getWorkbook(surveyId);
             createExcel(workbook, fileName, request);
         } catch (IOException e) {
             log.error("[downloadPoiExcelAsyncVersion] {}", e.getMessage());
@@ -49,9 +50,9 @@ public class ExcelController {
         return ResponseEntity.ok("ok");
     }
 
-    private SXSSFWorkbook getWorkbook() throws IOException {
-        Map<String, Object> map = excelCreateService.getExcelMap();
-        SXSSFWorkbook workbook = excelService.getWorkbook(map);
+    private SXSSFWorkbook getWorkbook(Long surveyId) throws IOException {
+        Map<String, Object> map = excelCreateService.getExcelMap(surveyId);
+        SXSSFWorkbook workbook = excelService.getWorkbook(map, surveyId);
 
         if (ObjectUtils.isEmpty(workbook)) {
             workbook = new SXSSFWorkbook();
