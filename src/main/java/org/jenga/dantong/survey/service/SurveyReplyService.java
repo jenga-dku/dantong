@@ -30,11 +30,12 @@ public class SurveyReplyService {
 
     @Transactional
     public List<List<SurveyUserReplyResponse>> findAllReply(Long surveyId) {
-        List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyId(surveyId);
+        Survey survey = surveyRepository.findById(surveyId)
+                .orElseThrow(SurveyNotFoundException::new);
+        List<SurveyItem> items = surveyItemRepository.findBySurvey(survey);
 
         List<List<SurveyReply>> replys = items.stream()
-                .map(currItem ->
-                        surveyReplyRepository.findBySurveyItem_SurveyItemId(currItem.getSurveyItemId())).toList();
+                .map(surveyReplyRepository::findBySurveyItem).toList();
 
         List<List<SurveyUserReplyResponse>> response = new ArrayList<>();
 
@@ -53,11 +54,13 @@ public class SurveyReplyService {
 
     @Transactional
     public List<SurveyUserReplyResponse> findUserReply(Long surveyId, Long userId) {
-        List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyId(surveyId);
+        Survey survey = surveyRepository.findById(surveyId)
+                .orElseThrow(SurveyNotFoundException::new);
+        List<SurveyItem> items = surveyItemRepository.findBySurvey(survey);
 
         List<SurveyReply> reply = items.stream()
                 .map(currItem ->
-                        surveyReplyRepository.findBySurveyItem_SurveyItemIdAndUserId(currItem.getSurveyItemId(), userId)).toList();
+                        surveyReplyRepository.findBySurveyItemAndUserId(currItem, userId)).toList();
 
         List<SurveyUserReplyResponse> responseReplys = reply.stream()
                 .map(currReply -> SurveyUserReplyResponse.builder()
