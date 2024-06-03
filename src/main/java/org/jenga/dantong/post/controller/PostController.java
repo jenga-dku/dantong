@@ -41,6 +41,7 @@ public class PostController {
 
     @PatchMapping("/{postId}")
     @UserAuth
+    @SecurityRequirement(name = "JWT Token")
     public void edit(@PathVariable(name = "postId") Long postId, @RequestBody PostUpdateRequest post, AppAuthentication auth) {
 
         postService.updatePost(postId, post, auth.getUserId());
@@ -61,7 +62,9 @@ public class PostController {
 
 
     @DeleteMapping("/{postId}")
-    public void delete(@PathVariable("postId") Long postId) throws Exception {
-        postService.deletePost(postId);
+    @UserAuth
+    @SecurityRequirement(name = "JWT Token")
+    public void delete(@PathVariable("postId") Long postId, AppAuthentication user) throws Exception {
+        postService.deletePost(postId, user.getUserId());
     }
 }
