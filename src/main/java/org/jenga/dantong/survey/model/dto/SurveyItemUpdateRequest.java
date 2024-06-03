@@ -17,5 +17,6 @@ public class SurveyItemUpdateRequest {
     private Long surveyItemId;
     private String title;
     private Tag tag;
+    private String description;
     private List<String> options;
 }

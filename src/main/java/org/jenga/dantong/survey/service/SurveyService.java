@@ -45,6 +45,7 @@ public class SurveyService {
                         .surveyItemId(currItem.getSurveyItemId())
                         .title(currItem.getTitle())
                         .tag(currItem.getTag())
+                        .description(currItem.getDescription())
                         .options(currItem.getOptions())
                         .build())
                 .toList();
@@ -86,6 +87,7 @@ public class SurveyService {
                         .survey(survey)
                         .title(currItem.getTitle())
                         .tag(currItem.getTag())
+                        .description(currItem.getDescription())
                         .options(currItem.getOptions())
                         .build())
                 .forEach(surveyItemRepository::save);
@@ -122,6 +124,7 @@ public class SurveyService {
                         log.info("Item detected");
                         item.setTitle(currItem.getTitle());
                         item.setTag(currItem.getTag());
+                        item.setDescription(currItem.getDescription());
                         item.getOptions().clear();
                         currItem.getOptions().forEach(option -> {
                             item.getOptions().add(option);
@@ -134,6 +137,7 @@ public class SurveyService {
                                 .surveyItemId(currItem.getSurveyItemId())
                                 .title(currItem.getTitle())
                                 .tag(currItem.getTag())
+                                .description(currItem.getDescription())
                                 .options(currItem.getOptions())
                                 .build();
 

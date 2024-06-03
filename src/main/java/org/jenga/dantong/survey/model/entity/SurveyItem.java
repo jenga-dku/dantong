@@ -68,6 +68,10 @@ public class SurveyItem extends BaseEntity {
         this.tag = tag;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public void setShown(boolean shown) {
         this.shown = shown;
     }
