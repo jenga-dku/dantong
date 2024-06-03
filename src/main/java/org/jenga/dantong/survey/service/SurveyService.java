@@ -1,25 +1,23 @@
 package org.jenga.dantong.survey.service;
 
 import jakarta.transaction.Transactional;
-import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jenga.dantong.post.exception.PostNotFoundException;
 import org.jenga.dantong.post.model.entity.Post;
 import org.jenga.dantong.post.repository.PostRepository;
 import org.jenga.dantong.survey.exception.AlreadyHasSurveyException;
+import org.jenga.dantong.survey.exception.SurveyItemNotFoundException;
 import org.jenga.dantong.survey.exception.SurveyNotFoundException;
-import org.jenga.dantong.survey.model.dto.SurveyCreateRequest;
-import org.jenga.dantong.survey.model.dto.SurveyItemCreateRequest;
-import org.jenga.dantong.survey.model.dto.SurveyItemResponse;
-import org.jenga.dantong.survey.model.dto.SurveyItemUpdateRequest;
-import org.jenga.dantong.survey.model.dto.SurveyResponse;
-import org.jenga.dantong.survey.model.dto.SurveyUpdateRequest;
+import org.jenga.dantong.survey.model.dto.*;
 import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.survey.model.entity.SurveyItem;
 import org.jenga.dantong.survey.repository.SurveyItemRepository;
 import org.jenga.dantong.survey.repository.SurveyRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -33,49 +31,51 @@ public class SurveyService {
     @Transactional
     public SurveyResponse findSurvey(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId)
-            .orElseThrow(SurveyNotFoundException::new);
-
+                .orElseThrow(SurveyNotFoundException::new);
         if (!survey.isShown()) {
             return SurveyResponse.builder()
-                .description("Deleted Survey")
-                .build();
+                    .description("Deleted Survey")
+                    .build();
         }
 
-        List<SurveyItem> items = surveyItemRepository.findBySurvey_SurveyIdAndShownTrue(surveyId);
+        List<SurveyItem> items = surveyItemRepository.findBySurveyAndShownTrue(survey);
 
         List<SurveyItemResponse> responseItems = items.stream()
-            .map(currItem -> SurveyItemResponse.builder()
-                .surveyItemId(currItem.getSurveyItemId())
-                .title(currItem.getTitle())
-                .tag(currItem.getTag())
-                .options(currItem.getOptions())
-                .build())
-            .toList();
+                .map(currItem -> SurveyItemResponse.builder()
+                        .surveyItemId(currItem.getSurveyItemId())
+                        .title(currItem.getTitle())
+                        .tag(currItem.getTag())
+                        .description(currItem.getDescription())
+                        .options(currItem.getOptions())
+                        .build())
+                .toList();
 
         SurveyResponse response = SurveyResponse.builder()
-            .title(survey.getTitle())
-            .description(survey.getDescription())
-            .postId(Objects.isNull(survey.getPost()) ? 0 : survey.getPost().getPostId())
-            .startTime(survey.getStartTime())
-            .endTime(survey.getEndTime())
-            .surveyItems(responseItems)
-            .build();
+                .title(survey.getTitle())
+                .description(survey.getDescription())
+                .postId(Objects.isNull(survey.getPost()) ? 0 : survey.getPost().getPostId())
+                .startTime(survey.getStartTime())
+                .endTime(survey.getEndTime())
+                .surveyItems(responseItems)
+                .build();
 
         return response;
     }
 
     @Transactional
     public Long create(SurveyCreateRequest surveyCreate) {
-        Post post = postRepository.findByPostId(surveyCreate.getPostId());
+        Post post = postRepository.findById(surveyCreate.getPostId())
+                .orElseThrow(PostNotFoundException::new);
         if (post.hasSurvey()) {
             throw new AlreadyHasSurveyException();
         }
         Survey survey = new Survey(
-            surveyCreate.getTitle(),
-            surveyCreate.getDescription(),
-            post,
-            surveyCreate.getStartTime(),
-            surveyCreate.getEndTime()
+                surveyCreate.getTitle(),
+                surveyCreate.getDescription(),
+                post,
+                surveyCreate.getStartTime(),
+                surveyCreate.getEndTime(),
+                surveyCreate.isShown()
         );
 
         surveyRepository.save(survey);
@@ -83,13 +83,14 @@ public class SurveyService {
         List<SurveyItemCreateRequest> item = surveyCreate.getSurveyItems();
 
         item.stream()
-            .map(currItem -> SurveyItem.builder()
-                .survey(survey)
-                .title(currItem.getTitle())
-                .tag(currItem.getTag())
-                .options(currItem.getOptions())
-                .build())
-            .forEach(surveyItemRepository::save);
+                .map(currItem -> SurveyItem.builder()
+                        .survey(survey)
+                        .title(currItem.getTitle())
+                        .tag(currItem.getTag())
+                        .description(currItem.getDescription())
+                        .options(currItem.getOptions())
+                        .build())
+                .forEach(surveyItemRepository::save);
 
         return survey.getSurveyId();
     }
@@ -97,8 +98,9 @@ public class SurveyService {
     @Transactional
     public Long updateSurvey(Long surveyId, SurveyUpdateRequest request) {
         Survey survey = surveyRepository.findById(surveyId)
-            .orElseThrow(SurveyNotFoundException::new);
-        Post post = postRepository.findByPostId(request.getPostId());
+                .orElseThrow(SurveyNotFoundException::new);
+        Post post = postRepository.findById(request.getPostId())
+                .orElseThrow(PostNotFoundException::new);
 
         survey.setTitle(request.getTitle());
         survey.setDescription(request.getDescription());
@@ -109,37 +111,39 @@ public class SurveyService {
         List<SurveyItemUpdateRequest> itemUpdate = request.getSurveyItems();
 
         itemUpdate.stream()
-            .filter(currItem ->
-                surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId()) == null || (
-                    surveyId.equals(
-                        surveyItemRepository.findBySurveyItemId(currItem.getSurveyItemId())
-                            .getSurvey().getSurveyId())))
-            .forEach(currItem -> {
-                SurveyItem item = surveyItemRepository.findBySurveyItemId(
-                    currItem.getSurveyItemId());
+                .filter(currItem -> surveyItemRepository.findById(currItem.getSurveyItemId())
+                        .orElseThrow(SurveyItemNotFoundException::new) == null ||
+                        (Objects.equals(surveyId, surveyItemRepository.findById(currItem.getSurveyItemId())
+                                .orElseThrow(SurveyItemNotFoundException::new)
+                                .getSurvey().getSurveyId())))
+                .forEach(currItem -> {
+                    SurveyItem item = surveyItemRepository.findById(currItem.getSurveyItemId())
+                            .orElseThrow(SurveyItemNotFoundException::new);
 
-                if (item != null) {
-                    log.info("Item detected");
-                    item.setTitle(currItem.getTitle());
-                    item.setTag(currItem.getTag());
-                    item.getOptions().clear();
-                    currItem.getOptions().forEach(option -> {
-                        item.getOptions().add(option);
-                    });
-                } else {
-                    log.info("New Item detected");
+                    if (item != null) {
+                        log.info("Item detected");
+                        item.setTitle(currItem.getTitle());
+                        item.setTag(currItem.getTag());
+                        item.setDescription(currItem.getDescription());
+                        item.getOptions().clear();
+                        currItem.getOptions().forEach(option -> {
+                            item.getOptions().add(option);
+                        });
+                    } else {
+                        log.info("New Item detected");
 
-                    SurveyItem newItem = SurveyItem.builder()
-                        .survey(survey)
-                        .surveyItemId(currItem.getSurveyItemId())
-                        .title(currItem.getTitle())
-                        .tag(currItem.getTag())
-                        .options(currItem.getOptions())
-                        .build();
+                        SurveyItem newItem = SurveyItem.builder()
+                                .survey(survey)
+                                .surveyItemId(currItem.getSurveyItemId())
+                                .title(currItem.getTitle())
+                                .tag(currItem.getTag())
+                                .description(currItem.getDescription())
+                                .options(currItem.getOptions())
+                                .build();
 
-                    surveyItemRepository.save(newItem);
-                }
-            });
+                        surveyItemRepository.save(newItem);
+                    }
+                });
 
         return survey.getSurveyId();
     }
@@ -147,16 +151,21 @@ public class SurveyService {
     @Transactional
     public void deleteSurvey(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId)
-            .orElseThrow(SurveyNotFoundException::new);
+                .orElseThrow(SurveyNotFoundException::new);
 
         survey.setShown(false);
     }
 
     @Transactional
     public void deleteSurveyItem(Long surveyId, Long itemId) {
-        SurveyItem item = surveyItemRepository.findBySurvey_SurveyIdAndSurveyItemId(surveyId,
-            itemId).orElseThrow();
+        if (surveyId == surveyItemRepository.findById(itemId)
+                .orElseThrow(SurveyItemNotFoundException::new)
+                .getSurvey().getSurveyId()) {
+            SurveyItem item = surveyItemRepository.findById(itemId)
+                    .orElseThrow(SurveyItemNotFoundException::new);
 
-        item.setShown(false);
+            item.setShown(false);
+        } else return;
+
     }
 }
