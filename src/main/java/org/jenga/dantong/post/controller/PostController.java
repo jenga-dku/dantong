@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,7 +38,8 @@ public class PostController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @UserAuth
     @SecurityRequirement(name = "JWT Token")
-    public void post(@ModelAttribute PostCreateRequest postSaveRequest, AppAuthentication auth) {
+    public void post(@ModelAttribute @Validated PostCreateRequest postSaveRequest,
+        AppAuthentication auth) {
 
         postService.savePost(postSaveRequest, auth.getUserId());
     }

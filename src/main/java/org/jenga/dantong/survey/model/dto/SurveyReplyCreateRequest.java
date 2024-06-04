@@ -13,6 +13,4 @@ public class SurveyReplyCreateRequest {
 
     private Long surveyItemId;
     private String content;
-
-    private Long userId;
 }

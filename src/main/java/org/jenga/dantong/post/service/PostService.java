@@ -84,7 +84,7 @@ public class PostService {
     public Long deletePost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNofFoundException::new);
         post.setShown(false);
-        postRepository.save(post);
+        postRepository.delete(post);
 
         return postId;
     }

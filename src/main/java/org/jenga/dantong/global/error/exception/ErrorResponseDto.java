@@ -7,6 +7,7 @@ import java.util.UUID;
 import lombok.Getter;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Getter
 public class ErrorResponseDto {
@@ -24,5 +25,14 @@ public class ErrorResponseDto {
         this.status = e.getStatus();
         this.code = e.getCode();
         this.message = e.getMessages(messageSource, locale);
+    }
+
+    public ErrorResponseDto(MessageSource messageSource, Locale locale,
+        MethodArgumentNotValidException e) {
+        this.timestamp = LocalDateTime.now().toString();
+        this.trackingId = UUID.randomUUID().toString();
+        this.status = HttpStatus.resolve(e.getStatusCode().value());
+        this.code = e.getClass().getSimpleName();
+        this.message = List.of(e.getDetailMessageArguments(messageSource, locale));
     }
 }

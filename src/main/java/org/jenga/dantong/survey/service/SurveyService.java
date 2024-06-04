@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jenga.dantong.global.util.Util;
 import org.jenga.dantong.post.model.entity.Post;
 import org.jenga.dantong.post.repository.PostRepository;
 import org.jenga.dantong.survey.exception.AlreadyHasSurveyException;
@@ -58,6 +59,7 @@ public class SurveyService {
             .postId(Objects.isNull(survey.getPost()) ? 0 : survey.getPost().getPostId())
             .startTime(survey.getStartTime())
             .endTime(survey.getEndTime())
+            .status(Util.getProgress(survey))
             .surveyItems(responseItems)
             .build();
 
@@ -87,6 +89,7 @@ public class SurveyService {
                 .survey(survey)
                 .title(currItem.getTitle())
                 .tag(currItem.getTag())
+                .description(currItem.getDescription())
                 .options(currItem.getOptions())
                 .build())
             .forEach(surveyItemRepository::save);

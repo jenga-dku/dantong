@@ -1,10 +1,19 @@
 package org.jenga.dantong.survey.model.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jenga.dantong.user.model.entity.User;
 
 @Table(name = "survey_reply")
 @Entity
@@ -26,12 +35,13 @@ public class SurveyReply {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @JoinColumn(name = "user_id")
+    @ManyToOne
+    private User user;
 
-    public SurveyReply(String content, Long userId) {
+    public SurveyReply(String content, User user) {
         this.content = content;
-        this.userId = userId;
+        this.user = user;
     }
 
     public void setSurveyItem(SurveyItem surveyItem) {

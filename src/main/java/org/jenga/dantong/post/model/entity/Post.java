@@ -59,10 +59,10 @@ public class Post extends BaseEntity {
     @Column(name = "shown")
     private boolean shown;
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     private LocalDateTime startDate;
 
-    @Column(name = "end_date")
+    @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
 
     @OneToOne(mappedBy = "post")
