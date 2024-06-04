@@ -9,15 +9,17 @@ import org.jenga.dantong.survey.model.entity.Survey;
 @Setter
 public class SurveySummaryResponse {
 
+    private Long surveyId;
     private String title;
     private Long postId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
     public SurveySummaryResponse(Survey survey) {
+        this.surveyId = survey.getSurveyId();
         this.title = survey.getTitle();
         this.postId = survey.getPost().getPostId();
-        this.startTime = getStartTime();
-        this.endTime = getEndTime();
+        this.startTime = survey.getStartTime();
+        this.endTime = survey.getEndTime();
     }
 }

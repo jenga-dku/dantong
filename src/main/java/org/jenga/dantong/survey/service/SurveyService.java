@@ -87,6 +87,7 @@ public class SurveyService {
                 .survey(survey)
                 .title(currItem.getTitle())
                 .tag(currItem.getTag())
+                .description(currItem.getDescription())
                 .options(currItem.getOptions())
                 .build())
             .forEach(surveyItemRepository::save);

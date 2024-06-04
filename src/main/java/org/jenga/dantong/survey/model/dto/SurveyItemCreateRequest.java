@@ -14,4 +14,5 @@ public class SurveyItemCreateRequest {
     private String title;
     private Tag tag;
     private List<String> options;
+    private String description;
 }
