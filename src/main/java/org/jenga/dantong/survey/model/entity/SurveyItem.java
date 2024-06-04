@@ -87,4 +87,8 @@ public class SurveyItem extends BaseEntity {
     public void setSurveyReply(SurveyReply reply) {
         this.surveyReply = reply;
     }
+
+    public String getDescription() {
+        return description;
+    }
 }

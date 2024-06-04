@@ -20,6 +20,9 @@ import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.survey.model.entity.SurveyItem;
 import org.jenga.dantong.survey.repository.SurveyItemRepository;
 import org.jenga.dantong.survey.repository.SurveyRepository;
+import org.jenga.dantong.user.exception.UserNotFoundException;
+import org.jenga.dantong.user.model.entity.User;
+import org.jenga.dantong.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -30,6 +33,7 @@ public class SurveyService {
     private final SurveyRepository surveyRepository;
     private final SurveyItemRepository surveyItemRepository;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public SurveyResponse findSurvey(Long surveyId) {
@@ -49,6 +53,7 @@ public class SurveyService {
                 .surveyItemId(currItem.getSurveyItemId())
                 .title(currItem.getTitle())
                 .tag(currItem.getTag())
+                .description(currItem.getDescription())
                 .options(currItem.getOptions())
                 .build())
             .toList();
@@ -67,7 +72,8 @@ public class SurveyService {
     }
 
     @Transactional
-    public Long create(SurveyCreateRequest surveyCreate) {
+    public Long create(SurveyCreateRequest surveyCreate, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Post post = postRepository.findByPostId(surveyCreate.getPostId());
         if (post.hasSurvey()) {
             throw new AlreadyHasSurveyException();
@@ -79,6 +85,7 @@ public class SurveyService {
             surveyCreate.getStartTime(),
             surveyCreate.getEndTime()
         );
+        survey.setUser(user);
 
         surveyRepository.save(survey);
 

@@ -1,11 +1,10 @@
 package org.jenga.dantong.survey.model.dto;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.jenga.dantong.survey.model.entity.Tag;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -16,4 +15,5 @@ public class SurveyItemResponse {
     private String title;
     private Tag tag;
     private List<String> options;
+    private String description;
 }

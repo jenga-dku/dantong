@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -18,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jenga.dantong.global.base.BaseEntity;
 import org.jenga.dantong.post.model.entity.Post;
+import org.jenga.dantong.user.model.entity.User;
 
 @Table(name = "survey")
 @Entity
@@ -35,6 +37,10 @@ public class Survey extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @OneToMany(mappedBy = "survey")
     private List<SurveyItem> surveyItems = new ArrayList<>();
@@ -89,4 +95,7 @@ public class Survey extends BaseEntity {
         this.shown = shown;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
