@@ -1,14 +1,6 @@
 package org.jenga.dantong.survey.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,7 +20,7 @@ public class SurveyReply {
     @Column(name = "reply_id", insertable = false, updatable = false)
     private Long replyId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "survey_item_id")
     private SurveyItem surveyItem;
 
