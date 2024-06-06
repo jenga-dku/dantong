@@ -2,6 +2,10 @@ package org.jenga.dantong.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.jenga.dantong.global.auth.CustomAccessDeniedHandler;
 import org.jenga.dantong.global.auth.CustomAuthenticationEntryPoint;
@@ -12,7 +16,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.MessageSourceAccessor;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -32,28 +36,23 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private static final String[] PUBLIC_URI = {
-            "/swagger-ui/**", "/api-docs/**", "/test/**"
+        "/swagger-ui/**", "/api-docs/**", "/test/**"
     };
     private static final String[] ADMIN_URI = {
-            "/admin/**"
+        "/admin/**"
     };
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper;
 
     @Bean
     AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -73,7 +72,7 @@ public class SecurityConfig {
 
     @Bean
     public MessageSource messageSource() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("messages");
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setCacheSeconds(60);
@@ -127,7 +126,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
-                                           HandlerMappingIntrospector introspector) throws Exception {
+        HandlerMappingIntrospector introspector) throws Exception {
         return http
             .cors(httpSecurityCorsConfigurer -> corsConfigurationSource())
             .csrf(AbstractHttpConfigurer::disable)
@@ -146,12 +145,12 @@ public class SecurityConfig {
                 authorizeRequests.requestMatchers("/reply/**").permitAll();
                 authorizeRequests.requestMatchers("/excel/**").permitAll();
 
-                })
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class)
-                .exceptionHandling(c -> c.authenticationEntryPoint(customAuthenticationEntryPoint())
-                        .accessDeniedHandler(customAccessDeniedHandler()))
-                .build();
+            })
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class)
+            .exceptionHandling(c -> c.authenticationEntryPoint(customAuthenticationEntryPoint())
+                .accessDeniedHandler(customAccessDeniedHandler()))
+            .build();
     }
 
     public static class CustomLocaleResolver extends AcceptHeaderLocaleResolver {
@@ -167,7 +166,7 @@ public class SecurityConfig {
                 return Locale.getDefault();
             }
             List<Locale.LanguageRange> list = Locale.LanguageRange.parse(
-                    request.getHeader("Accept-Language"));
+                request.getHeader("Accept-Language"));
 
             mLocales = new ArrayList<>();
             for (String code : mLanguageCode) {
