@@ -33,8 +33,7 @@ public class ExcelService {
 
         try {
             for (int start = 0; start < listSize; start += PAGE_SIZE) {
-                List<Map<String, Object>> list = getExcelList(start, PAGE_SIZE);
-
+                List<Map<String, Object>> list = getExcelList(start, PAGE_SIZE, survey);
                 sxssfWorkbook = SxssfExcelBuilder.createExcel(headers
                     , keys
                     , null
@@ -63,8 +62,8 @@ public class ExcelService {
     }
 
     public List<Map<String, Object>> getExcelList(int start
-        , int size) {
-        return excelCreateService.getListForPoi(start, size);
+        , int size, Survey survey) {
+        return excelCreateService.getListForPoi(start, size, survey);
 
     }
 

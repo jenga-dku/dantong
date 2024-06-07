@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jenga.dantong.global.base.BaseEntity;
 import org.jenga.dantong.user.model.entity.User;
 
 @Entity
@@ -20,7 +21,7 @@ import org.jenga.dantong.user.model.entity.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class SurveySubmit {
+public class SurveySubmit extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
