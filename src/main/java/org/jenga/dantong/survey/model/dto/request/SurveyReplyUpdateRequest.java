@@ -1,4 +1,4 @@
-package org.jenga.dantong.survey.model.dto;
+package org.jenga.dantong.survey.model.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

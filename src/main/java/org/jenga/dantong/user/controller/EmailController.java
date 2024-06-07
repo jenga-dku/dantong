@@ -2,10 +2,10 @@ package org.jenga.dantong.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.jenga.dantong.user.model.dto.EmailRequest;
-import org.jenga.dantong.user.model.dto.EmailVerifyRequest;
-import org.jenga.dantong.user.model.dto.StudentVerifyResponse;
 import org.jenga.dantong.user.model.dto.UserInfo;
+import org.jenga.dantong.user.model.dto.request.EmailRequest;
+import org.jenga.dantong.user.model.dto.request.EmailVerifyRequest;
+import org.jenga.dantong.user.model.dto.response.StudentVerifyResponse;
 import org.jenga.dantong.user.service.EmailService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

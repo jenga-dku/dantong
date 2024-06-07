@@ -1,16 +1,17 @@
-package org.jenga.dantong.survey.model.dto;
+package org.jenga.dantong.survey.model.dto.response;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.jenga.dantong.survey.model.entity.Tag;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class SurveyItemCreateRequest {
+@Setter
+@Builder
+public class SurveyItemResponse {
 
+    private Long surveyItemId;
     private String title;
     private Tag tag;
     private List<String> options;

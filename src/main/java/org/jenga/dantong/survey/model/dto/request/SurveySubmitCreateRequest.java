@@ -1,4 +1,4 @@
-package org.jenga.dantong.survey.model.dto;
+package org.jenga.dantong.survey.model.dto.request;
 
 import java.util.List;
 import lombok.AllArgsConstructor;

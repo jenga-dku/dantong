@@ -1,4 +1,4 @@
-package org.jenga.dantong.post.model.dto;
+package org.jenga.dantong.post.model.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

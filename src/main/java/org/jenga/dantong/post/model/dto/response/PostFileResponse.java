@@ -1,4 +1,4 @@
-package org.jenga.dantong.post.model.dto;
+package org.jenga.dantong.post.model.dto.response;
 
 import java.util.Objects;
 import lombok.Getter;

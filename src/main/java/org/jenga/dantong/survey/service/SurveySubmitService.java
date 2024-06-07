@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jenga.dantong.survey.exception.SurveyNotFoundException;
-import org.jenga.dantong.survey.model.dto.SurveySubmitCreateRequest;
+import org.jenga.dantong.survey.model.dto.request.SurveySubmitCreateRequest;
 import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.survey.model.entity.SurveyReply;
 import org.jenga.dantong.survey.model.entity.SurveySubmit;

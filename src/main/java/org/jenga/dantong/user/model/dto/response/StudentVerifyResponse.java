@@ -1,7 +1,8 @@
-package org.jenga.dantong.user.model.dto;
+package org.jenga.dantong.user.model.dto.response;
 
 
 import lombok.Getter;
+import org.jenga.dantong.user.model.dto.UserInfo;
 
 @Getter
 public class StudentVerifyResponse {
