@@ -2,10 +2,16 @@ package org.jenga.dantong.survey.service;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.jenga.dantong.global.auth.jwt.exception.NotGrantedException;
 import org.jenga.dantong.survey.exception.AlreadyHasSubmitException;
 import org.jenga.dantong.survey.exception.SurveyNotFoundException;
+import org.jenga.dantong.survey.exception.SurveySubmitNotFoundException;
 import org.jenga.dantong.survey.model.dto.request.SurveySubmitCreateRequest;
+import org.jenga.dantong.survey.model.dto.response.SurveyItemResponse;
+import org.jenga.dantong.survey.model.dto.response.SurveyReplyResponse;
+import org.jenga.dantong.survey.model.dto.response.SurveySubmitResponse;
 import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.survey.model.entity.SurveyReply;
 import org.jenga.dantong.survey.model.entity.SurveySubmit;
@@ -41,5 +47,34 @@ public class SurveySubmitService {
         surveySubmit.setSurveyReplies(surveyReplies);
 
         surveySubmitRepository.save(surveySubmit);
+    }
+
+    @Transactional
+    public void deleteSubmit(Long submitId, Long userId) {
+        SurveySubmit surveySubmit = surveySubmitRepository.findById(submitId)
+            .orElseThrow(SurveySubmitNotFoundException::new);
+        if (surveySubmit.getUser().getId().equals(userId)) {
+            surveySubmitRepository.delete(surveySubmit);
+        } else {
+            throw new NotGrantedException();
+        }
+    }
+
+    @Transactional
+    public SurveySubmitResponse getSubmit(Long submitId, Long userId) {
+        SurveySubmit submit = surveySubmitRepository.findById(submitId)
+            .orElseThrow(SurveySubmitNotFoundException::new);
+        List<SurveyReplyResponse> surveyReplyResponses = submit.getSurveyReplies().stream()
+            .map(surveyReply -> {
+                SurveyItemResponse surveyItemResponse = new SurveyItemResponse(
+                    surveyReply.getSurveyItem());
+                return new SurveyReplyResponse(surveyReply.getReplyId(), surveyItemResponse,
+                    surveyReply.getContent());
+            }).collect(Collectors.toList());
+        if (submit.getUser().getId().equals(userId)) {
+            return new SurveySubmitResponse(submit.getSurvey().getSurveyId(), surveyReplyResponses);
+        } else {
+            throw new NotGrantedException();
+        }
     }
 }
