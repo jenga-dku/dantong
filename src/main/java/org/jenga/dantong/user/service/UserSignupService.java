@@ -44,7 +44,7 @@ public class UserSignupService {
             .phoneNumber(dto.getPhoneNumber())
             .status(Status.INACTIVE)
             .password(encryptedPassword)
-            .userRole(UserRole.GUEST)
+            .userRole(UserRole.USER)
             .build();
 
         deleteSignupAuths(signupToken);
