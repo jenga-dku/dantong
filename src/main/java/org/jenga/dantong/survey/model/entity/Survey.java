@@ -48,7 +48,7 @@ public class Survey extends BaseEntity {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 1000)
     private String description;
 
     @Column(name = "start_time")
