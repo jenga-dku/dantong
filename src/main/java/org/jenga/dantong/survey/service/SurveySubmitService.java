@@ -3,6 +3,7 @@ package org.jenga.dantong.survey.service;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.jenga.dantong.survey.exception.AlreadyHasSubmitException;
 import org.jenga.dantong.survey.exception.SurveyNotFoundException;
 import org.jenga.dantong.survey.model.dto.request.SurveySubmitCreateRequest;
 import org.jenga.dantong.survey.model.entity.Survey;
@@ -29,7 +30,10 @@ public class SurveySubmitService {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Survey survey = surveyRepository.findById(request.getSurveyId())
             .orElseThrow(SurveyNotFoundException::new);
-
+        surveySubmitRepository.findSurveySubmitByUserAndSurvey(user, survey)
+            .ifPresent(surveySubmit -> {
+                throw new AlreadyHasSubmitException();
+            });
         SurveySubmit surveySubmit = new SurveySubmit(user, survey);
         List<SurveyReply> surveyReplies = surveyReplyService.createReply(request.getReplyRequest(),
             surveySubmit, userId);
