@@ -1,6 +1,5 @@
 package org.jenga.dantong.survey.controller;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
@@ -38,7 +37,6 @@ public class SurveyController {
 
     @PostMapping()
     @UserAuth
-    @SecurityRequirement(name = "JWT Token")
     public ResponseEntity<SurveyIdInfoResponse> create(
         @RequestBody @Validated SurveyCreateRequest survey, AppAuthentication auth) {
 

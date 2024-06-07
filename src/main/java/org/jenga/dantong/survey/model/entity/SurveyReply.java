@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jenga.dantong.global.base.BaseEntity;
 import org.jenga.dantong.user.model.entity.User;
 
 @Table(name = "survey_reply")
@@ -21,7 +22,7 @@ import org.jenga.dantong.user.model.entity.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class SurveyReply {
+public class SurveyReply extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,6 +33,10 @@ public class SurveyReply {
     @JoinColumn(name = "survey_item_id")
     private SurveyItem surveyItem;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "survey_submit_id")
+    private SurveySubmit surveySubmit;
+
     @Column(name = "content")
     private String content;
 
@@ -39,8 +44,9 @@ public class SurveyReply {
     @ManyToOne
     private User user;
 
-    public SurveyReply(String content, User user) {
+    public SurveyReply(String content, SurveySubmit surveySubmit, User user) {
         this.content = content;
+        this.surveySubmit = surveySubmit;
         this.user = user;
     }
 
