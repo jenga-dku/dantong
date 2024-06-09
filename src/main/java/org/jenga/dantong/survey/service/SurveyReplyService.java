@@ -2,6 +2,7 @@ package org.jenga.dantong.survey.service;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.survey.exception.SurveyItemNotFoundException;
@@ -34,7 +35,7 @@ public class SurveyReplyService {
     private final UserRepository userRepository;
 
     @Transactional
-    public List<SurveyUserReplyResponse> findAllReply(Long surveyItemId) {
+    public List<SurveyUserReplyResponse> findAllReplyBySurveyItem(Long surveyItemId) {
         SurveyItem surveyItem = surveyItemRepository.findById(surveyItemId)
             .orElseThrow(SurveyItemNotFoundException::new);
         List<SurveyReply> replies = surveyReplyRepository.findAllBySurveyItem(surveyItem);
@@ -45,6 +46,19 @@ public class SurveyReplyService {
                 .content(reply.getContent())
                 .build())
             .toList();
+    }
+
+    public List<List<SurveyUserReplyResponse>> findAllReplyBySurvey(Long surveyId) {
+        Survey survey = surveyRepository.findById(surveyId)
+            .orElseThrow(SurveyNotFoundException::new);
+        List<SurveyItem> surveyItems = surveyItemRepository.findBySurvey(survey);
+        return surveyItems.stream()
+            .map(surveyItem -> surveyReplyRepository.findAllBySurveyItem(
+                    surveyItem).stream()
+                .map(reply -> SurveyUserReplyResponse.builder()
+                    .surveyItemId(reply.getSurveyItem().getSurveyItemId())
+                    .content(reply.getContent())
+                    .build()).collect(Collectors.toList())).collect(Collectors.toList());
     }
 
     @Transactional

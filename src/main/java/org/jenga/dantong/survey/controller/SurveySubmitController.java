@@ -1,5 +1,6 @@
 package org.jenga.dantong.survey.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 import org.jenga.dantong.global.base.UserAuth;
@@ -40,5 +41,17 @@ public class SurveySubmitController {
     public SurveySubmitResponse submit(@PathVariable(name = "submitId") Long submitId,
         AppAuthentication auth) {
         return surveySubmitService.getSubmit(submitId, auth.getUserId());
+    }
+
+    /**
+     * 설문에 대한 전체 응답결과를 조회하기
+     *
+     * @param surveyId
+     * @return
+     */
+    @GetMapping("/survey/{surveyId}")
+    public List<SurveySubmitResponse> getSubmissions(
+        @PathVariable(name = "surveyId") Long surveyId) {
+        return surveySubmitService.getSubmissions(surveyId);
     }
 }

@@ -30,11 +30,26 @@ public class SurveyReplyController {
     private final SurveySubmitService surveySubmitService;
 
     @GetMapping("/{surveyItemId}")
-    public ResponseEntity<List<SurveyUserReplyResponse>> findAllReply(
+    public ResponseEntity<List<SurveyUserReplyResponse>> findReply(
         @PathVariable("surveyItemId") Long surveyItemId) {
-        List<SurveyUserReplyResponse> reply = surveyReplyService.findAllReply(surveyItemId);
+        List<SurveyUserReplyResponse> reply = surveyReplyService.findAllReplyBySurveyItem(
+            surveyItemId);
 
         return ResponseEntity.ok(reply);
+    }
+
+    /**
+     * 질문 항목별 응답 리스트 나열
+     *
+     * @param surveyId 설문 번호
+     * @return
+     */
+    @GetMapping("/all/{surveyId}")
+    public ResponseEntity<List<List<SurveyUserReplyResponse>>> findAllReply(
+        @PathVariable("surveyId") Long surveyId) {
+        List<List<SurveyUserReplyResponse>> replies = surveyReplyService.findAllReplyBySurvey(
+            surveyId);
+        return ResponseEntity.ok(replies);
     }
 
     @GetMapping("/user/{surveyId}")
