@@ -6,13 +6,12 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.jenga.dantong.global.auth.jwt.JwtProvider;
 import org.springframework.security.access.annotation.Secured;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@SecurityRequirement(name = JwtProvider.AUTHORIZATION)
+@SecurityRequirement(name = "JWT Token")
 @Secured("ROLE_USER")
 public @interface UserAuth {
 

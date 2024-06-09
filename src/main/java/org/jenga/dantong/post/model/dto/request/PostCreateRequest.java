@@ -1,4 +1,4 @@
-package org.jenga.dantong.post.model.dto;
+package org.jenga.dantong.post.model.dto.request;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;

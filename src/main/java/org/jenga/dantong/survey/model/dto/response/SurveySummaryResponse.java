@@ -1,4 +1,4 @@
-package org.jenga.dantong.survey.model.dto;
+package org.jenga.dantong.survey.model.dto.response;
 
 import java.time.LocalDateTime;
 import lombok.Getter;

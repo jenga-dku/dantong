@@ -36,6 +36,7 @@ public class User extends BaseEntity {
     private String phoneNumber;
     @NotNull
     private String password;
+    @Enumerated(EnumType.STRING)
     private UserRole userRole;
     @Enumerated(EnumType.STRING)
     private Status status;
