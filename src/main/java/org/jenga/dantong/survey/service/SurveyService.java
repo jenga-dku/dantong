@@ -75,8 +75,11 @@ public class SurveyService {
 
     @Transactional
     public Long create(SurveyCreateRequest surveyCreate, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        Post post = postRepository.findByPostId(surveyCreate.getPostId());
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        Post post = postRepository.findById(surveyCreate.getPostId())
+                .orElseThrow(PostNofFoundException::new);
+
         if (post.hasSurvey()) {
             throw new AlreadyHasSurveyException();
         }
@@ -161,9 +164,15 @@ public class SurveyService {
     @Transactional
     public void deleteSurvey(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId)
-            .orElseThrow(SurveyNotFoundException::new);
+                .orElseThrow(SurveyNotFoundException::new);
+        Post post = survey.getPost();
 
         survey.setShown(false);
+
+        if (post != null) {
+            post.setSurvey(null);
+            survey.setPost(null);
+        }
     }
 
     @Transactional
