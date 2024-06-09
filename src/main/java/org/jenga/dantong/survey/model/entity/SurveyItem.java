@@ -45,7 +45,7 @@ public class SurveyItem extends BaseEntity {
     @Builder.Default
     private boolean shown = true;
 
-    @OneToMany(mappedBy = "surveyItem")
+    @OneToMany(mappedBy = "surveyItem", cascade = CascadeType.REMOVE)
     private List<SurveyReply> surveyReplys = new ArrayList<>();
 
     public SurveyItem(Survey survey, String title, Tag tag) {

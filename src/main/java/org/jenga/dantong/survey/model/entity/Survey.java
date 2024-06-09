@@ -1,25 +1,19 @@
 package org.jenga.dantong.survey.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.jenga.dantong.global.base.BaseEntity;
 import org.jenga.dantong.post.model.entity.Post;
 import org.jenga.dantong.user.model.entity.User;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "survey")
 @Entity
@@ -40,12 +34,13 @@ public class Survey extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @OneToMany(mappedBy = "survey")
+    @OneToMany(mappedBy = "survey", cascade = CascadeType.REMOVE)
     private List<SurveyItem> surveyItems = new ArrayList<>();
 
-    @OneToMany(mappedBy = "survey")
+    @OneToMany(mappedBy = "survey", cascade = CascadeType.REMOVE)
     private List<SurveySubmit> surveySubmits = new ArrayList<>();
 
     @Column(name = "title")
@@ -65,7 +60,7 @@ public class Survey extends BaseEntity {
     private boolean shown = true;
 
     public Survey(String title, String description, Post post, LocalDateTime startTime,
-        LocalDateTime endTime) {
+                  LocalDateTime endTime) {
         this.title = title;
         this.description = description;
         this.post = post;

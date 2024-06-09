@@ -15,16 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequestMapping("/post")
@@ -37,7 +28,7 @@ public class PostController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @UserAuth
     public void post(@ModelAttribute @Validated PostCreateRequest postSaveRequest,
-        AppAuthentication auth) {
+                     AppAuthentication auth) {
 
         postService.savePost(postSaveRequest, auth.getUserId());
     }
@@ -51,15 +42,16 @@ public class PostController {
 
     @PatchMapping("/edit")
     @UserAuth
-    public void edit(@RequestBody @Validated PostUpdateRequest post, AppAuthentication auth) {
+    public void edit(@RequestBody @Validated PostUpdateRequest post,
+                     AppAuthentication auth) {
 
         postService.updatePost(post, auth.getUserId());
     }
 
     @GetMapping("/list")
     public ResponseEntity<Page<PostPreviewResponse>> list(
-        @RequestParam(required = false, name = "category") Category category,
-        Pageable pageable) {
+            @RequestParam(required = false, name = "category") Category category,
+            Pageable pageable) {
         Page<PostPreviewResponse> posts;
         posts = postService.showAllPost(pageable);
         if (category != null) {
@@ -71,7 +63,9 @@ public class PostController {
 
 
     @DeleteMapping("/{postId}")
-    public void delete(@PathVariable("postId") Long postId) throws Exception {
-        postService.deletePost(postId);
+    @UserAuth
+    public void delete(@PathVariable("postId") Long postId,
+                       AppAuthentication auth) throws Exception {
+        postService.deletePost(postId, auth.getUserId());
     }
 }
