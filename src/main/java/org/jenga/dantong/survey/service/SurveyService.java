@@ -125,38 +125,34 @@ public class SurveyService {
 
         List<SurveyItemUpdateRequest> itemUpdate = request.getSurveyItems();
 
-        itemUpdate.stream()
-            .filter(currItem -> surveyItemRepository.findById(currItem.getSurveyItemId())
-                .orElseThrow(SurveyItemNotFoundException::new) == null ||
-                (Objects.equals(surveyId, surveyItemRepository.findById(currItem.getSurveyItemId())
-                    .orElseThrow(SurveyItemNotFoundException::new)
-                    .getSurvey().getSurveyId())))
-            .forEach(currItem -> {
-                SurveyItem item = surveyItemRepository.findById(currItem.getSurveyItemId())
-                    .orElseThrow(SurveyItemNotFoundException::new);
+        itemUpdate
+                .forEach(currItem -> {
+                    Boolean isNew = currItem.getIsNew();
 
-                if (item != null) {
-                    log.info("Item detected");
-                    item.setTitle(currItem.getTitle());
-                    item.setTag(currItem.getTag());
-                    item.getOptions().clear();
-                    currItem.getOptions().forEach(option -> {
-                        item.getOptions().add(option);
-                    });
-                } else {
-                    log.info("New Item detected");
+                    if (isNew != null && isNew) {
+                        log.info("New Item detected");
 
-                    SurveyItem newItem = SurveyItem.builder()
-                        .survey(survey)
-                        .surveyItemId(currItem.getSurveyItemId())
-                        .title(currItem.getTitle())
-                        .tag(currItem.getTag())
-                        .options(currItem.getOptions())
-                        .build();
+                        SurveyItem newItem = SurveyItem.builder()
+                                .survey(survey)
+                                .surveyItemId(currItem.getSurveyItemId())
+                                .title(currItem.getTitle())
+                                .tag(currItem.getTag())
+                                .options(currItem.getOptions())
+                                .build();
 
-                    surveyItemRepository.save(newItem);
-                }
-            });
+                        surveyItemRepository.save(newItem);
+                    } else {
+                        SurveyItem item = surveyItemRepository.findById(currItem.getSurveyItemId())
+                                .orElseThrow(SurveyItemNotFoundException::new);
+                        log.info("Item detected");
+                        item.setTitle(currItem.getTitle());
+                        item.setTag(currItem.getTag());
+                        item.getOptions().clear();
+                        for (String option : currItem.getOptions()) {
+                            item.getOptions().add(option);
+                        }
+                    }
+                });
 
         return survey.getSurveyId();
     }
