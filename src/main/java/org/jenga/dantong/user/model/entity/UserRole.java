@@ -8,7 +8,7 @@ import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 
 @Getter
 public enum UserRole {
-    SER("ROLE_USER"),
+    USER("ROLE_USER"),
     GUEST("ROLE_GUEST"),
     ADMIN("ROLE_USER, ROLE_ADMIN");
 

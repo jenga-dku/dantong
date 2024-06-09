@@ -20,6 +20,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -38,6 +39,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -142,9 +144,8 @@ public class SecurityConfig {
                 authorizeRequests.requestMatchers("/post/**").permitAll();
                 authorizeRequests.requestMatchers("/user/**").permitAll();
                 authorizeRequests.requestMatchers("/survey/**").permitAll();
-                authorizeRequests.requestMatchers("/reply/**").permitAll();
+                authorizeRequests.requestMatchers("/submit/**").permitAll();
                 authorizeRequests.requestMatchers("/excel/**").permitAll();
-
             })
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class)

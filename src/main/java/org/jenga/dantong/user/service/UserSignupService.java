@@ -7,11 +7,11 @@ import org.jenga.dantong.global.auth.jwt.AuthenticationToken;
 import org.jenga.dantong.global.auth.jwt.JwtProvider;
 import org.jenga.dantong.user.exception.AlreadyUserExistException;
 import org.jenga.dantong.user.exception.UserNotFoundException;
-import org.jenga.dantong.user.model.dto.LoginRequest;
-import org.jenga.dantong.user.model.dto.LoginResponse;
-import org.jenga.dantong.user.model.dto.SignupRequest;
 import org.jenga.dantong.user.model.dto.UserInfo;
-import org.jenga.dantong.user.model.dto.UserResponse;
+import org.jenga.dantong.user.model.dto.request.LoginRequest;
+import org.jenga.dantong.user.model.dto.request.SignupRequest;
+import org.jenga.dantong.user.model.dto.response.LoginResponse;
+import org.jenga.dantong.user.model.dto.response.UserResponse;
 import org.jenga.dantong.user.model.entity.Status;
 import org.jenga.dantong.user.model.entity.User;
 import org.jenga.dantong.user.model.entity.UserRole;
@@ -44,7 +44,7 @@ public class UserSignupService {
             .phoneNumber(dto.getPhoneNumber())
             .status(Status.INACTIVE)
             .password(encryptedPassword)
-            .userRole(UserRole.GUEST)
+            .userRole(UserRole.USER)
             .build();
 
         deleteSignupAuths(signupToken);

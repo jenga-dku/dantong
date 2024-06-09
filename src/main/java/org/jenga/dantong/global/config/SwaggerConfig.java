@@ -12,12 +12,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
-        info = @Info(title = "Dantong App", version = "v01"))
+    info = @Info(title = "Dantong App", version = "v01"))
 @SecurityScheme(
-        name = "JWT Token",
-        type = SecuritySchemeType.HTTP,
-        bearerFormat = "JWT",
-        scheme = "bearer"
+    name = "JWT Token",
+    type = SecuritySchemeType.HTTP,
+    bearerFormat = "JWT",
+    scheme = "bearer"
 )
 @RequiredArgsConstructor
 @Configuration
@@ -33,10 +33,10 @@ public class SwaggerConfig {
     public GroupedOpenApi getUserApi() {
 
         return GroupedOpenApi
-                .builder()
-                .group("user & email")
-                .pathsToMatch("/user/**")
-                .build();
+            .builder()
+            .group("user & email")
+            .pathsToMatch("/user/**")
+            .build();
 
     }
 
@@ -44,10 +44,10 @@ public class SwaggerConfig {
     public GroupedOpenApi getSurveyApi() {
 
         return GroupedOpenApi
-                .builder()
-                .group("survey")
-                .pathsToMatch("/survey/**")
-                .build();
+            .builder()
+            .group("survey")
+            .pathsToMatch("/survey/**")
+            .build();
 
     }
 
@@ -55,10 +55,10 @@ public class SwaggerConfig {
     public GroupedOpenApi getPostApi() {
 
         return GroupedOpenApi
-                .builder()
-                .group("post")
-                .pathsToMatch("/post/**")
-                .build();
+            .builder()
+            .group("post")
+            .pathsToMatch("/post/**")
+            .build();
 
     }
 
@@ -66,10 +66,10 @@ public class SwaggerConfig {
     public GroupedOpenApi getAllApi() {
 
         return GroupedOpenApi
-                .builder()
-                .group("All")
-                .pathsToMatch("/**")
-                .build();
+            .builder()
+            .group("All")
+            .pathsToMatch("/**")
+            .build();
 
     }
 }

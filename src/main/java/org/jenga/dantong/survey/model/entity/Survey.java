@@ -45,10 +45,13 @@ public class Survey extends BaseEntity {
     @OneToMany(mappedBy = "survey")
     private List<SurveyItem> surveyItems = new ArrayList<>();
 
+    @OneToMany(mappedBy = "survey")
+    private List<SurveySubmit> surveySubmits = new ArrayList<>();
+
     @Column(name = "title")
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 1000)
     private String description;
 
     @Column(name = "start_time")
