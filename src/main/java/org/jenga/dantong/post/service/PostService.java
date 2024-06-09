@@ -22,6 +22,8 @@ import org.jenga.dantong.post.model.entity.Post;
 import org.jenga.dantong.post.model.entity.PostFile;
 import org.jenga.dantong.post.repository.PostRepository;
 import org.jenga.dantong.survey.model.dto.response.SurveySummaryResponse;
+import org.jenga.dantong.survey.model.dto.SurveySummaryResponse;
+import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.user.exception.UserNotFoundException;
 import org.jenga.dantong.user.model.dto.response.UserResponse;
 import org.jenga.dantong.user.model.entity.User;
@@ -42,7 +44,8 @@ public class PostService {
 
     @Transactional
     public Long savePost(PostCreateRequest request, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
         Post post = Post.builder()
             .user(user)
             .title(request.getTitle())
@@ -62,7 +65,8 @@ public class PostService {
 
     @Transactional
     public PostResponse findPost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(PostNofFoundException::new);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNofFoundException::new);
         String progress = Util.getProgress(post);
 
         List<PostFileResponse> files = post.getFiles().stream()
@@ -82,8 +86,18 @@ public class PostService {
 
     @Transactional
     public Long deletePost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(PostNofFoundException::new);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNofFoundException::new);
+
+        Survey survey = post.getSurvey();
+
         post.setShown(false);
+
+        if (survey != null) {
+            post.setSurvey(null);
+            survey.setPost(null);
+        }
+
         postRepository.delete(post);
 
         return postId;
