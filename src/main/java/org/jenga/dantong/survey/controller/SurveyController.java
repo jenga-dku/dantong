@@ -12,14 +12,7 @@ import org.jenga.dantong.survey.model.dto.SurveyUpdateRequest;
 import org.jenga.dantong.survey.service.SurveyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequestMapping("/survey")
@@ -40,7 +33,7 @@ public class SurveyController {
     @UserAuth
     @SecurityRequirement(name = "JWT Token")
     public ResponseEntity<SurveyIdInfoResponse> create(
-        @RequestBody @Validated SurveyCreateRequest survey, AppAuthentication auth) {
+            @RequestBody @Validated SurveyCreateRequest survey, AppAuthentication auth) {
 
         Long surveyId = surveyService.create(survey, auth.getUserId());
 
@@ -49,7 +42,7 @@ public class SurveyController {
 
     @PatchMapping("/{surveyId}")
     public ResponseEntity<SurveyIdInfoResponse> update(@PathVariable("surveyId") Long id,
-        @RequestBody SurveyUpdateRequest survey) throws Exception {
+                                                       @RequestBody @Validated SurveyUpdateRequest survey) throws Exception {
 
         Long surveyId = surveyService.updateSurvey(id, survey);
 
@@ -64,7 +57,7 @@ public class SurveyController {
 
     @DeleteMapping("/{surveyId}/{surveyItemId}")
     public void deleteSurveyItem(@PathVariable("surveyId") Long surveyId,
-        @PathVariable("surveyItemId") Long surveyItemId) {
+                                 @PathVariable("surveyItemId") Long surveyItemId) {
 
         surveyService.deleteSurveyItem(surveyId, surveyItemId);
     }

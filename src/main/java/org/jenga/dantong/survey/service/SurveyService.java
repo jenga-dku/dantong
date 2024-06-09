@@ -71,8 +71,11 @@ public class SurveyService {
 
     @Transactional
     public Long create(SurveyCreateRequest surveyCreate, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        Post post = postRepository.findByPostId(surveyCreate.getPostId());
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        Post post = postRepository.findById(surveyCreate.getPostId())
+                .orElseThrow(PostNofFoundException::new);
+
         if (post.hasSurvey()) {
             throw new AlreadyHasSurveyException();
         }

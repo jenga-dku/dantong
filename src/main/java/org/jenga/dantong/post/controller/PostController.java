@@ -44,7 +44,7 @@ public class PostController {
 
     @PatchMapping("/edit")
     @UserAuth
-    public void edit(@RequestBody PostUpdateRequest post, AppAuthentication auth) {
+    public void edit(@RequestBody @Validated PostUpdateRequest post, AppAuthentication auth) {
 
         postService.updatePost(post, auth.getUserId());
     }
