@@ -144,6 +144,7 @@ public class SecurityConfig {
                 authorizeRequests.requestMatchers("/post/**").permitAll();
                 authorizeRequests.requestMatchers("/user/**").permitAll();
                 authorizeRequests.requestMatchers("/survey/**").permitAll();
+                authorizeRequests.requestMatchers("/reply/**").permitAll();
                 authorizeRequests.requestMatchers("/submit/**").permitAll();
                 authorizeRequests.requestMatchers("/excel/**").permitAll();
             })
