@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatus;
 public class SurveyItemNotFoundException extends ApplicationException {
 
     public SurveyItemNotFoundException() {
-        super(HttpStatus.NOT_FOUND, "NOT_FOUND");
+        super(HttpStatus.NOT_FOUND, "SURVEY_ITEM_NOT_FOUND");
     }
 }

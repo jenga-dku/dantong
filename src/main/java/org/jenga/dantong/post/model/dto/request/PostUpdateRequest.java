@@ -1,4 +1,4 @@
-package org.jenga.dantong.post.model.dto;
+package org.jenga.dantong.post.model.dto.request;
 
 
 import jakarta.validation.constraints.Future;
@@ -20,9 +20,6 @@ public class PostUpdateRequest {
 
     @NotNull(message = "Post Id는 필수 입력값입니다.")
     private Long postId;
-
-    @NotNull(message = "User Id는 필수 입력값입니다.")
-    private Long userId;
 
     @NotNull(message = "제목은 필수 입력값입니다.")
     @NotEmpty(message = "제목은 필수 입력값입니다.")

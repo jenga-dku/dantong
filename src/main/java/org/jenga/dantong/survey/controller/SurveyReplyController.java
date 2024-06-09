@@ -8,9 +8,7 @@ import org.jenga.dantong.survey.model.dto.request.SurveyReplyUpdateRequest;
 import org.jenga.dantong.survey.model.dto.response.SurveyUserReplyResponse;
 import org.jenga.dantong.survey.service.SurveyReplyService;
 import org.jenga.dantong.survey.service.SurveySubmitService;
-import org.jenga.dantong.user.model.entity.User;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +25,7 @@ public class SurveyReplyController {
 
     @GetMapping("/{surveyItemId}")
     public ResponseEntity<List<SurveyUserReplyResponse>> findAllReply(
-        @PathVariable("surveyItemId") Long surveyItemId) {
+            @PathVariable("surveyItemId") Long surveyItemId) {
         List<SurveyUserReplyResponse> reply = surveyReplyService.findAllReply(surveyItemId);
 
         return ResponseEntity.ok(reply);
@@ -45,15 +43,19 @@ public class SurveyReplyController {
 
 
     @PatchMapping("/{surveyId}")
-    public void updateReply(@RequestBody List<SurveyReplyUpdateRequest> survey) {
+    @UserAuth
+    public void updateReply(@PathVariable(name = "surveyId") Long surveyId,
+                            @RequestBody @Validated List<SurveyReplyUpdateRequest> reply,
+                            AppAuthentication auth) {
 
-        surveyReplyService.updateReply(survey);
+        surveyReplyService.updateReply(surveyId, reply, auth.getUserId());
     }
 
     @DeleteMapping("/{surveyId}")
+    @UserAuth
     public void deleteUserReply(@PathVariable(name = "surveyId") Long surveyId,
-        @AuthenticationPrincipal User user) {
+                                AppAuthentication auth) {
 
-        surveyReplyService.deleteUserReply(surveyId, user.getId());
+        surveyReplyService.deleteUserReply(surveyId, auth.getUserId());
     }
 }
