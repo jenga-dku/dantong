@@ -78,4 +78,22 @@ public class SurveySubmitService {
             throw new NotGrantedException();
         }
     }
+
+    public List<SurveySubmitResponse> getSubmissions(Long surveyId) {
+        Survey survey = surveyRepository.findById(surveyId)
+            .orElseThrow(SurveyNotFoundException::new);
+        List<SurveySubmit> surveySubmits = surveySubmitRepository.findSurveySubmitBySurvey(survey);
+        return surveySubmits.stream()
+            .map(submit -> {
+                List<SurveyReplyResponse> surveyReplies = submit.getSurveyReplies().stream()
+                    .map(surveyReply -> {
+                        SurveyItemResponse surveyItemResponse = new SurveyItemResponse(
+                            surveyReply.getSurveyItem());
+                        return new SurveyReplyResponse(surveyReply.getReplyId(), surveyItemResponse,
+                            surveyReply.getContent());
+                    }).collect(Collectors.toList());
+                return new SurveySubmitResponse(submit.getSurvey().getSurveyId(), surveyReplies);
+            }).collect(Collectors.toList());
+    }
 }
+

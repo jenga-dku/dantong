@@ -2,6 +2,10 @@ package org.jenga.dantong.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.jenga.dantong.global.auth.CustomAccessDeniedHandler;
 import org.jenga.dantong.global.auth.CustomAuthenticationEntryPoint;
@@ -33,11 +37,6 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
@@ -45,17 +44,17 @@ import java.util.Locale;
 public class SecurityConfig {
 
     private static final String[] PUBLIC_URI = {
-            "/swagger-ui/**", "/api-docs/**", "/test/**"
+        "/swagger-ui/**", "/api-docs/**", "/test/**"
     };
     private static final String[] ADMIN_URI = {
-            "/admin/**"
+        "/admin/**"
     };
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper;
 
     @Bean
     AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -129,31 +128,31 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
-                                           HandlerMappingIntrospector introspector) throws Exception {
+        HandlerMappingIntrospector introspector) throws Exception {
         return http
-                .cors(httpSecurityCorsConfigurer -> corsConfigurationSource())
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS))
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizeRequests -> {
-                    authorizeRequests.requestMatchers(
-                            new MvcRequestMatcher(introspector, "/swagger-ui/**")).permitAll();
-                    authorizeRequests.requestMatchers("/v3/api-docs/**",
-                            "/webjars/**").permitAll();
-                    authorizeRequests.requestMatchers("/post/**").permitAll();
-                    authorizeRequests.requestMatchers("/user/**").permitAll();
-                    authorizeRequests.requestMatchers("/survey/**").permitAll();
-                    authorizeRequests.requestMatchers("/reply/**").permitAll();
-                    authorizeRequests.requestMatchers("/submit/**").permitAll();
-                    authorizeRequests.requestMatchers("/excel/**").permitAll();
-                })
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class)
-                .exceptionHandling(c -> c.authenticationEntryPoint(customAuthenticationEntryPoint())
-                        .accessDeniedHandler(customAccessDeniedHandler()))
-                .build();
+            .cors(httpSecurityCorsConfigurer -> corsConfigurationSource())
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
+                SessionCreationPolicy.STATELESS))
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(authorizeRequests -> {
+                authorizeRequests.requestMatchers(
+                    new MvcRequestMatcher(introspector, "/swagger-ui/**")).permitAll();
+                authorizeRequests.requestMatchers("/v3/api-docs/**",
+                    "/webjars/**").permitAll();
+                authorizeRequests.requestMatchers("/post/**").permitAll();
+                authorizeRequests.requestMatchers("/user/**").permitAll();
+                authorizeRequests.requestMatchers("/survey/**").permitAll();
+                authorizeRequests.requestMatchers("/reply/**").permitAll();
+                authorizeRequests.requestMatchers("/submit/**").permitAll();
+                authorizeRequests.requestMatchers("/excel/**").permitAll();
+            })
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class)
+            .exceptionHandling(c -> c.authenticationEntryPoint(customAuthenticationEntryPoint())
+                .accessDeniedHandler(customAccessDeniedHandler()))
+            .build();
     }
 
     public static class CustomLocaleResolver extends AcceptHeaderLocaleResolver {
@@ -169,7 +168,7 @@ public class SecurityConfig {
                 return Locale.getDefault();
             }
             List<Locale.LanguageRange> list = Locale.LanguageRange.parse(
-                    request.getHeader("Accept-Language"));
+                request.getHeader("Accept-Language"));
 
             mLocales = new ArrayList<>();
             for (String code : mLanguageCode) {
