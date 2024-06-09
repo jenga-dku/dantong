@@ -161,8 +161,14 @@ public class SurveyService {
     public void deleteSurvey(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId)
                 .orElseThrow(SurveyNotFoundException::new);
+        Post post = survey.getPost();
 
         survey.setShown(false);
+
+        if (post != null) {
+            post.setSurvey(null);
+            survey.setPost(null);
+        }
     }
 
     @Transactional

@@ -82,8 +82,18 @@ public class PostService {
 
     @Transactional
     public Long deletePost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(PostNofFoundException::new);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNofFoundException::new);
+
+        Survey survey = post.getSurvey();
+
         post.setShown(false);
+
+        if (survey != null) {
+            post.setSurvey(null);
+            survey.setPost(null);
+        }
+
         postRepository.delete(post);
 
         return postId;
