@@ -10,6 +10,7 @@ import org.jenga.dantong.user.exception.UserNotFoundException;
 import org.jenga.dantong.user.model.dto.UserInfo;
 import org.jenga.dantong.user.model.dto.request.LoginRequest;
 import org.jenga.dantong.user.model.dto.request.SignupRequest;
+import org.jenga.dantong.user.model.dto.request.UserInfoEditRequest;
 import org.jenga.dantong.user.model.dto.response.LoginResponse;
 import org.jenga.dantong.user.model.dto.response.UserResponse;
 import org.jenga.dantong.user.model.entity.Status;
@@ -38,14 +39,14 @@ public class UserSignupService {
         String encryptedPassword = passwordEncoder.encode(dto.getPassword());
 
         User user = User.builder()
-            .studentId(info.getStudentId())
-            .name(dto.getName())
-            .major(dto.getMajor())
-            .phoneNumber(dto.getPhoneNumber())
-            .status(Status.INACTIVE)
-            .password(encryptedPassword)
-            .userRole(UserRole.USER)
-            .build();
+                .studentId(info.getStudentId())
+                .name(dto.getName())
+                .major(dto.getMajor())
+                .phoneNumber(dto.getPhoneNumber())
+                .status(Status.INACTIVE)
+                .password(encryptedPassword)
+                .userRole(UserRole.USER)
+                .build();
 
         deleteSignupAuths(signupToken);
         return userRepository.save(user);
@@ -59,7 +60,7 @@ public class UserSignupService {
 
     public LoginResponse login(LoginRequest dto) {
         User user = userRepository.findByStudentId(dto.getStudentId())
-            .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             AuthenticationToken token = jwtProvider.issue(user);
@@ -81,5 +82,12 @@ public class UserSignupService {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         return new UserResponse(user);
+    }
+
+    @Transactional
+    public void userInfoEdit(UserInfoEditRequest request, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        user.edit(request.getName(), request.getMajor(), request.getPhoneNumber());
     }
 }
