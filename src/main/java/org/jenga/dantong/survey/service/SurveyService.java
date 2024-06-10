@@ -1,6 +1,8 @@
 package org.jenga.dantong.survey.service;
 
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.util.Util;
@@ -15,19 +17,20 @@ import org.jenga.dantong.survey.model.dto.request.SurveyCreateRequest;
 import org.jenga.dantong.survey.model.dto.request.SurveyItemCreateRequest;
 import org.jenga.dantong.survey.model.dto.request.SurveyItemUpdateRequest;
 import org.jenga.dantong.survey.model.dto.request.SurveyUpdateRequest;
+import org.jenga.dantong.survey.model.dto.response.SurveyAdminResponse;
 import org.jenga.dantong.survey.model.dto.response.SurveyItemResponse;
 import org.jenga.dantong.survey.model.dto.response.SurveyResponse;
 import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.survey.model.entity.SurveyItem;
 import org.jenga.dantong.survey.repository.SurveyItemRepository;
 import org.jenga.dantong.survey.repository.SurveyRepository;
+import org.jenga.dantong.survey.repository.SurveySubmitRepository;
 import org.jenga.dantong.user.exception.UserNotFoundException;
 import org.jenga.dantong.user.model.entity.User;
 import org.jenga.dantong.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -38,39 +41,40 @@ public class SurveyService {
     private final SurveyItemRepository surveyItemRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final SurveySubmitRepository surveySubmitRepository;
 
     @Transactional
     public SurveyResponse findSurvey(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId)
-                .orElseThrow(SurveyNotFoundException::new);
+            .orElseThrow(SurveyNotFoundException::new);
 
         if (!survey.isShown()) {
             return SurveyResponse.builder()
-                    .description("Deleted Survey")
-                    .build();
+                .description("Deleted Survey")
+                .build();
         }
 
         List<SurveyItem> items = surveyItemRepository.findBySurveyAndShownTrue(survey);
 
         List<SurveyItemResponse> responseItems = items.stream()
-                .map(currItem -> SurveyItemResponse.builder()
-                        .surveyItemId(currItem.getSurveyItemId())
-                        .title(currItem.getTitle())
-                        .tag(currItem.getTag())
-                        .description(currItem.getDescription())
-                        .options(currItem.getOptions())
-                        .build())
-                .toList();
+            .map(currItem -> SurveyItemResponse.builder()
+                .surveyItemId(currItem.getSurveyItemId())
+                .title(currItem.getTitle())
+                .tag(currItem.getTag())
+                .description(currItem.getDescription())
+                .options(currItem.getOptions())
+                .build())
+            .toList();
 
         SurveyResponse response = SurveyResponse.builder()
-                .title(survey.getTitle())
-                .description(survey.getDescription())
-                .postId(Objects.isNull(survey.getPost()) ? 0 : survey.getPost().getPostId())
-                .startTime(survey.getStartTime())
-                .endTime(survey.getEndTime())
-                .status(Util.getProgress(survey))
-                .surveyItems(responseItems)
-                .build();
+            .title(survey.getTitle())
+            .description(survey.getDescription())
+            .postId(Objects.isNull(survey.getPost()) ? 0 : survey.getPost().getPostId())
+            .startTime(survey.getStartTime())
+            .endTime(survey.getEndTime())
+            .status(Util.getProgress(survey))
+            .surveyItems(responseItems)
+            .build();
 
         return response;
     }
@@ -78,19 +82,19 @@ public class SurveyService {
     @Transactional
     public Long create(SurveyCreateRequest surveyCreate, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+            .orElseThrow(UserNotFoundException::new);
         Post post = postRepository.findById(surveyCreate.getPostId())
-                .orElseThrow(PostNofFoundException::new);
+            .orElseThrow(PostNofFoundException::new);
 
         if (post.hasSurvey()) {
             throw new AlreadyHasSurveyException();
         }
         Survey survey = new Survey(
-                surveyCreate.getTitle(),
-                surveyCreate.getDescription(),
-                post,
-                surveyCreate.getStartTime(),
-                surveyCreate.getEndTime()
+            surveyCreate.getTitle(),
+            surveyCreate.getDescription(),
+            post,
+            surveyCreate.getStartTime(),
+            surveyCreate.getEndTime()
         );
         survey.setUser(user);
 
@@ -99,14 +103,14 @@ public class SurveyService {
         List<SurveyItemCreateRequest> item = surveyCreate.getSurveyItems();
 
         item.stream()
-                .map(currItem -> SurveyItem.builder()
-                        .survey(survey)
-                        .title(currItem.getTitle())
-                        .tag(currItem.getTag())
-                        .description(currItem.getDescription())
-                        .options(currItem.getOptions())
-                        .build())
-                .forEach(surveyItemRepository::save);
+            .map(currItem -> SurveyItem.builder()
+                .survey(survey)
+                .title(currItem.getTitle())
+                .tag(currItem.getTag())
+                .description(currItem.getDescription())
+                .options(currItem.getOptions())
+                .build())
+            .forEach(surveyItemRepository::save);
 
         return survey.getSurveyId();
     }
@@ -115,13 +119,13 @@ public class SurveyService {
     public Long updateSurvey(Long surveyId, SurveyUpdateRequest request, Long userId) {
 
         Survey survey = surveyRepository.findById(surveyId)
-                .orElseThrow(SurveyNotFoundException::new);
+            .orElseThrow(SurveyNotFoundException::new);
         if (userId != survey.getUser().getId()) {
             throw new PermissionDeniedException();
         }
 
         Post post = postRepository.findById(request.getPostId())
-                .orElseThrow(PostNofFoundException::new);
+            .orElseThrow(PostNofFoundException::new);
         if (userId != post.getUser().getId()) {
             throw new PermissionDeniedException();
         }
@@ -135,33 +139,33 @@ public class SurveyService {
         List<SurveyItemUpdateRequest> itemUpdate = request.getSurveyItems();
 
         itemUpdate
-                .forEach(currItem -> {
-                    Boolean isNew = currItem.getIsNew();
+            .forEach(currItem -> {
+                Boolean isNew = currItem.getIsNew();
 
-                    if (isNew != null && isNew) {
-                        log.info("New Item detected");
+                if (isNew != null && isNew) {
+                    log.info("New Item detected");
 
-                        SurveyItem newItem = SurveyItem.builder()
-                                .survey(survey)
-                                .surveyItemId(currItem.getSurveyItemId())
-                                .title(currItem.getTitle())
-                                .tag(currItem.getTag())
-                                .options(currItem.getOptions())
-                                .build();
+                    SurveyItem newItem = SurveyItem.builder()
+                        .survey(survey)
+                        .surveyItemId(currItem.getSurveyItemId())
+                        .title(currItem.getTitle())
+                        .tag(currItem.getTag())
+                        .options(currItem.getOptions())
+                        .build();
 
-                        surveyItemRepository.save(newItem);
-                    } else {
-                        SurveyItem item = surveyItemRepository.findById(currItem.getSurveyItemId())
-                                .orElseThrow(SurveyItemNotFoundException::new);
-                        log.info("Item detected");
-                        item.setTitle(currItem.getTitle());
-                        item.setTag(currItem.getTag());
-                        item.getOptions().clear();
-                        for (String option : currItem.getOptions()) {
-                            item.getOptions().add(option);
-                        }
+                    surveyItemRepository.save(newItem);
+                } else {
+                    SurveyItem item = surveyItemRepository.findById(currItem.getSurveyItemId())
+                        .orElseThrow(SurveyItemNotFoundException::new);
+                    log.info("Item detected");
+                    item.setTitle(currItem.getTitle());
+                    item.setTag(currItem.getTag());
+                    item.getOptions().clear();
+                    for (String option : currItem.getOptions()) {
+                        item.getOptions().add(option);
                     }
-                });
+                }
+            });
 
         return survey.getSurveyId();
     }
@@ -169,7 +173,7 @@ public class SurveyService {
     @Transactional
     public void deleteSurvey(Long surveyId, Long userId) {
         Survey survey = surveyRepository.findById(surveyId)
-                .orElseThrow(SurveyNotFoundException::new);
+            .orElseThrow(SurveyNotFoundException::new);
         if (userId != survey.getUser().getId()) {
             throw new PermissionDeniedException();
         }
@@ -186,22 +190,33 @@ public class SurveyService {
 
     @Transactional
     public void deleteSurveyItem(Long surveyId, Long itemId, Long userId) {
-        Survey survey = surveyRepository.findById(surveyId).orElseThrow(SurveyNotFoundException::new);
+        Survey survey = surveyRepository.findById(surveyId)
+            .orElseThrow(SurveyNotFoundException::new);
 
-        if (userId != survey.getUser().getId()) {
+        if (!Objects.equals(userId, survey.getUser().getId())) {
             throw new PermissionDeniedException();
         }
 
-        if (surveyId == surveyItemRepository.findById(itemId)
-                .orElseThrow(SurveyItemNotFoundException::new)
-                .getSurvey().getSurveyId()) {
+        if (surveyId.equals(surveyItemRepository.findById(itemId)
+            .orElseThrow(SurveyItemNotFoundException::new)
+            .getSurvey().getSurveyId())) {
             SurveyItem item = surveyItemRepository.findById(itemId)
-                    .orElseThrow(SurveyItemNotFoundException::new);
+                .orElseThrow(SurveyItemNotFoundException::new);
 
             item.setShown(false);
         } else {
             return;
         }
+    }
 
+    public Page<SurveyAdminResponse> getSurveyInfos(Pageable pageable) {
+        Page<Survey> surveys = surveyRepository.findAll(pageable);
+        return surveys
+            .map(survey -> {
+                String progress = Util.getProgress(survey);
+                Long count = surveySubmitRepository.countBySurvey(survey);
+                return new SurveyAdminResponse(survey,
+                    progress, count);
+            });
     }
 }

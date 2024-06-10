@@ -7,6 +7,7 @@ import org.jenga.dantong.global.auth.jwt.AuthenticationToken;
 import org.jenga.dantong.global.auth.jwt.JwtProvider;
 import org.jenga.dantong.user.exception.AlreadyUserExistException;
 import org.jenga.dantong.user.exception.UserNotFoundException;
+import org.jenga.dantong.user.exception.WrongPasswordException;
 import org.jenga.dantong.user.model.dto.UserInfo;
 import org.jenga.dantong.user.model.dto.request.LoginRequest;
 import org.jenga.dantong.user.model.dto.request.SignupRequest;
@@ -67,7 +68,7 @@ public class UserSignupService {
             userRepository.findByStudentId(dto.getStudentId());
             return new LoginResponse(token);
         } else {
-            throw new RuntimeException();
+            throw new WrongPasswordException();
         }
     }
 
