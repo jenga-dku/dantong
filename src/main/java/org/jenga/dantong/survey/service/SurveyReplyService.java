@@ -10,6 +10,8 @@ import org.jenga.dantong.survey.exception.SurveyReplyNotFoundException;
 import org.jenga.dantong.survey.model.dto.request.SurveyReplyCreateRequest;
 import org.jenga.dantong.survey.model.dto.request.SurveyReplyUpdateRequest;
 import org.jenga.dantong.survey.model.dto.response.SurveyUserAllReplyResponse;
+import org.jenga.dantong.survey.model.dto.response.AllRepliesResponse;
+import org.jenga.dantong.survey.model.dto.response.SurveyItemResponse;
 import org.jenga.dantong.survey.model.dto.response.SurveyUserReplyResponse;
 import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.survey.model.entity.SurveyItem;
@@ -53,17 +55,30 @@ public class SurveyReplyService {
                 .toList();
     }
 
-    public List<List<SurveyUserReplyResponse>> findAllReplyBySurvey(Long surveyId) {
+    public List<AllRepliesResponse> findAllReplyBySurvey(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId)
                 .orElseThrow(SurveyNotFoundException::new);
         List<SurveyItem> surveyItems = surveyItemRepository.findBySurvey(survey);
         return surveyItems.stream()
-                .map(surveyItem -> surveyReplyRepository.findAllBySurveyItem(
-                                surveyItem).stream()
-                        .map(reply -> SurveyUserReplyResponse.builder()
-                                .surveyItemId(reply.getSurveyItem().getSurveyItemId())
-                                .content(reply.getContent())
-                                .build()).collect(Collectors.toList())).collect(Collectors.toList());
+            .map(surveyItem -> {
+                    List<SurveyUserReplyResponse> replyResponseList = surveyReplyRepository.findAllBySurveyItem(
+                            surveyItem).stream()
+                        .map(reply -> {
+                                SurveyUserReplyResponse replyResponse = SurveyUserReplyResponse.builder()
+                                    .surveyItemId(reply.getSurveyItem().getSurveyItemId())
+                                    .content(reply.getContent())
+                                    .build();
+                                return replyResponse;
+                            }
+                        ).collect(Collectors.toList());
+                    SurveyItemResponse surveyItemResponse = new SurveyItemResponse(surveyItem);
+                    return AllRepliesResponse.builder()
+                        .surveyItemResponse(surveyItemResponse)
+                        .replies(replyResponseList)
+                        .build();
+                }
+            )
+            .collect(Collectors.toList());
     }
 
     @Transactional

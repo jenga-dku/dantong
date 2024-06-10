@@ -6,6 +6,7 @@ import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 import org.jenga.dantong.global.base.UserAuth;
 import org.jenga.dantong.survey.model.dto.request.SurveyReplyUpdateRequest;
 import org.jenga.dantong.survey.model.dto.response.SurveyUserAllReplyResponse;
+import org.jenga.dantong.survey.model.dto.response.AllRepliesResponse;
 import org.jenga.dantong.survey.model.dto.response.SurveyUserReplyResponse;
 import org.jenga.dantong.survey.service.SurveyReplyService;
 import org.jenga.dantong.survey.service.SurveySubmitService;
@@ -40,10 +41,10 @@ public class SurveyReplyController {
      * @return
      */
     @GetMapping("/all/{surveyId}")
-    public ResponseEntity<List<List<SurveyUserReplyResponse>>> findAllReply(
-            @PathVariable("surveyId") Long surveyId) {
-        List<List<SurveyUserReplyResponse>> replies = surveyReplyService.findAllReplyBySurvey(
-                surveyId);
+    public ResponseEntity<List<AllRepliesResponse>> findAllReply(
+        @PathVariable("surveyId") Long surveyId) {
+        List<AllRepliesResponse> replies = surveyReplyService.findAllReplyBySurvey(
+            surveyId);
         return ResponseEntity.ok(replies);
     }
 
@@ -68,7 +69,6 @@ public class SurveyReplyController {
 
     @PatchMapping("/{surveyId}")
     @UserAuth
-
     public void updateReply(@PathVariable(name = "surveyId") Long surveyId,
                             @RequestBody @Validated List<SurveyReplyUpdateRequest> reply,
                             AppAuthentication auth) {
