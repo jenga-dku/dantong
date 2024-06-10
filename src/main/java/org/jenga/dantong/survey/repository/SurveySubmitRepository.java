@@ -1,11 +1,12 @@
 package org.jenga.dantong.survey.repository;
 
-import java.util.List;
-import java.util.Optional;
 import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.survey.model.entity.SurveySubmit;
 import org.jenga.dantong.user.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface SurveySubmitRepository extends JpaRepository<SurveySubmit, Long> {
 
@@ -14,4 +15,6 @@ public interface SurveySubmitRepository extends JpaRepository<SurveySubmit, Long
     List<SurveySubmit> findSurveySubmitBySurvey(Survey survey);
 
     Long countBySurvey(Survey survey);
+  
+    List<SurveySubmit> findByUser(User user);
 }
