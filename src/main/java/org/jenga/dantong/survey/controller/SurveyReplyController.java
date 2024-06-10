@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 import org.jenga.dantong.global.base.UserAuth;
 import org.jenga.dantong.survey.model.dto.request.SurveyReplyUpdateRequest;
+import org.jenga.dantong.survey.model.dto.response.AllRepliesResponse;
 import org.jenga.dantong.survey.model.dto.response.SurveyUserReplyResponse;
 import org.jenga.dantong.survey.service.SurveyReplyService;
 import org.jenga.dantong.survey.service.SurveySubmitService;
@@ -45,9 +46,9 @@ public class SurveyReplyController {
      * @return
      */
     @GetMapping("/all/{surveyId}")
-    public ResponseEntity<List<List<SurveyUserReplyResponse>>> findAllReply(
+    public ResponseEntity<List<AllRepliesResponse>> findAllReply(
         @PathVariable("surveyId") Long surveyId) {
-        List<List<SurveyUserReplyResponse>> replies = surveyReplyService.findAllReplyBySurvey(
+        List<AllRepliesResponse> replies = surveyReplyService.findAllReplyBySurvey(
             surveyId);
         return ResponseEntity.ok(replies);
     }
