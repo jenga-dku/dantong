@@ -84,9 +84,12 @@ public class PostService {
     }
 
     @Transactional
-    public Long deletePost(Long postId) {
+    public Long deletePost(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
-            .orElseThrow(PostNofFoundException::new);
+                .orElseThrow(PostNofFoundException::new);
+        if (userId != post.getUser().getId()) {
+            throw new PermissionDeniedException();
+        }
 
         Survey survey = post.getSurvey();
 

@@ -1,20 +1,16 @@
 package org.jenga.dantong.survey.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.List;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.jenga.dantong.global.base.BaseEntity;
 import org.jenga.dantong.user.model.entity.User;
+
+import java.util.List;
 
 @Entity
 @Builder
@@ -32,11 +28,12 @@ public class SurveySubmit extends BaseEntity {
     @JoinColumn(name = "survey_id")
     private Survey survey;
 
-    @OneToMany(mappedBy = "surveySubmit")
+    @OneToMany(mappedBy = "surveySubmit", cascade = CascadeType.REMOVE)
     private List<SurveyReply> surveyReplies;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     public SurveySubmit(User user, Survey survey) {

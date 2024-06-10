@@ -17,8 +17,9 @@ import java.util.List;
 @Builder
 public class SurveyItemUpdateRequest {
 
-    @NotNull(message = "Survey Item Id는 필수 입력값입니다.")
     private Long surveyItemId;
+
+    private Boolean isNew;
 
     @NotNull(message = "제목은 필수 입력값입니다.")
     @NotEmpty(message = "제목은 필수 입력갑입니다.")
@@ -29,9 +30,7 @@ public class SurveyItemUpdateRequest {
     private Tag tag;
 
     @NotNull(message = "질문은 필수 입력값입니다.")
-    @NotEmpty(message = "질문은 필수 입력값입니다.")
-    @NotBlank(message = "질문은 공백일 수 없습니다.")
-    private List<String> options;
+    private List<@NotEmpty(message = "질문은 필수 입력값입니다.") @NotBlank(message = "질문은 공백일 수 없습니다.") String> options;
 
     private String description;
 }

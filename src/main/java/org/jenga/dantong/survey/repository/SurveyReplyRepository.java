@@ -14,9 +14,5 @@ public interface SurveyReplyRepository extends JpaRepository<SurveyReply, Long> 
 
     List<SurveyReply> findAllBySurveyItem(SurveyItem surveyItem);
 
-    Optional<SurveyReply> findSurveyReplyByUserAndSurveyItem(User user, SurveyItem surveyItem);
-
-    SurveyReply findBySurveyItemAndUserId(SurveyItem surveyItem, Long userId);
-
-    SurveyReply findBySurveyItemAndReplyId(SurveyItem surveyItem, Long replyId);
+    Optional<SurveyReply> findBySurveyItemAndUser(SurveyItem surveyItem, User user);
 }
