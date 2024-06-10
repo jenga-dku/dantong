@@ -10,12 +10,16 @@ import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 public enum UserRole {
     USER("ROLE_USER"),
     GUEST("ROLE_GUEST"),
-    ADMIN("ROLE_USER, ROLE_ADMIN");
+    ADMIN(combine("ROLE_ADMIN", "ROLE_USER"));
 
     private final String name;
 
     UserRole(String name) {
         this.name = name;
+    }
+
+    public static String combine(String... names) {
+        return String.join(",", names);
     }
 
     private static final Map<String, UserRole> BY_LABEL =
