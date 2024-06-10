@@ -1,6 +1,5 @@
 package org.jenga.dantong.survey.controller;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
@@ -10,16 +9,11 @@ import org.jenga.dantong.survey.model.dto.response.AllRepliesResponse;
 import org.jenga.dantong.survey.model.dto.response.SurveyUserReplyResponse;
 import org.jenga.dantong.survey.service.SurveyReplyService;
 import org.jenga.dantong.survey.service.SurveySubmitService;
-import org.jenga.dantong.user.model.entity.User;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequestMapping("/reply")
@@ -56,24 +50,28 @@ public class SurveyReplyController {
     @GetMapping("/user/{surveyId}")
     @UserAuth
     public ResponseEntity<List<SurveyUserReplyResponse>> findUserReply(
-        @PathVariable("surveyId") Long surveyId, AppAuthentication user) {
+            @PathVariable("surveyId") Long surveyId, AppAuthentication auth) {
         List<SurveyUserReplyResponse> reply = surveyReplyService.findUserReply(surveyId,
-            user.getUserId());
+                auth.getUserId());
 
         return ResponseEntity.ok(reply);
     }
 
 
     @PatchMapping("/{surveyId}")
-    public void updateReply(@RequestBody List<SurveyReplyUpdateRequest> survey) {
+    @UserAuth
+    public void updateReply(@PathVariable(name = "surveyId") Long surveyId,
+                            @RequestBody @Validated List<SurveyReplyUpdateRequest> reply,
+                            AppAuthentication auth) {
 
-        surveyReplyService.updateReply(survey);
+        surveyReplyService.updateReply(surveyId, reply, auth.getUserId());
     }
 
     @DeleteMapping("/{surveyId}")
+    @UserAuth
     public void deleteUserReply(@PathVariable(name = "surveyId") Long surveyId,
-        @AuthenticationPrincipal User user) {
+                                AppAuthentication auth) {
 
-        surveyReplyService.deleteUserReply(surveyId, user.getId());
+        surveyReplyService.deleteUserReply(surveyId, auth.getUserId());
     }
 }

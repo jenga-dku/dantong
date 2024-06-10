@@ -13,16 +13,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SurveyReplyUpdateRequest {
 
-    @NotNull(message = "Reply Id는 필수 입력값입니다.")
-    private Long replyId;
-
     @NotNull(message = "Survey Item Id는 필수 입력값입니다.")
     private Long surveyItemId;
 
     @NotNull(message = "답변은 필수 입력값입니다.")
     @NotBlank(message = "답변은 공백일 수 없습니다.")
     private String content;
-
-    @NotNull(message = "User Id는 필수 입력값입니다.")
-    private Long userId;
 }

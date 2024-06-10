@@ -20,9 +20,6 @@ public class PostUpdateRequest {
     @NotNull(message = "Post Id는 필수 입력값입니다.")
     private Long postId;
 
-    @NotNull(message = "User Id는 필수 입력값입니다.")
-    private Long userId;
-
     @NotNull(message = "제목은 필수 입력값입니다.")
     @NotEmpty(message = "제목은 필수 입력값입니다.")
     @NotBlank(message = "제목은 공백일 수 없습니다.")

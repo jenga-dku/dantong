@@ -39,24 +39,29 @@ public class SurveyController {
     }
 
     @PatchMapping("/{surveyId}")
+    @UserAuth
     public ResponseEntity<SurveyIdInfoResponse> update(@PathVariable("surveyId") Long id,
-                                                       @RequestBody @Validated SurveyUpdateRequest survey) throws Exception {
+                                                       @RequestBody @Validated SurveyUpdateRequest survey,
+                                                       AppAuthentication auth) {
 
-        Long surveyId = surveyService.updateSurvey(id, survey);
+        Long surveyId = surveyService.updateSurvey(id, survey, auth.getUserId());
 
         return ResponseEntity.ok(SurveyIdInfoResponse.builder().surveyId(surveyId).build());
     }
 
     @DeleteMapping("/{surveyId}")
-    public void deleteSurvey(@PathVariable("surveyId") Long surveyId) {
+    @UserAuth
+    public void deleteSurvey(@PathVariable("surveyId") Long surveyId, AppAuthentication auth) {
 
-        surveyService.deleteSurvey(surveyId);
+        surveyService.deleteSurvey(surveyId, auth.getUserId());
     }
 
     @DeleteMapping("/{surveyId}/{surveyItemId}")
+    @UserAuth
     public void deleteSurveyItem(@PathVariable("surveyId") Long surveyId,
-                                 @PathVariable("surveyItemId") Long surveyItemId) {
+                                 @PathVariable("surveyItemId") Long surveyItemId,
+                                 AppAuthentication auth) {
 
-        surveyService.deleteSurveyItem(surveyId, surveyItemId);
+        surveyService.deleteSurveyItem(surveyId, surveyItemId, auth.getUserId());
     }
 }

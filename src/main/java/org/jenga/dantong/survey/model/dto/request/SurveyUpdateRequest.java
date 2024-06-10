@@ -1,8 +1,6 @@
 package org.jenga.dantong.survey.model.dto.request;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -12,6 +10,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder
@@ -40,6 +42,7 @@ public class SurveyUpdateRequest {
     private LocalDateTime endTime;
 
     @NotNull(message = "질문은 필수 입력값입니다.")
+    @Valid
     @Builder.Default
     private List<SurveyItemUpdateRequest> surveyItems = new ArrayList<SurveyItemUpdateRequest>();
 }
