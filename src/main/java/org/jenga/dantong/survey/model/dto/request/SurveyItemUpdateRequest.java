@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jenga.dantong.survey.exception.ItemOptionIsWrongException;
 import org.jenga.dantong.survey.model.entity.Tag;
 
 import java.util.List;
@@ -29,8 +30,21 @@ public class SurveyItemUpdateRequest {
     @NotNull(message = "질문 유형은 필수 입력값입니다.")
     private Tag tag;
 
-    @NotNull(message = "질문은 필수 입력값입니다.")
-    private List<@NotEmpty(message = "질문은 필수 입력값입니다.") @NotBlank(message = "질문은 공백일 수 없습니다.") String> options;
+    private List<String> options;
 
     private String description;
+
+    public void tagCheck() {
+        if (this.tag.equals(Tag.MULTIPLE)) {
+            if (this.options == null || this.options.isEmpty()) {
+                throw new ItemOptionIsWrongException();
+            } else {
+                this.options.forEach(currOption -> {
+                    if (currOption.isEmpty() || currOption.isBlank()) {
+                        throw new ItemOptionIsWrongException();
+                    }
+                });
+            }
+        }
+    }
 }

@@ -22,7 +22,7 @@ public enum Major {
     @JsonCreator
     public static Major from(String val) {
         for (Major major : Major.values()) {
-            if (major.getMajorName().equals(val)) {
+            if (major.name().equals(val)) {
                 return major;
             }
         }
