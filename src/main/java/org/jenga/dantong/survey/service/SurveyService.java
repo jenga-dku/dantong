@@ -180,7 +180,7 @@ public class SurveyService {
 
         Post post = survey.getPost();
 
-        survey.setShown(false);
+        surveyRepository.delete(survey);
 
         if (post != null) {
             post.setSurvey(null);

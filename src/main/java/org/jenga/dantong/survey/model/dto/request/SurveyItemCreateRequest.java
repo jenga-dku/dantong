@@ -2,14 +2,13 @@ package org.jenga.dantong.survey.model.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.survey.exception.ItemOptionIsWrongException;
 import org.jenga.dantong.survey.model.entity.Tag;
-
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
