@@ -3,7 +3,6 @@ package org.jenga.dantong.survey.model.dto.request;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,14 +20,11 @@ import java.util.List;
 @Setter
 public class SurveyCreateRequest {
 
-    @NotNull(message = "제목은 필수 입력값입니다.")
-    @NotEmpty(message = "제목은 필수 입력값입니다.")
-    @NotBlank(message = "제목은 공백일 수 없습니다.")
+    @NotBlank(message = "제목은 필수 입력값입니다.")
     private String title;
 
     private String description;
 
-    @NotNull(message = "Post Id는 필수 입력값입니다.")
     private Long postId;
 
     @NotNull(message = "시작 시각은 필수 입력값입니다.")
@@ -44,4 +40,8 @@ public class SurveyCreateRequest {
     @NotNull(message = "질문은 필수 입력값입니다.")
     @Valid
     private List<SurveyItemCreateRequest> surveyItems = new ArrayList<SurveyItemCreateRequest>();
+
+    public void itemOptionCheck() {
+        surveyItems.forEach(SurveyItemCreateRequest::tagCheck);
+    }
 }

@@ -2,7 +2,6 @@ package org.jenga.dantong.post.model.dto.request;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,9 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PostCreateRequest {
 
-    @NotNull(message = "제목은 필수 입력값입니다.")
-    @NotEmpty(message = "제목은 필수 입력값입니다.")
-    @NotBlank(message = "제목은 공백일 수 없습니다.")
+    @NotBlank(message = "제목은 필수 입력값입니다.")
     private String title;
 
     private String description;

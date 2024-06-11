@@ -3,14 +3,14 @@ package org.jenga.dantong.post.model.dto.request;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jenga.dantong.post.model.entity.Category;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -20,9 +20,7 @@ public class PostUpdateRequest {
     @NotNull(message = "Post Id는 필수 입력값입니다.")
     private Long postId;
 
-    @NotNull(message = "제목은 필수 입력값입니다.")
-    @NotEmpty(message = "제목은 필수 입력값입니다.")
-    @NotBlank(message = "제목은 공백일 수 없습니다.")
+    @NotBlank(message = "제목은 필수 입력값입니다.")
     private String title;
 
     private String content;
