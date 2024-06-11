@@ -3,11 +3,14 @@ package org.jenga.dantong.survey.service;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jenga.dantong.global.s3.service.FileUploadService;
 import org.jenga.dantong.global.util.Util;
 import org.jenga.dantong.post.exception.PermissionDeniedException;
 import org.jenga.dantong.post.exception.PostNofFoundException;
+import org.jenga.dantong.post.model.dto.response.PostFileResponse;
 import org.jenga.dantong.post.model.entity.Post;
 import org.jenga.dantong.post.repository.PostRepository;
 import org.jenga.dantong.survey.exception.AlreadyHasSurveyException;
@@ -20,8 +23,10 @@ import org.jenga.dantong.survey.model.dto.request.SurveyUpdateRequest;
 import org.jenga.dantong.survey.model.dto.response.SurveyAdminResponse;
 import org.jenga.dantong.survey.model.dto.response.SurveyItemResponse;
 import org.jenga.dantong.survey.model.dto.response.SurveyResponse;
+import org.jenga.dantong.survey.model.dto.response.TicketResponse;
 import org.jenga.dantong.survey.model.entity.Survey;
 import org.jenga.dantong.survey.model.entity.SurveyItem;
+import org.jenga.dantong.survey.model.entity.SurveySubmit;
 import org.jenga.dantong.survey.repository.SurveyItemRepository;
 import org.jenga.dantong.survey.repository.SurveyRepository;
 import org.jenga.dantong.survey.repository.SurveySubmitRepository;
@@ -42,6 +47,7 @@ public class SurveyService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final SurveySubmitRepository surveySubmitRepository;
+    private final FileUploadService fileUploadService;
 
     @Transactional
     public SurveyResponse findSurvey(Long surveyId) {
@@ -219,4 +225,32 @@ public class SurveyService {
                     progress, count);
             });
     }
+
+    public List<TicketResponse> getTickets(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        List<SurveySubmit> submits = surveySubmitRepository.findByUser(user);
+        return submits.stream().map(surveySubmit -> {
+            Survey survey = surveySubmit.getSurvey();
+            Post post = survey.getPost();
+            List<PostFileResponse> postFiles = getFileFromPost(post);
+
+            return TicketResponse.builder()
+                .postId(post.getPostId())
+                .title(survey.getTitle())
+                .surveyId(survey.getSurveyId())
+                .startTime(survey.getStartTime())
+                .description(survey.getDescription())
+                .status(Util.getProgress(survey))
+                .postFileResponse(postFiles)
+                .build();
+        }).collect(Collectors.toList());
+    }
+
+    private List<PostFileResponse> getFileFromPost(Post post) {
+        return post.getFiles().stream().map(file -> {
+            String url = fileUploadService.getFileUrl(file.getFileId());
+            return new PostFileResponse(file, url);
+        }).collect(Collectors.toList());
+    }
+
 }
