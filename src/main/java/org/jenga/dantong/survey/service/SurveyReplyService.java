@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.util.Util;
+import org.jenga.dantong.post.exception.PermissionDeniedException;
 import org.jenga.dantong.survey.exception.SurveyItemNotFoundException;
 import org.jenga.dantong.survey.exception.SurveyNotFoundException;
 import org.jenga.dantong.survey.exception.SurveyReplyNotFoundException;
@@ -59,25 +60,25 @@ public class SurveyReplyService {
             .orElseThrow(SurveyNotFoundException::new);
         List<SurveyItem> surveyItems = surveyItemRepository.findBySurvey(survey);
         return surveyItems.stream()
-            .map(surveyItem -> {
-                    List<SurveyUserReplyResponse> replyResponseList = surveyReplyRepository.findAllBySurveyItem(
-                            surveyItem).stream()
-                        .map(reply -> {
-                                SurveyUserReplyResponse replyResponse = SurveyUserReplyResponse.builder()
-                                    .surveyItemId(reply.getSurveyItem().getSurveyItemId())
-                                    .content(reply.getContent())
+                .map(surveyItem -> {
+                            List<SurveyUserReplyResponse> replyResponseList = surveyReplyRepository.findAllBySurveyItem(
+                                            surveyItem).stream()
+                                    .map(reply -> {
+                                                SurveyUserReplyResponse replyResponse = SurveyUserReplyResponse.builder()
+                                                        .surveyItemId(reply.getSurveyItem().getSurveyItemId())
+                                                        .content(reply.getContent())
+                                                        .build();
+                                                return replyResponse;
+                                            }
+                                    ).collect(Collectors.toList());
+                            SurveyItemResponse surveyItemResponse = new SurveyItemResponse(surveyItem);
+                            return AllRepliesResponse.builder()
+                                    .surveyItemResponse(surveyItemResponse)
+                                    .replies(replyResponseList)
                                     .build();
-                                return replyResponse;
-                            }
-                        ).collect(Collectors.toList());
-                    SurveyItemResponse surveyItemResponse = new SurveyItemResponse(surveyItem);
-                    return AllRepliesResponse.builder()
-                        .surveyItemResponse(surveyItemResponse)
-                        .replies(replyResponseList)
-                        .build();
-                }
-            )
-            .collect(Collectors.toList());
+                        }
+                )
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -117,19 +118,18 @@ public class SurveyReplyService {
 
         List<SurveyReply> reply = new ArrayList<>();
 
-        items.stream().forEach(currItem -> {
+        items.forEach(currItem -> {
             SurveyReply surveyReply = surveyReplyRepository.findBySurveyItemAndUser(currItem, user)
                 .orElseThrow(SurveyReplyNotFoundException::new);
 
             reply.add(surveyReply);
         });
 
-        List<SurveyUserReplyResponse> responseReplys = reply.stream().map(
-            currReply -> SurveyUserReplyResponse.builder()
-                .surveyItemId(currReply.getSurveyItem().getSurveyItemId())
-                .content(currReply.getContent()).build()).toList();
+        return reply.stream().map(
+                currReply -> SurveyUserReplyResponse.builder()
+                        .surveyItemId(currReply.getSurveyItem().getSurveyItemId())
+                        .content(currReply.getContent()).build()).toList();
 
-        return responseReplys;
     }
 
     @Transactional
@@ -149,18 +149,19 @@ public class SurveyReplyService {
 
     @Transactional
     public void updateReply(Long surveyId, List<SurveyReplyUpdateRequest> request, Long userId) {
-        Survey survey = surveyRepository.findById(surveyId)
-            .orElseThrow(SurveyNotFoundException::new);
+
         User user = userRepository.findById(userId)
             .orElseThrow(UserNotFoundException::new);
-
-        List<SurveyItem> items = survey.getSurveyItems();
 
         request.forEach(currRequest -> {
             SurveyItem item = surveyItemRepository.findById(currRequest.getSurveyItemId())
                 .orElseThrow(SurveyItemNotFoundException::new);
             SurveyReply surveyReply = surveyReplyRepository.findBySurveyItemAndUser(item, user)
                 .orElseThrow(SurveyReplyNotFoundException::new);
+
+            if (!item.getSurvey().getSurveyId().equals(surveyId)) {
+                throw new PermissionDeniedException();
+            }
 
             surveyReply.setContent(currRequest.getContent());
         });
@@ -181,6 +182,6 @@ public class SurveyReplyService {
                 surveyReplyRepository.findBySurveyItemAndUser(currItem, user)
                     .orElseThrow(SurveyReplyNotFoundException::new)).toList();
 
-        reply.forEach(surveyReplyRepository::delete);
+        surveyReplyRepository.deleteAll(reply);
     }
 }
