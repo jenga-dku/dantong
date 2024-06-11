@@ -25,6 +25,7 @@ public class SurveyCreateRequest {
 
     private String description;
 
+    @NotNull(message = "Post Id는 필수 입력값입니다.")
     private Long postId;
 
     @NotNull(message = "시작 시각은 필수 입력값입니다.")
