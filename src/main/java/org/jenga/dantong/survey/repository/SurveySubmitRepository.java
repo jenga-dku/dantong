@@ -19,4 +19,6 @@ public interface SurveySubmitRepository extends JpaRepository<SurveySubmit, Long
     Long countBySurvey(Survey survey);
 
     Page<SurveySubmit> findByUser(User user, Pageable pageable);
+
+    List<SurveySubmit> findByUser(User user);
 }
