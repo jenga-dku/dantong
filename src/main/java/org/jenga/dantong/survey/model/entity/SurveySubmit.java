@@ -22,7 +22,7 @@ public class SurveySubmit extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "survey_item_id", insertable = false, updatable = false)
-    private int id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "survey_id")
