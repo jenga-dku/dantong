@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
@@ -15,7 +16,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.jenga.dantong.excel.Util.Util;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +36,7 @@ public class ExcelController {
     private final ExcelService excelService;
 
     private final ExcelCreateService excelCreateService;
+    private final Util util;
 
     @Value("${file.path}")
     private String filePath;
@@ -42,7 +48,7 @@ public class ExcelController {
         HttpServletRequest request) {
         try {
             SXSSFWorkbook workbook = getWorkbook(surveyId);
-            createExcel(workbook, fileName, request);
+            File file = createExcel(workbook, fileName, request);
         } catch (IOException e) {
             log.error("[downloadPoiExcelAsyncVersion] {}", e.getMessage());
         }
@@ -61,7 +67,26 @@ public class ExcelController {
         return workbook;
     }
 
-    private void createExcel(SXSSFWorkbook workbook
+    @GetMapping("/download")
+    private ResponseEntity<Resource> downloadExcel(@RequestParam(name = "fileName") String fileName,
+        @RequestParam(name = "surveyId") Long surveyId,
+        HttpServletRequest request) {
+        try {
+            SXSSFWorkbook workbook = getWorkbook(surveyId);
+            File file = createExcel(workbook, fileName, request);
+            Resource resource = util.readFileAsResource(file);
+            String filename = URLEncoder.encode(file.getName(), "UTF-8");
+            return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; fileName=\"" + filename + "\";")
+                .body(resource);
+        } catch (IOException e) {
+            throw new RuntimeException("filename encoding failed");
+        }
+    }
+
+    private File createExcel(SXSSFWorkbook workbook
         , String fileName
         , HttpServletRequest request) throws IOException {
         String excelFilePath = filePath
@@ -94,6 +119,7 @@ public class ExcelController {
             if (ObjectUtils.isNotEmpty(workbook)) {
                 workbook.close();
             }
+            return excelFile;
         }
     }
 
