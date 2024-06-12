@@ -10,7 +10,15 @@ import java.time.LocalDateTime;
 public class SurveyUserAllReplyResponse {
     private Long surveyId;
     private String title;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private String status;
+
+    public SurveyUserAllReplyResponse(Long surveyId, String title, LocalDateTime startTime, LocalDateTime endTime, String status) {
+        this.surveyId = surveyId;
+        this.title = title;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.status = status;
+    }
 }
