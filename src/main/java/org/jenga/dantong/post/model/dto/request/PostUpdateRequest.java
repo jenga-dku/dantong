@@ -32,11 +32,11 @@ public class PostUpdateRequest {
     @NotNull(message = "시작 시각은 필수 입력값입니다.")
     @Future(message = "시작 시각은 현재 시각 이후입니다.")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime start_time;
+    private LocalDateTime startTime;
 
     @NotNull(message = "종료 시각은 필수 입력값입니다.")
     @Future(message = "종료 시각은 현재 시각 이후입니다.")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime end_time;
+    private LocalDateTime endTime;
 
 }

@@ -1,12 +1,10 @@
 package org.jenga.dantong.survey.controller;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 import org.jenga.dantong.global.base.AdminAuth;
 import org.jenga.dantong.global.base.UserAuth;
-import org.jenga.dantong.post.model.entity.Category;
 import org.jenga.dantong.survey.model.dto.request.SurveyCreateRequest;
 import org.jenga.dantong.survey.model.dto.request.SurveyUpdateRequest;
 import org.jenga.dantong.survey.model.dto.response.SurveyAdminResponse;
@@ -19,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequestMapping("/survey")
@@ -83,7 +83,7 @@ public class SurveyController {
 
     @GetMapping("/ticket")
     @UserAuth
-    public ResponseEntity<List<TicketResponse>> tickets(Category category, AppAuthentication auth) {
+    public ResponseEntity<List<TicketResponse>> tickets(AppAuthentication auth) {
         List<TicketResponse> tickets = surveyService.getTickets(auth.getUserId());
         return ResponseEntity.ok(tickets);
     }
