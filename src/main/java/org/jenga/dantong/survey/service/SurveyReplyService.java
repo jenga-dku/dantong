@@ -28,6 +28,8 @@ import org.jenga.dantong.survey.repository.SurveySubmitRepository;
 import org.jenga.dantong.user.exception.UserNotFoundException;
 import org.jenga.dantong.user.model.entity.User;
 import org.jenga.dantong.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -82,29 +84,13 @@ public class SurveyReplyService {
     }
 
     @Transactional
-    public List<SurveyUserAllReplyResponse> findAllUserReply(Long userId) {
+    public Page<SurveyUserAllReplyResponse> findAllUserReply(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
             .orElseThrow(UserNotFoundException::new);
 
-        List<SurveySubmit> submits = surveySubmitRepository.findByUser(user);
+        Page<SurveySubmit> submits = surveySubmitRepository.findByUser(user, pageable);
 
-        List<SurveyUserAllReplyResponse> response = new ArrayList<>();
-
-        submits.stream()
-            .forEach(currSubmit -> {
-                Survey survey = currSubmit.getSurvey();
-                response.add(
-                    SurveyUserAllReplyResponse.builder()
-                        .surveyId(survey.getSurveyId())
-                        .title(survey.getTitle())
-                        .startDate(survey.getStartTime())
-                        .endDate(survey.getEndTime())
-                        .status(Util.getProgress(survey))
-                        .build()
-                );
-            });
-
-        return response;
+        return getSurveyUserAllReplyResponses(submits);
     }
 
 
@@ -130,6 +116,15 @@ public class SurveyReplyService {
                         .surveyItemId(currReply.getSurveyItem().getSurveyItemId())
                         .content(currReply.getContent()).build()).toList();
 
+    }
+
+    public Page<SurveyUserAllReplyResponse> getSurveyUserAllReplyResponses(Page<SurveySubmit> submit) {
+        return submit.map(currSubmit -> {
+            Survey survey = currSubmit.getSurvey();
+
+            return new SurveyUserAllReplyResponse(survey.getSurveyId(), survey.getTitle(),
+                    survey.getStartTime(), survey.getEndTime(), Util.getProgress(survey));
+        });
     }
 
     @Transactional
@@ -168,6 +163,7 @@ public class SurveyReplyService {
     }
 
     @Transactional
+    //Todo 이 메소드로 삭제 시 submit 삭제 안되는 오류
     public void deleteUserReply(Long surveyId, Long userId) {
 
         Survey survey = surveyRepository.findById(surveyId)

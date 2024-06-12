@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 import org.jenga.dantong.global.base.UserAuth;
 import org.jenga.dantong.survey.model.dto.request.SurveyReplyUpdateRequest;
-import org.jenga.dantong.survey.model.dto.response.SurveyUserAllReplyResponse;
 import org.jenga.dantong.survey.model.dto.response.AllRepliesResponse;
+import org.jenga.dantong.survey.model.dto.response.SurveyUserAllReplyResponse;
 import org.jenga.dantong.survey.model.dto.response.SurveyUserReplyResponse;
 import org.jenga.dantong.survey.service.SurveyReplyService;
 import org.jenga.dantong.survey.service.SurveySubmitService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -42,9 +44,9 @@ public class SurveyReplyController {
      */
     @GetMapping("/all/{surveyId}")
     public ResponseEntity<List<AllRepliesResponse>> findAllReply(
-        @PathVariable("surveyId") Long surveyId) {
+            @PathVariable("surveyId") Long surveyId) {
         List<AllRepliesResponse> replies = surveyReplyService.findAllReplyBySurvey(
-            surveyId);
+                surveyId);
         return ResponseEntity.ok(replies);
     }
 
@@ -60,8 +62,9 @@ public class SurveyReplyController {
 
     @GetMapping("/user")
     @UserAuth
-    public ResponseEntity<List<SurveyUserAllReplyResponse>> findAllUserReply(AppAuthentication auth) {
-        List<SurveyUserAllReplyResponse> response = surveyReplyService.findAllUserReply(auth.getUserId());
+    public ResponseEntity<Page<SurveyUserAllReplyResponse>> findAllUserReply(AppAuthentication auth,
+                                                                             Pageable pageable) {
+        Page<SurveyUserAllReplyResponse> response = surveyReplyService.findAllUserReply(auth.getUserId(), pageable);
 
         return ResponseEntity.ok(response);
     }
