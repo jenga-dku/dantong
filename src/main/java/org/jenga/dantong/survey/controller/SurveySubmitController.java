@@ -47,6 +47,14 @@ public class SurveySubmitController {
         return surveySubmitService.getSubmit(submitId, auth.getUserId());
     }
 
+    @GetMapping("/user/{surveyId}")
+    @UserAuth
+    public SurveySubmitResponse userSubmit(@PathVariable(name = "surveyId") Long surveyId,
+        AppAuthentication auth) {
+        return surveySubmitService.getSubmit(surveyId, auth.getUserId());
+
+    }
+
     /**
      * 설문에 대한 전체 응답결과를 조회하기
      *

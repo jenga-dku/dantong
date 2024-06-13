@@ -61,6 +61,27 @@ public class SurveySubmitService {
     }
 
     @Transactional
+    public SurveySubmitResponse getUserSubmit(Long surveyId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        Survey survey = surveyRepository.findById(surveyId)
+            .orElseThrow(SurveyNotFoundException::new);
+        SurveySubmit submit = surveySubmitRepository.findSurveySubmitByUserAndSurvey(user, survey)
+            .orElseThrow(SurveySubmitNotFoundException::new);
+        List<SurveyReplyResponse> surveyReplyResponses = submit.getSurveyReplies().stream()
+            .map(surveyReply -> {
+                SurveyItemResponse surveyItemResponse = new SurveyItemResponse(
+                    surveyReply.getSurveyItem());
+                return new SurveyReplyResponse(surveyReply.getReplyId(), surveyItemResponse,
+                    surveyReply.getContent());
+            }).collect(Collectors.toList());
+        if (submit.getUser().getId().equals(userId)) {
+            return new SurveySubmitResponse(submit.getSurvey().getSurveyId(), surveyReplyResponses);
+        } else {
+            throw new NotGrantedException();
+        }
+    }
+
+    @Transactional
     public SurveySubmitResponse getSubmit(Long submitId, Long userId) {
         SurveySubmit submit = surveySubmitRepository.findById(submitId)
             .orElseThrow(SurveySubmitNotFoundException::new);
