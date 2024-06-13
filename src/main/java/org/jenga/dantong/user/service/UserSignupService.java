@@ -40,14 +40,14 @@ public class UserSignupService {
         String encryptedPassword = passwordEncoder.encode(dto.getPassword());
 
         User user = User.builder()
-                .studentId(info.getStudentId())
-                .name(dto.getName())
-                .major(dto.getMajor())
-                .phoneNumber(dto.getPhoneNumber())
-                .status(Status.INACTIVE)
-                .password(encryptedPassword)
-                .userRole(UserRole.USER)
-                .build();
+            .studentId(info.getStudentId())
+            .name(dto.getName())
+            .major(dto.getMajor())
+            .phoneNumber(dto.getPhoneNumber())
+            .status(Status.INACTIVE)
+            .password(encryptedPassword)
+            .userRole(UserRole.USER)
+            .build();
 
         deleteSignupAuths(signupToken);
         return userRepository.save(user);
@@ -59,9 +59,10 @@ public class UserSignupService {
         }
     }
 
+    @Transactional
     public LoginResponse login(LoginRequest dto) {
         User user = userRepository.findByStudentId(dto.getStudentId())
-                .orElseThrow(UserNotFoundException::new);
+            .orElseThrow(UserNotFoundException::new);
 
         if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             AuthenticationToken token = jwtProvider.issue(user);
@@ -74,7 +75,7 @@ public class UserSignupService {
 
     private void checkUserExist(SignupRequest dto) {
         if (userRepository.findByStudentId(dto.getStudentId()).isPresent()) {
-            //TODO specific exception으로 변경
+            //TODO specific exception으로 변경능
             throw new AlreadyUserExistException();
         }
     }
