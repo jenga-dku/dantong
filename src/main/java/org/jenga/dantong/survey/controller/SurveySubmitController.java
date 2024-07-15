@@ -51,7 +51,7 @@ public class SurveySubmitController {
     @UserAuth
     public SurveySubmitResponse userSubmit(@PathVariable(name = "surveyId") Long surveyId,
         AppAuthentication auth) {
-        return surveySubmitService.getSubmit(surveyId, auth.getUserId());
+        return surveySubmitService.getUserSubmit(surveyId, auth.getUserId());
 
     }
 
