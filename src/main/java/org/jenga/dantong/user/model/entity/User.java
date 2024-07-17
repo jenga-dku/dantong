@@ -6,7 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jenga.dantong.friend.model.entity.Friend;
 import org.jenga.dantong.global.base.BaseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -35,6 +39,9 @@ public class User extends BaseEntity {
     private UserRole userRole;
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @OneToMany(mappedBy = "friend")
+    private List<Friend> friendList = new ArrayList<>();
 
     public void edit(String name, Major major, String phoneNumber) {
         this.name = name;
