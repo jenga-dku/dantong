@@ -23,9 +23,9 @@ spring:
   data:
     redis:
       host: ${redis.url}
-      port: 10393
+      port: 15620
       password: ${redis.password}
-      url: redis://${redis.password}@${redis.url}:10393
+      url: redis://${redis.password}@${redis.url}:15620
   messages:
     basename: messages/messages
 
