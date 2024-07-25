@@ -1,5 +1,6 @@
 package org.jenga.dantong.survey.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
@@ -28,6 +29,7 @@ public class SurveySubmitController {
 
     @PostMapping()
     @UserAuth
+    @Operation(summary = "설문 응답 제출")
     public void createReply(@RequestBody @Validated SurveySubmitCreateRequest request,
         AppAuthentication auth) {
         surveySubmitService.createSubmit(request, auth.getUserId());
@@ -35,6 +37,7 @@ public class SurveySubmitController {
 
     @DeleteMapping("/{submitId}")
     @UserAuth
+    @Operation(summary = "설문 응답 삭제", description = "token과 설문번호로 권한 확인 후 설문 응답 삭제")
     public void deleteReply(@PathVariable(name = "submitId") Long submitId,
         AppAuthentication auth) {
         surveySubmitService.deleteSubmit(submitId, auth.getUserId());
@@ -42,12 +45,14 @@ public class SurveySubmitController {
 
     @GetMapping("/{submitId}")
     @UserAuth
+    @Operation(summary = "설문 응답 조회", description = "token과 설문번호로 권한 확인 후 설문 응답 조회")
     public SurveySubmitResponse submit(@PathVariable(name = "submitId") Long submitId,
         AppAuthentication auth) {
         return surveySubmitService.getSubmit(submitId, auth.getUserId());
     }
 
-    @GetMapping("/user/{surveyId}")
+    @GetMapping("/my/{surveyId}")
+    @Operation(summary = "내 설문 제출 정보 확인", description = "token과 설문번호로 내 제출 정보를 찾는 api")
     @UserAuth
     public SurveySubmitResponse userSubmit(@PathVariable(name = "surveyId") Long surveyId,
         AppAuthentication auth) {
@@ -62,6 +67,7 @@ public class SurveySubmitController {
      * @return
      */
     @GetMapping("/survey/{surveyId}")
+    @Operation(summary = "설문 전체 응답 조회")
     public List<SurveySubmitResponse> getSubmissions(
         @PathVariable(name = "surveyId") Long surveyId) {
         return surveySubmitService.getSubmissions(surveyId);
