@@ -8,11 +8,14 @@ import org.jenga.dantong.friend.model.dto.response.RequestListResponse;
 import org.jenga.dantong.friend.service.FriendService;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 import org.jenga.dantong.global.base.UserAuth;
+import org.jenga.dantong.survey.model.dto.response.TicketResponse;
 import org.jenga.dantong.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequestMapping("/friend")
@@ -44,5 +47,11 @@ public class FriendController {
     @GetMapping("/list")
     public ResponseEntity<Page<FriendListResponse>> getFriendList(AppAuthentication auth, Pageable pageable) {
         return ResponseEntity.ok(friendService.getFriendList(auth.getUserId(), pageable));
+    }
+
+    @UserAuth
+    @GetMapping("/submit-list/{friendStudentId}")
+    public ResponseEntity<List<TicketResponse>> viewFriendSubmit(@PathVariable("friendStudentId") String studentId, AppAuthentication auth) {
+        return ResponseEntity.ok(friendService.viewSubmit(studentId, auth.getUserId()));
     }
 }
