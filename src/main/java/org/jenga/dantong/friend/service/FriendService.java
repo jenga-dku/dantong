@@ -10,7 +10,12 @@ import org.jenga.dantong.friend.model.entity.Friend;
 import org.jenga.dantong.friend.model.entity.FriendStatus;
 import org.jenga.dantong.friend.repository.FriendRepository;
 import org.jenga.dantong.post.exception.PermissionDeniedException;
+import org.jenga.dantong.post.exception.PostNofFoundException;
+import org.jenga.dantong.post.model.entity.Post;
+import org.jenga.dantong.post.repository.PostRepository;
 import org.jenga.dantong.survey.model.dto.response.TicketResponse;
+import org.jenga.dantong.survey.model.entity.Survey;
+import org.jenga.dantong.survey.repository.SurveySubmitRepository;
 import org.jenga.dantong.survey.service.SurveyService;
 import org.jenga.dantong.user.exception.UserNotFoundException;
 import org.jenga.dantong.user.model.entity.User;
@@ -28,6 +33,8 @@ public class FriendService {
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
     private final SurveyService surveyService;
+    private final PostRepository postRepository;
+    private final SurveySubmitRepository surveySubmitRepository;
 
     @Transactional
     public void sendRequest(String studentId, Long userId) {
@@ -135,13 +142,35 @@ public class FriendService {
         });
     }
 
-    public List<TicketResponse> viewSubmit(String studentId, Long userId) {
+    public List<TicketResponse> viewSubmitByStudentId(String studentId, Long userId) {
         User friend = userRepository.findByStudentId(studentId)
                 .orElseThrow(UserNotFoundException::new);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
+        if (friendRepository.findByUserStudentIdAndFriendStudentIdAndStatus(user.getStudentId(), studentId, FriendStatus.ACCEPT).isEmpty())
+            throw new FriendshipNotFoundException();
+
         return surveyService.getTickets(friend.getId());
+    }
+
+    public List<FriendListResponse> viewSubmitByPost(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNofFoundException::new);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        Survey survey = post.getSurvey();
+
+        return surveySubmitRepository.findBySurvey(survey).stream().map(currSubmit -> {
+                    String studentId = currSubmit.getUser().getStudentId();
+                    String name = currSubmit.getUser().getName();
+
+                    return new FriendListResponse(studentId, name);
+                })
+                .filter(currSubmit -> !currSubmit.getStudentId().equals(user.getStudentId()))
+                .toList();
     }
 }

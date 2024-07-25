@@ -50,8 +50,14 @@ public class FriendController {
     }
 
     @UserAuth
-    @GetMapping("/submit-list/{friendStudentId}")
+    @GetMapping("/submit-list/studentId/{friendStudentId}")
     public ResponseEntity<List<TicketResponse>> viewFriendSubmit(@PathVariable("friendStudentId") String studentId, AppAuthentication auth) {
-        return ResponseEntity.ok(friendService.viewSubmit(studentId, auth.getUserId()));
+        return ResponseEntity.ok(friendService.viewSubmitByStudentId(studentId, auth.getUserId()));
+    }
+
+    @UserAuth
+    @GetMapping("/submit-list/postId/{postId}")
+    public ResponseEntity<List<FriendListResponse>> viewSubmitAtPost(@PathVariable("postId") Long postId, AppAuthentication auth) {
+        return ResponseEntity.ok(friendService.viewSubmitByPost(postId, auth.getUserId()));
     }
 }
