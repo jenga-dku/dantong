@@ -8,14 +8,14 @@ public class UserResponse {
 
     private String name;
     private String studentId;
-    private String majorName;
+    private String major;
     private String phoneNumber;
     private String userRole;
 
     public UserResponse(User user) {
         this.name = user.getName();
         this.studentId = user.getStudentId();
-        this.majorName = user.getMajor().name();
+        this.major = user.getMajor().name();
         this.phoneNumber = user.getPhoneNumber();
         this.userRole = user.getUserRole().getName();
     }
