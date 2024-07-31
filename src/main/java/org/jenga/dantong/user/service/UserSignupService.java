@@ -1,5 +1,6 @@
 package org.jenga.dantong.user.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.jenga.dantong.user.model.dto.request.LoginRequest;
 import org.jenga.dantong.user.model.dto.request.SignupRequest;
 import org.jenga.dantong.user.model.dto.request.UserInfoEditRequest;
 import org.jenga.dantong.user.model.dto.response.LoginResponse;
+import org.jenga.dantong.user.model.dto.response.RefreshTokenResponse;
 import org.jenga.dantong.user.model.dto.response.UserResponse;
 import org.jenga.dantong.user.model.entity.Status;
 import org.jenga.dantong.user.model.entity.User;
@@ -71,6 +73,12 @@ public class UserSignupService {
         } else {
             throw new WrongPasswordException();
         }
+    }
+
+    public RefreshTokenResponse refreshToken(HttpServletRequest request, String refreshToken) {
+        String accessToken = jwtProvider.getAccessTokenFromHeader(request);
+        AuthenticationToken token = jwtProvider.reissue(accessToken, refreshToken);
+        return new RefreshTokenResponse(token);
     }
 
     private void checkUserExist(SignupRequest dto) {
