@@ -6,7 +6,7 @@ import com.google.firebase.messaging.WebpushConfig;
 import com.google.firebase.messaging.WebpushNotification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jenga.dantong.notification.repository.NotificationRedisRepository;
+import org.jenga.dantong.notification.repository.NotificationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import java.util.Map;
 @Slf4j
 public class NotificationService {
 
-    private final NotificationRedisRepository notificationRedisRepository;
+    private final NotificationRepository notificationRedisRepository;
     private final Map<Long, String> tokenMap = new HashMap<>();
 
     public void sendEventNotification(String studentId) {
