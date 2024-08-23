@@ -1,5 +1,6 @@
 package org.jenga.dantong.post.model.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,8 @@ public class PostResponse {
 
     private Long postId;
     private SurveySummaryResponse surveySummaryResponse;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private String title;
     private String description;
     private String content;
@@ -26,6 +29,8 @@ public class PostResponse {
         UserResponse userResponse) {
         this.userResponse = userResponse;
         this.postId = post.getPostId();
+        this.startTime = post.getStartDate();
+        this.endTime = post.getEndDate();
         this.title = post.getTitle();
         this.description = post.getDescription();
         this.content = post.getContent();
