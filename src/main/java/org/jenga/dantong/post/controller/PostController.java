@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,7 +54,7 @@ public class PostController {
     @PatchMapping("/edit/{postId}")
     @Operation(summary = "게시글 수정", description = "권한 확인 후 게시글 정보 모두 입력하여 게시글 수정")
     @UserAuth
-    public void edit(@RequestBody @Validated PostUpdateRequest request,
+    public void edit(@ModelAttribute @Validated PostUpdateRequest request,
         @PathVariable("postId") Long postId,
         AppAuthentication auth) {
 
