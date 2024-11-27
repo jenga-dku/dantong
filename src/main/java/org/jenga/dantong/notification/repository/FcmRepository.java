@@ -37,10 +37,8 @@ public class FcmRepository {
 
         return userRepository.findAll()
                 .stream()
-                .map(user -> {
-                    return tokenRedisTemplate.opsForValue().get(user.getStudentId());
-                })
                 .filter(Objects::nonNull)
+                .map(user -> getToken(user.getStudentId()))
                 .toList();
     }
 }

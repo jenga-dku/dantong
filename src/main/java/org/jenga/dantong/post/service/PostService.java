@@ -70,6 +70,7 @@ public class PostService {
             NotificationGlobalRequest notificationRequest = NotificationGlobalRequest.builder()
                     .body("공지 알림")
                     .title(request.getTitle())
+                    .url("https://dantong.site/news/" + post.getPostId())
                     .build();
             try {
                 fcmService.sendGlobalNotification(notificationRequest);
