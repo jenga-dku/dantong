@@ -129,10 +129,11 @@ public class FcmService implements NotificationService{
         List<String> tokens = fcmRepository.getAllTokens();
         if (tokens.isEmpty()) return;
 
+        log.info(tokens.toString());
+
         MulticastMessage message = MulticastMessage.builder()
                 .putData("title", request.getTitle())
                 .putData("body", request.getBody())
-                .putData("url", request.getUrl())
                 .addAllTokens(tokens)
                 // 안드로이드
                 .setAndroidConfig(AndroidConfig.builder()

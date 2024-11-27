@@ -68,8 +68,8 @@ public class PostService {
 
         if (post.getCategory().equals(Category.NOTICE)){
             NotificationGlobalRequest notificationRequest = NotificationGlobalRequest.builder()
-                    .body("공지 알림")
-                    .title(request.getTitle())
+                    .title("공지 알림 📢")
+                    .body(request.getTitle())
                     .url("https://dantong.site/news/" + post.getPostId())
                     .build();
             try {

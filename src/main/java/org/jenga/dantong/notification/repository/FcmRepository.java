@@ -37,7 +37,7 @@ public class FcmRepository {
 
         return userRepository.findAll()
                 .stream()
-                .filter(Objects::nonNull)
+                .filter(user -> getToken(user.getStudentId()) != null)
                 .map(user -> getToken(user.getStudentId()))
                 .toList();
     }
