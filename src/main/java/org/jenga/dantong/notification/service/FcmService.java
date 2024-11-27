@@ -127,15 +127,34 @@ public class FcmService implements NotificationService{
 
     public void sendGlobalNotification(NotificationGlobalRequest request) throws FirebaseMessagingException {
         List<String> tokens = fcmRepository.getAllTokens();
+        if (tokens.isEmpty()) return;
 
         MulticastMessage message = MulticastMessage.builder()
                 .putData("title", request.getTitle())
                 .putData("body", request.getBody())
                 .putData("url", request.getUrl())
                 .addAllTokens(tokens)
+                // 안드로이드
+                .setAndroidConfig(AndroidConfig.builder()
+                        .setNotification(AndroidNotification.builder()
+                                .setTitle(request.getTitle())
+                                .setBody(request.getBody())
+                                .build())
+                        .build())
+                // 아이폰
+                .setApnsConfig(ApnsConfig.builder()
+                        .putHeader("apns-priority", "10")
+                        .setAps(Aps.builder()
+                                .setAlert(ApsAlert.builder()
+                                        .setTitle(request.getTitle())
+                                        .setBody(request.getBody())
+                                        .build())
+                                .setBadge(42)
+                                .build())
+                        .build())
                 .build();
 
-        FirebaseMessaging.getInstance().sendEachForMulticast(message);
+        FirebaseMessaging.getInstance().sendEachForMulticastAsync(message);
     }
 
     public Page<NotificationResponse> getNotifications(Long userId, Pageable pageable) {
