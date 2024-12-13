@@ -4,9 +4,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
 import org.jenga.dantong.global.base.UserAuth;
+import org.jenga.dantong.notification.model.dto.request.NotificationRequest;
 import org.jenga.dantong.notification.service.FcmService;
+import org.jenga.dantong.survey.exception.SurveyNotFoundException;
 import org.jenga.dantong.survey.model.dto.request.SurveySubmitCreateRequest;
 import org.jenga.dantong.survey.model.dto.response.SurveySubmitResponse;
+import org.jenga.dantong.survey.model.entity.Survey;
+import org.jenga.dantong.survey.repository.SurveyRepository;
 import org.jenga.dantong.survey.service.SurveySubmitService;
 import org.jenga.dantong.user.exception.UserNotFoundException;
 import org.jenga.dantong.user.model.entity.User;
@@ -24,6 +28,7 @@ public class SurveySubmitController {
     private final SurveySubmitService surveySubmitService;
     private final FcmService fcmService;
     private final UserRepository userRepository;
+    private final SurveyRepository surveyRepository;
 
     @PostMapping()
     @UserAuth
@@ -33,6 +38,18 @@ public class SurveySubmitController {
         User user = userRepository.findById(auth.getUserId()).orElseThrow(UserNotFoundException::new);
         surveySubmitService.createSubmit(request, auth.getUserId());
         fcmService.sendSubmitNotification(user.getStudentId());
+
+        Survey survey = surveyRepository.findById(request.getSurveyId())
+                .orElseThrow(SurveyNotFoundException::new);
+
+        NotificationRequest notificationRequest = new NotificationRequest(
+                user.getStudentId(),
+                "10분 전 알림",
+                "행사 시작 10분 전 입니다.",
+                "https://dantong.site/news/" + survey.getPost().getPostId().toString()
+        );
+
+        fcmService.sendEventReminder(notificationRequest, request.getSurveyId());
     }
 
     @DeleteMapping("/{submitId}")

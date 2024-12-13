@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jenga.dantong.global.auth.jwt.AppAuthentication;
+import org.jenga.dantong.global.base.AdminAuth;
 import org.jenga.dantong.global.base.UserAuth;
 import org.jenga.dantong.post.model.dto.request.PostCreateRequest;
 import org.jenga.dantong.post.model.dto.request.PostUpdateRequest;
@@ -28,7 +29,7 @@ public class PostController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "게시글 생성")
-    @UserAuth
+    @AdminAuth
     public void post(@ModelAttribute @Validated PostCreateRequest postSaveRequest,
                      AppAuthentication auth) {
 

@@ -1,6 +1,8 @@
 package org.jenga.dantong.survey.service;
 
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -14,6 +16,7 @@ import org.jenga.dantong.post.model.dto.response.PostFileResponse;
 import org.jenga.dantong.post.model.entity.Post;
 import org.jenga.dantong.post.repository.PostRepository;
 import org.jenga.dantong.survey.exception.AlreadyHasSurveyException;
+import org.jenga.dantong.survey.exception.SurveyDueHasPassedException;
 import org.jenga.dantong.survey.exception.SurveyItemNotFoundException;
 import org.jenga.dantong.survey.exception.SurveyNotFoundException;
 import org.jenga.dantong.survey.model.dto.request.SurveyCreateRequest;
@@ -91,6 +94,9 @@ public class SurveyService {
             .orElseThrow(UserNotFoundException::new);
         Post post = postRepository.findById(surveyCreate.getPostId())
             .orElseThrow(PostNofFoundException::new);
+
+        if(post.getEndDate().isBefore(LocalDateTime.now())) throw new SurveyDueHasPassedException();
+        if(post.getStartDate().isAfter(LocalDateTime.now())) throw new SurveyDueHasPassedException();
 
         if (post.hasSurvey()) {
             throw new AlreadyHasSurveyException();
